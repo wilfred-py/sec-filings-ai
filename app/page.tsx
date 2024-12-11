@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Bell, Sun, Moon } from 'lucide-react'
 import axios from 'axios'
 
-import notifications from '@/components/exampleSummaries' 
+import notifications from '@/components/exampleSummaries'
 
 export default function LandingPage() {
 const [email, setEmail] = useState('')
@@ -16,18 +16,31 @@ const [darkMode, setDarkMode] = useState(false)
 const [submitStatus, setSubmitStatus] = useState('')
 
 useEffect(() => {
-const interval = setInterval(() => {
-    setProgress((prevProgress) => {
-    if (prevProgress >= 100) {
-        setCurrentNotification((prev) => (prev + 1) % notifications.length)
-        return 0
-    }
-    return prevProgress + (100 / 60) // 100% over 6 seconds (60 steps of 100ms each)
-    })
-}, 100)
+  let animationFrame: number;
+  const startTime = Date.now();
+  const duration = 6000; // 6 seconds for full cycle
 
-return () => clearInterval(interval)
-}, [])
+  const animate = () => {
+    const elapsed = Date.now() - startTime;
+    const newProgress = (elapsed / duration) * 100;
+
+    if (newProgress >= 100) {
+      setProgress(0);
+      setCurrentNotification(prev => (prev + 1) % notifications.length);
+    } else {
+      setProgress(newProgress);
+      animationFrame = requestAnimationFrame(animate);
+    }
+  };
+
+  animationFrame = requestAnimationFrame(animate);
+
+  return () => {
+    if (animationFrame) {
+      cancelAnimationFrame(animationFrame);
+    }
+  };
+}, [currentNotification]); // Add currentNotification as dependency
 
 const handleSubmit = async (e: React.FormEvent) => {
 e.preventDefault()
@@ -114,7 +127,10 @@ return (
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative">
                 <div className="flex items-center mb-4">
                 {notifications[currentNotification].icon}
+                
                 <span className="font-semibold text-gray-900 dark:text-white">{notifications[currentNotification].company} {notifications[currentNotification].period} Summary</span>
+
+
                 </div>
                 <div className="space-y-4">
                 <div>
