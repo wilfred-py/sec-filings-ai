@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .bg-background {
+    background-color: #f0f0f0; /* Replace with your desired color */
+  }
+    .text-foreground {
+    color: #333; /* Replace with your desired color */
+  }
+  .border-border {
+    border-color: var(--border); /* Use your desired border color */
+  }
+}
+
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
