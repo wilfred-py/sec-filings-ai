@@ -43,18 +43,24 @@ useEffect(() => {
 }, [currentNotification]); // Add currentNotification as dependency
 
 const handleSubmit = async (e: React.FormEvent) => {
-e.preventDefault()
-try {
-    const response = await axios.post('http://localhost:3001/api/subscribe', { email })
+  e.preventDefault();
+  try {
+    const response = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
     setSubmitStatus('Subscription successful!')
     setEmail('')
-} catch (error) {
+  } catch (error) {
     if (axios.isAxiosError(error) && error.response) {
-    setSubmitStatus(error.response.data.message)
+      setSubmitStatus(error.response.data.message)
     } else {
-    setSubmitStatus('An error occurred. Please try again.')
+      setSubmitStatus('An error occurred. Please try again.')
     }
-}
+  }
 }
 
 const handleDotClick = (index: number) => {
@@ -195,7 +201,7 @@ return (
     </div>
     </div>
 
-{/* FIX: Loading transition is skipping every second dot after 100ms. */}
+
 {/* FIX: Link MONGODB to the backend */}
 
 <a 
