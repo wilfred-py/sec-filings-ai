@@ -47,6 +47,14 @@ export async function POST(request: Request) {
     // Create new subscription
     await Subscription.create({ email });
 
+    // Send welcome email
+    await resend.emails.send({
+      from: 'SEC Filings AI <notifications@your-domain.com>',
+      to: email,
+      subject: 'Welcome to SEC Filings AI Waitlist!',
+      react: WelcomeEmail({ email }),
+    });
+
     return NextResponse.json(
       { message: 'Subscription successful!' },
       { status: 201 }
