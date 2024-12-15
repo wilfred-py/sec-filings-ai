@@ -18,16 +18,16 @@ export default function WelcomeEmail({ email }: WelcomeEmailProps) {
       <Preview>Welcome to the SEC Filings AI Waitlist</Preview>
       <Body style={{ backgroundColor: '#ffffff', fontFamily: 'sans-serif' }}>
         <Container>
-          <Heading>Welcome to SEC Filings AI! 🎉</Heading>
+          <Heading>Welcome to the SEC Filings AI Waitlist! 🎉</Heading>
           <Text>
-            Thanks for sigining up to our waitlist. I'm excited to share SEC Filings AI with you!
+            Thanks for sigining up to the waitlist. We're working hard to bring SEC Filings AI to life!
           </Text>
           <Text>
-            We'll notify you as soon as our beta launches with AI-powered SEC filing summaries delivered straight to your inbox.
+            We'll notify you as soon as our beta launches with SEC filing summaries delivered straight to your inbox.
           </Text>
           <Text style={{ color: '#666666', marginTop: '24px' }}>
             Best regards,<br />
-            Wilf
+            Wilfred
           </Text>
         </Container>
       </Body>

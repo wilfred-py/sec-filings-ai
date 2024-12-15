@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import mongoose from 'mongoose';
+import WelcomeEmail from '@/app/emails/WelcomeEmail';
+import { Resend } from 'resend';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Email Subscription Schema
 const SubscriptionSchema = new mongoose.Schema({
@@ -49,8 +53,8 @@ export async function POST(request: Request) {
 
     // Send welcome email
     await resend.emails.send({
-      from: 'SEC Filings AI <notifications@your-domain.com>',
-      to: email,
+      from: 'onboarding@resend.dev',
+      to: 'wilfredchen1@gmail.com',
       subject: 'Welcome to SEC Filings AI Waitlist!',
       react: WelcomeEmail({ email }),
     });
