@@ -103,10 +103,27 @@ return (
         <main className="flex-grow flex flex-col lg:flex-row items-center justify-center gap-12 max-w-6xl mx-auto w-full">
             {/* Left Panel */}
             <div className="w-full lg:w-1/2 max-w-md bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Comprehensive AI-Powered SEC Filing Summaries</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Save hours deciphering SEC filings</h2>
+
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Get concise, AI-generated summaries of SEC filings for US equities, including key financials, management insights, and risk factors, delivered straight to your inbox.
+                Stay ahead with prompt SEC filing summaries tailored to your investment strategy:
             </p>
+                <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2">
+                    <li className="flex">
+                        <div className="min-w-[8px] mr-2">•</div>
+                        <div className="flex-1"><strong>10-K & 10-Q Annual and Quarterly Reports</strong>: Deep financial insights condensed into actionable intelligence</div>
+                    </li>
+                    <li className="flex">
+                        <div className="min-w-[8px] mr-2">•</div>
+                        <div className="flex-1"><strong>8-K Event Tracking</strong>: Instant alerts on significant corporate changes that could impact your investments</div>
+                    </li>
+                    <li className="flex">
+                        <div className="min-w-[8px] mr-2">•</div>
+                        <div className="flex-1"><strong>Insider Movement Tracking: Form 4</strong> ownership changes that reveal insider confidence</div>
+                    </li>
+                </ul>
+                <br>
+                </br>
             <form onSubmit={handleSubmit} className="space-y-4">
                 <Input
                 type="email"
@@ -202,7 +219,7 @@ return (
     </div>
 
 
-{/* FIX: Link MONGODB to the backend */}
+
 
 <a 
 href="https://www.freepik.com/free-video/motion-graphic-abstract-halftone-background_3294772#fromView=search&page=1&position=8&uuid=056c9e50-158d-4687-b15e-74fb24ae4241" 
