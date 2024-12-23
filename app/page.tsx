@@ -119,7 +119,7 @@ return (
                     </li>
                     <li className="flex">
                         <div className="min-w-[8px] mr-2">•</div>
-                        <div className="flex-1"><strong>Insider Movement Tracking: Form 4</strong> ownership changes that reveal insider confidence</div>
+                        <div className="flex-1"><strong>Form 4 Insider Movement Tracking</strong>: Ownership changes that reveal insider confidence</div>
                     </li>
                 </ul>
                 <br>
@@ -216,19 +216,19 @@ return (
         </main>
         </div>
     </div>
-    </div>
+</div>
 
 
 
-
+{/* 
 <a 
 href="https://www.freepik.com/free-video/motion-graphic-abstract-halftone-background_3294772#fromView=search&page=1&position=8&uuid=056c9e50-158d-4687-b15e-74fb24ae4241" 
 target="_blank" 
 rel="noopener noreferrer" 
-className="absolute bottom-4 right-4 text-sm text-gray-600 dark:text-gray-300"
+className="absolute bottom-2 md:bottom-4 right-2 md:right-4 text-xs md:text-sm text-gray-600 dark:text-gray-300"
 >
 Designed by Freepik
-</a>
+</a> */}
 </div>
 )
 }
