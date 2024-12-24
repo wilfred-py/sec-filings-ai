@@ -44,10 +44,7 @@ const notifications = [
       { label: "Revenue", value: "$65.6B", growth: 16.0, unit: "% YoY" },
       { label: "Net Income", value: "$24.7B", growth: 10.7, unit: "% YoY" },
       { label: "Service Revenue", value: "$50.3B", growth: 22.8, unit: "% YoY" }
-      ].map(item => ({
-      ...item,
-      displayValue: `${item.value} (${renderGrowth(item.growth, item.unit)})`
-      })),
+      ],
       insights: [
       "Service & cloud revenue drives growth at +22.8% YoY",
       "Continued operating margin strength at 46.6%",
@@ -71,10 +68,7 @@ const notifications = [
       { label: "Net Revenue", value: "$10.98B", growth: 5, unit: "% YoY" },
       { label: "Organic Revenue Growth", value: "12%", growth: 12, unit: "%" },
       { label: "EPS", value: "$0.64", growth: 12, unit: "% YoY" }
-    ].map(item => ({
-      ...item,
-      displayValue: `${item.value} (${renderGrowth(item.growth, item.unit)})`
-    })),
+    ],
     insights: [
       "Strong growth in developing and emerging markets",
       "Successful pricing strategies offsetting inflationary pressures",
@@ -94,10 +88,7 @@ const notifications = [
       { label: "Revenue", value: "$7.19B", growth: -13, unit: "% YoY" },
       { label: "EPS", value: "$0.82", growth: -20, unit: "% YoY" },
       { label: "Gross Margin", value: "64.6%", growth: -270, unit: " bps YoY" }
-    ].map(item => ({
-      ...item,
-      displayValue: `${item.value} (${renderGrowth(item.growth, item.unit)})`
-    })),
+    ],
     insights: [
       "Strong demand in Data Center and Automotive segments",
       "Continued leadership in AI and accelerated computing",
@@ -117,10 +108,7 @@ const notifications = [
       { label: "Revenue", value: "$24.93B", growth: 47, unit: "% YoY" },
       { label: "EPS", value: "$0.91", growth: 20, unit: "% YoY" },
       { label: "Vehicle Deliveries", value: "466,140", growth: 83, unit: "% YoY" }
-    ].map(item => ({
-      ...item,
-      displayValue: `${item.value} (${renderGrowth(item.growth, item.unit)})`
-    })),
+    ],
     insights: [
       "Continued expansion of production capacity globally",
       "Advancements in autonomous driving technology",
@@ -140,10 +128,7 @@ const notifications = [
       { label: "Revenue", value: "$8.19B", growth: 2.7, unit: "% YoY" },
       { label: "EPS", value: "$3.29", growth: 3.5, unit: "% YoY" },
       { label: "Paid Memberships", value: "238.39M", growth: 8, unit: "% YoY" }
-    ].map(item => ({
-      ...item,
-      displayValue: `${item.value} (${renderGrowth(item.growth, item.unit)})`
-    })),
+    ],
     insights: [
       "Successful implementation of paid sharing",
       "Strong growth in ad-supported tier",
@@ -163,12 +148,7 @@ const notifications = [
       { label: "Revenue", value: "$2.68B", growth: -25.2, unit: "% YoY" },
       { label: "Adjusted EBITDA", value: "$137M", growth: -87.3, unit: "% YoY" },
       { label: "Free Cash Flow", value: "-$56M", growth: null }
-    ].map(item => ({
-      ...item,
-      displayValue: item.growth !== null 
-        ? `${item.value} (${renderGrowth(item.growth, item.unit)})`
-        : item.value
-    })),
+    ],
     insights: [
       "Focus on operational efficiency and cost reduction",
       "Progress on sustainability initiatives",
@@ -188,10 +168,7 @@ const notifications = [
       { label: "Revenue", value: "$17.32B", growth: 22, unit: "% YoY" },
       { label: "Adjusted EPS", value: "$5.55", growth: 75, unit: "% YoY" },
       { label: "Operating Profit Margin", value: "21.1%", growth: 540, unit: " bps YoY" }
-    ].map(item => ({
-      ...item,
-      displayValue: `${item.value} (${renderGrowth(item.growth, item.unit)})`
-    })),
+    ],
     insights: [
       "Strong demand across all segments and regions",
       "Continued investment in services and digital capabilities",
@@ -211,10 +188,7 @@ const notifications = [
       { label: "Revenue", value: "$8.60B", growth: 11, unit: "% YoY" },
       { label: "Non-GAAP EPS", value: "$2.12", growth: 78, unit: "% YoY" },
       { label: "Operating Cash Flow", value: "$808M", growth: 143, unit: "% YoY" }
-    ].map(item => ({
-      ...item,
-      displayValue: `${item.value} (${renderGrowth(item.growth, item.unit)})`
-    })),
+    ],
     insights: [
       "Strong adoption of AI-powered CRM solutions",
       "Expansion of industry-specific cloud offerings",

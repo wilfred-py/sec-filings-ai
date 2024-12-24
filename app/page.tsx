@@ -7,6 +7,7 @@ import { Bell, Sun, Moon } from 'lucide-react'
 import axios from 'axios'
 
 import notifications from '@/components/exampleSummaries'
+import GrowthIndicator from '@/components/GrowthIndicator'
 
 export default function LandingPage() {
 const [email, setEmail] = useState('')
@@ -164,9 +165,7 @@ return (
                         <div key={index} className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
                         <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{item.label}</p>
                         {/* <p className="text-sm text-gray-900 dark:text-white">{item.value}</p> */}
-                        <p className="text-sm text-gray-900 dark:text-white flex items-center gap-1">
-        {item.value} {renderGrowth(item.growth, item.unit)}
-      </p>
+                        <GrowthIndicator value={item.growth} unit={item.unit} />
                         </div>
                     ))}
                     </div>
