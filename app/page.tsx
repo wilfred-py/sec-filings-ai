@@ -7,6 +7,7 @@ import { Bell, Sun, Moon } from 'lucide-react'
 import axios from 'axios'
 
 import notifications from '@/components/exampleSummaries'
+import GrowthIndicator from '@/components/GrowthIndicator'
 
 export default function LandingPage() {
 const [email, setEmail] = useState('')
@@ -147,6 +148,7 @@ return (
             
             {/* Right Panel - Carousel */}
             <div className="w-full lg:w-1/2 max-w-md">
+            
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative">
                 <div className="flex items-center mb-4">
                 {notifications[currentNotification].icon}
@@ -162,7 +164,8 @@ return (
                     {notifications[currentNotification].financials.map((item, index) => (
                         <div key={index} className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
                         <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{item.label}</p>
-                        <p className="text-sm text-gray-900 dark:text-white">{item.value}</p>
+                        {/* <p className="text-sm text-gray-900 dark:text-white">{item.value}</p> */}
+                        <GrowthIndicator value={item.growth} unit={item.unit} />
                         </div>
                     ))}
                     </div>
@@ -217,6 +220,7 @@ return (
         </div>
     </div>
 </div>
+
 
 
 
