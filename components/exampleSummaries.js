@@ -1,6 +1,7 @@
 import { Mail } from 'lucide-react'
 import { FaCaretUp, FaCaretDown } from 'react-icons/fa'
 
+
 const renderGrowth = (value, unit = '') => {
   if (!value) return null;
   const isPositive = !String(value).includes('-');
@@ -23,10 +24,7 @@ const notifications = [
     { label: "Revenue", value: "$85.8B", growth: -5.5, unit: "% QoQ" },
     { label: "EPS", value: "$1.40", growth: -8.5, unit: "% QoQ" },
     { label: "iPhone Sales", value: "$39.3B", growth: -14.5, unit: "% QoQ" }
-    ].map(item => ({
-    ...item,
-    displayValue: `${item.value} (${renderGrowth(item.growth, item.unit)})`
-    })),
+    ],
     insights: [
     "Strong Services growth +14% YoY driven by advertising and App Store",
     "iPad segment showing robust performance with 24% YoY growth",
