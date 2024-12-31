@@ -43,21 +43,18 @@ const notifications = [
       financials: [
       { label: "Revenue", value: "$65.6B", growth: 16.0, unit: "% YoY" },
       { label: "Net Income", value: "$24.7B", growth: 10.7, unit: "% YoY" },
-      { label: "Service Revenue", value: "$50.3B", growth: 22.8, unit: "% YoY" }
+      { label: "Cloud Segment Revenue", value: "$24.09B", growth: 20.38, unit: "% YoY" }
       ],
       insights: [
-      "Service & cloud revenue drives growth at +22.8% YoY",
-      "Continued operating margin strength at 46.6%",
-      "Product revenue slightly declined by -1.7% YoY",
-      "Diluted EPS grew 10.4% to $3.30"
+      "Azure and other cloud services revenue grew 33%",
+      "$75.4 billion Activision Blizzard acquisition completed October 2023, positioning Microsoft for gaming market expansion. Integration focuses on mobile, cloud, and subscription opportunities.",
+      "Unprecedented datacenter expansion with '$108.7 billion' in future lease commitments, indicating massive scale of AI/cloud infrastructure buildout." 
       ],
       risks: [
-      "Operating margin compression (down 1.0 percentage points)",
-      "Cost of revenue growing faster than revenue",
-      "Product revenue showing slight decline",
-      "Rising operating expenses across R&D, sales, and admin",
-      "Increased tax provision impact on net margins"
-      ]
+      "'There are limited suppliers for certain device and datacenterƒ components' particularly GPUs needed for AI infrastructure. Microsoft faces potential bottlenecks in critical hardware supply.",
+      "Nation-state attacks increasing, with specific disclosure of 'password spray attack' in late 2023 compromising email systems. Company acknowledges ongoing source code repository risks.",
+      "Company notes EU AI Act and U.S. AI Executive Order may 'increase costs or restrict opportunity' in AI development."
+    ]
       } 
     ,
   {
