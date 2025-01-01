@@ -51,70 +51,30 @@ const notifications = [
       "Unprecedented datacenter expansion with '$108.7 billion' in future lease commitments, indicating massive scale of AI/cloud infrastructure buildout." 
       ],
       risks: [
-      "'There are limited suppliers for certain device and datacenterƒ components' particularly GPUs needed for AI infrastructure. Microsoft faces potential bottlenecks in critical hardware supply.",
+      "'There are limited suppliers for certain device and datacenter components' particularly GPUs needed for AI infrastructure. Microsoft faces potential bottlenecks in critical hardware supply.",
       "Nation-state attacks increasing, with specific disclosure of 'password spray attack' in late 2023 compromising email systems. Company acknowledges ongoing source code repository risks.",
       "Company notes EU AI Act and U.S. AI Executive Order may 'increase costs or restrict opportunity' in AI development."
     ]
       } 
     ,
   {
-    icon: <Mail className="text-blue-500 mr-2" />,
-    company: "The Coca-Cola Company (KO)",
-    period: "Q1 2023",
-    financials: [
-      { label: "Net Revenue", value: "$10.98B", growth: 5, unit: "% YoY" },
-      { label: "Organic Revenue Growth", value: "12%", growth: 12, unit: "%" },
-      { label: "EPS", value: "$0.64", growth: 12, unit: "% YoY" }
-    ],
-    insights: [
-      "Strong growth in developing and emerging markets",
-      "Successful pricing strategies offsetting inflationary pressures",
-      "Continued focus on innovation in zero-sugar and ready-to-drink products"
-    ],
-    risks: [
-      "Ongoing global economic uncertainties and inflationary pressures",
-      "Changing consumer preferences and health concerns",
-      "Increased competition in the non-alcoholic beverage market"
-    ]
-  },
-  {
-    icon: <Mail className="text-green-500 mr-2" />,
-    company: "NVIDIA Corporation (NVDA)",
-    period: "Q1 2023",
-    financials: [
-      { label: "Revenue", value: "$7.19B", growth: -13, unit: "% YoY" },
-      { label: "EPS", value: "$0.82", growth: -20, unit: "% YoY" },
-      { label: "Gross Margin", value: "64.6%", growth: -270, unit: " bps YoY" }
-    ],
-    insights: [
-      "Strong demand in Data Center and Automotive segments",
-      "Continued leadership in AI and accelerated computing",
-      "Expansion of software and services offerings"
-    ],
-    risks: [
-      "Volatility in cryptocurrency mining demand",
-      "Intense competition in the GPU market",
-      "Geopolitical tensions affecting global supply chains"
-    ]
-  },
-  {
     icon: <Mail className="text-red-500 mr-2" />,
     company: "Tesla, Inc. (TSLA)",
-    period: "Q2 2023",
+    period: "Q3 2024",
     financials: [
-      { label: "Revenue", value: "$24.93B", growth: 47, unit: "% YoY" },
-      { label: "EPS", value: "$0.91", growth: 20, unit: "% YoY" },
-      { label: "Vehicle Deliveries", value: "466,140", growth: 83, unit: "% YoY" }
+      { label: "Revenue", value: "$25.18B", growth: 8, unit: "% YoY" },
+      { label: "Operating Margin", value: "$2.72B", growth: 10.8, unit: "% YoY" },
+      { label: "Energy Generation and Storage Segment Revenue", value: "2.38B", growth: 52, unit: "% YoY" }
     ],
     insights: [
-      "Continued expansion of production capacity globally",
-      "Advancements in autonomous driving technology",
-      "Growth in energy generation and storage business"
+      "Cost Reduction Initiatives Show Early Success. 'Our ongoing cost reduction, including improved production innovation and efficiency at our newest factories and lower logistics costs, and focus on operating leverage will continue to benefit us.'", 
+      "Higher Margin Regulatory Credit Revenue Growth. Automotive regulatory credits revenue increased $714 million, or 53%, in the nine months ended September 30, 2024; growth in regulatory credit sales provides high-margin revenue as these credits have minimal associated costs.",
+      "IRA Manufacturing Credits Boost Energy Storage Margins. 'The increases were primarily due to increases in Megapack and Powerwall deployments, partially offset by increases in IRA manufacturing credits recognized as compared to the prior periods.' Recognition of IRA manufacturing credits directly reduces production costs, expanding gross margins in the energy storage segment.",
     ],
     risks: [
-      "Increasing competition in the electric vehicle market",
-      "Regulatory challenges in various markets",
-      "Supply chain constraints for critical components"
+      "Continued vehicle price cuts directly compress automotive gross margins.",
+      "Initial production inefficiencies for new models increase per-unit costs and reduce margins during ramp periods.",
+      "Rising labor and supply chain costs could compress margins if unable to offset through pricing or efficiency gains."
     ]
   },
   {
