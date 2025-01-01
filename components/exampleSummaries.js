@@ -47,12 +47,12 @@ const notifications = [
       ],
       insights: [
       "Azure and other cloud services revenue grew 33%",
-      "$75.4 billion Activision Blizzard acquisition completed October 2023, positioning Microsoft for gaming market expansion. Integration focuses on mobile, cloud, and subscription opportunities.",
+      "$75.4 billion Activision Blizzard acquisition completed October 2023, positioning Microsoft for gaming market expansion.",
       "Unprecedented datacenter expansion with '$108.7 billion' in future lease commitments, indicating massive scale of AI/cloud infrastructure buildout." 
       ],
       risks: [
-      "'There are limited suppliers for certain device and datacenter components' particularly GPUs needed for AI infrastructure. Microsoft faces potential bottlenecks in critical hardware supply.",
-      "Nation-state attacks increasing, with specific disclosure of 'password spray attack' in late 2023 compromising email systems. Company acknowledges ongoing source code repository risks.",
+      "Heavy investments in AI computing infrastructure are directly compressing gross margins in the cloud segment.",
+      "Supply chain competition for AI chips and other components could increase input costs and reduce hardware margins.",
       "Company notes EU AI Act and U.S. AI Executive Order may 'increase costs or restrict opportunity' in AI development."
     ]
       } 
@@ -67,9 +67,9 @@ const notifications = [
       { label: "Energy Generation and Storage Segment Revenue", value: "2.38B", growth: 52, unit: "% YoY" }
     ],
     insights: [
-      "Cost Reduction Initiatives Show Early Success. 'Our ongoing cost reduction, including improved production innovation and efficiency at our newest factories and lower logistics costs, and focus on operating leverage will continue to benefit us.'", 
-      "Higher Margin Regulatory Credit Revenue Growth. Automotive regulatory credits revenue increased $714 million, or 53%, in the nine months ended September 30, 2024; growth in regulatory credit sales provides high-margin revenue as these credits have minimal associated costs.",
-      "IRA Manufacturing Credits Boost Energy Storage Margins. 'The increases were primarily due to increases in Megapack and Powerwall deployments, partially offset by increases in IRA manufacturing credits recognized as compared to the prior periods.' Recognition of IRA manufacturing credits directly reduces production costs, expanding gross margins in the energy storage segment.",
+      "Systematic cost reductions across production and logistics could drive sustained margin expansion.",
+      "Growth in regulatory credit sales provides high-margin revenue as these credits have minimal associated costs.",
+      "Recognition of IRA manufacturing credits directly reduces production costs, expanding gross margins in the energy storage segment."
     ],
     risks: [
       "Continued vehicle price cuts directly compress automotive gross margins.",
