@@ -116,7 +116,7 @@ return (
                     </li>
                     <li className="flex">
                         <div className="min-w-[8px] mr-2">•</div>
-                        <div className="flex-1"><strong>8-K Event Tracking</strong>: Instant alerts on significant corporate changes that could impact your investments</div>
+                        <div className="flex-1"><strong>8-K Material Event Tracking</strong>: Instant alerts on significant corporate changes that could impact your investments</div>
                     </li>
                     <li className="flex">
                         <div className="min-w-[8px] mr-2">•</div>
