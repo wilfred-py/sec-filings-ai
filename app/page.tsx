@@ -244,15 +244,43 @@ return (
                                 </span>
                             </div>
                             <div className="space-y-4">
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    <strong>Event Type:</strong> {transactionRelatedFilings[currentNotification].eventType}
-                                </p>
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    <strong>Summary:</strong> {transactionRelatedFilings[currentNotification].summary}
-                                </p>
-                                <p className="text-gray-600 dark:text-gray-300">
-                                    <strong>Impact:</strong> {transactionRelatedFilings[currentNotification].potentialImpact}
-                                </p>
+                                <div className="grid grid-cols-2 gap-4">
+                                
+                                    <div className="text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 p-2 rounded">
+                                        <strong>Report Date:</strong><br />
+                                        {transactionRelatedFilings[currentNotification].reportDate}
+                                    </div>
+                                    <div className="text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 p-2 rounded">
+                                        <strong>Event Type:</strong><br />
+                                        {transactionRelatedFilings[currentNotification].eventType}
+                                    </div>
+                                </div>
+
+                                <div className="text-gray-600 dark:text-gray-300">
+                                    <strong>Summary:</strong>
+                                    <p className="mt-1">{transactionRelatedFilings[currentNotification].summary}</p>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="text-gray-600 dark:text-gray-300">
+                                        <strong>Positive Developments:</strong>
+                                        <p className="mt-1">{transactionRelatedFilings[currentNotification].positiveDevelopments}</p>
+                                    </div>
+                                    <div className="text-gray-600 dark:text-gray-300">
+                                        <strong>Potential Concerns:</strong>
+                                        <p className="mt-1">{transactionRelatedFilings[currentNotification].potentialConcerns}</p>
+                                    </div>
+                                </div>
+
+                                <div className="text-gray-600 dark:text-gray-300">
+                                    <strong>Structural Changes:</strong>
+                                    <p className="mt-1">{transactionRelatedFilings[currentNotification].structuralChanges}</p>
+                                </div>
+
+                                <div className="text-gray-600 dark:text-gray-300">
+                                    <strong>Additional Notes:</strong>
+                                    <p className="mt-1">{transactionRelatedFilings[currentNotification].additionalNotes}</p>
+                                </div>
                             </div>
                         </div>
                     )}

@@ -83,12 +83,14 @@ const notifications = [
 // Update the transactionRelatedFilings array with entries for all specified companies
 const transactionRelatedFilings = [
   {
-    company: "Apple Inc. (AAPL)",
-    filingDate: "2024-12-15",
-    eventDate: "2024-12-10",
-    eventType: "Senior Executive Departure",
-    summary: "Apple announced the unexpected departure of its Chief Financial Officer, citing personal reasons. The company has initiated a search for a successor and appointed an interim CFO.",
-    potentialImpact: "This sudden change in senior leadership could potentially impact Apple's financial strategy and investor relations in the short term."
+    company: "Tesla, Inc. (TSLA)",
+    reportDate: "2024-01-02",
+    eventType: "Quarterly Results",
+    summary: "Tesla hits Q4 records: 495K vehicles delivered, 11GWh energy deployed",
+    positiveDevelopments: "Record Q4 deliveries (495K), annual production (1.77M), energy storage growth (11GWh)",
+    potentialConcerns: "5-6% vehicles under lease, delivery exceeds production by 36K units",
+    structuralChanges: "None reported",
+    additionalNotes: "Q4 earnings call scheduled Jan 29, 2025"
   },
   {
     company: "Microsoft Corporation (MSFT)",
@@ -105,54 +107,6 @@ const transactionRelatedFilings = [
     eventType: "Restructuring Plan",
     summary: "Coca-Cola announced a global restructuring plan aimed at streamlining operations and reducing costs. The plan includes a workforce reduction of approximately 4,000 employees.",
     potentialImpact: "While this restructuring may lead to short-term costs, it is expected to improve operational efficiency and profitability in the long run."
-  },
-  {
-    company: "NVIDIA Corporation (NVDA)",
-    filingDate: "2024-09-20",
-    eventDate: "2024-09-15",
-    eventType: "New Product Launch",
-    summary: "NVIDIA unveiled its next-generation GPU architecture, promising unprecedented performance for AI and gaming applications.",
-    potentialImpact: "This launch could solidify NVIDIA's market leadership and drive significant revenue growth in the coming quarters."
-  },
-  {
-    company: "Tesla, Inc. (TSLA)",
-    filingDate: "2024-08-10",
-    eventDate: "2024-08-05",
-    eventType: "Factory Expansion",
-    summary: "Tesla announced plans to build a new Gigafactory in India, aiming to tap into the growing electric vehicle market in South Asia.",
-    potentialImpact: "This expansion could significantly increase Tesla's production capacity and market share in emerging markets."
-  },
-  {
-    company: "Netflix, Inc. (NFLX)",            
-    filingDate: "2024-07-25",
-    eventDate: "2024-07-20",
-    eventType: "Content Acquisition",
-    summary: "Netflix acquired exclusive streaming rights to a popular franchise for $1 billion, securing content for the next decade.",
-    potentialImpact: "This major content acquisition could attract new subscribers and improve retention rates in the highly competitive streaming market."
-  },
-  {
-    company: "Alcoa Corporation (AA)",
-    filingDate: "2024-06-15",
-    eventDate: "2024-06-10",
-    eventType: "Environmental Initiative",
-    summary: "Alcoa committed to a $500 million investment in sustainable aluminum production technologies, aiming to reduce its carbon footprint by 30% by 2030.",
-    potentialImpact: "This initiative could improve Alcoa's ESG profile and potentially lead to long-term cost savings and increased market share."
-  },
-  {
-    company: "Caterpillar Inc. (CAT)",
-    filingDate: "2024-05-05",
-    eventDate: "2024-05-01",
-    eventType: "Strategic Partnership",
-    summary: "Caterpillar entered into a strategic partnership with a leading autonomous vehicle technology company to develop self-operating heavy machinery.",
-    potentialImpact: "This partnership could give Caterpillar a competitive edge in the evolving construction and mining equipment market."
-  },
-  {
-    company: "Salesforce, Inc. (CRM)",
-    filingDate: "2024-04-20",
-    eventDate: "2024-04-15",
-    eventType: "Cybersecurity Incident",
-    summary: "Salesforce reported a data breach affecting a small percentage of its customers. The company has taken immediate steps to address the issue and enhance its security measures.",
-    potentialImpact: "While the immediate impact seems limited, this incident could potentially affect customer trust and lead to increased cybersecurity expenses."
   }
 ];
 
