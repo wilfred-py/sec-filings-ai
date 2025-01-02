@@ -17,7 +17,7 @@ const renderGrowth = (value, unit = '') => {
 
 const notifications = [
   {
-    icon: <Mail className="text-blue-500 mr-2" />,
+    icon: <Mail className="text-gray-500 mr-2" />,
     company: "Apple Inc. (AAPL)",
     period: "Q3 2024",
     financials: [
@@ -83,8 +83,28 @@ const notifications = [
 // Update the transactionRelatedFilings array with entries for all specified companies
 const transactionRelatedFilings = [
   {
+    company: "Apple Inc. (AAPL)",
+    reportDate: "31 Oct 2024",
+    eventType: "Quarterly Results",
+    summary: "Record Q4 revenue of $94.9B amid product launches and AI features debut",
+    positiveDevelopments: "6% revenue growth, Services revenue at all-time high, new product launches",
+    potentialConcerns: "$10.2B one-time tax charge, slight decline in Greater China revenue",
+    structuralChanges: "Introduction of Apple Intelligence AI features",
+    additionalNotes: "Q4 earnings call scheduled for October 31, 2024 at 2:00 p.m. PT"
+  },
+  {
+    company: "Microsoft Corporation (MSFT)",
+    reportDate: "10 Dec 2024",
+    eventType: "Annual Meeting Results & Investment Write-Down",
+    summary: "Annual shareholder meeting concludes with board re-elections; $800M Cruise investment impairment announced",
+    positiveDevelopments: "All directors re-elected with 90%+ approval; Deloitte & Touche appointment approved",
+    potentialConcerns: "$800M impairment charge on Cruise investment; growing shareholder interest in AI governance",
+    structuralChanges: "None reported",
+    additionalNotes: "Multiple AI-related shareholder proposals rejected; Q2 EPS impact of $0.09 expected"
+  },
+  {
     company: "Tesla, Inc. (TSLA)",
-    reportDate: "2024-01-02",
+    reportDate: "02 Jan 2025",
     eventType: "Quarterly Results",
     summary: "Tesla hits Q4 records: 495K vehicles delivered, 11GWh energy deployed",
     positiveDevelopments: "Record Q4 deliveries (495K), annual production (1.77M), energy storage growth (11GWh)",
@@ -93,21 +113,26 @@ const transactionRelatedFilings = [
     additionalNotes: "Q4 earnings call scheduled Jan 29, 2025"
   },
   {
-    company: "Microsoft Corporation (MSFT)",
-    filingDate: "2024-11-30",
-    eventDate: "2024-11-28",
-    eventType: "Major Acquisition",
-    summary: "Microsoft completed the acquisition of a leading AI research company for $5 billion, aiming to bolster its position in the artificial intelligence market.",
-    potentialImpact: "This acquisition is expected to significantly enhance Microsoft's AI capabilities and could lead to new product innovations across its suite of services."
+    company: "JPMorgan Chase & Co. (JPM)",
+    reportDate: "12 Dec 2024",
+    eventType: "Board Appointment",
+    summary: "Hershey CEO Michele Buck elected to JPMorgan board, effective March 2025",
+    positiveDevelopments: "Strategic addition of Fortune 500 CEO with 30+ years consumer experience",
+    potentialConcerns: "None reported",
+    structuralChanges: "Addition of new board member with consumer transformation expertise",
+    additionalNotes: "Buck also serves on New York Life board, has extensive operational experience"
   },
   {
-    company: "The Coca-Cola Company (KO)",
-    filingDate: "2024-10-05",
-    eventDate: "2024-10-01",
-    eventType: "Restructuring Plan",
-    summary: "Coca-Cola announced a global restructuring plan aimed at streamlining operations and reducing costs. The plan includes a workforce reduction of approximately 4,000 employees.",
-    potentialImpact: "While this restructuring may lead to short-term costs, it is expected to improve operational efficiency and profitability in the long run."
-  }
+    company: "Costco Wholesale Corporation (COST)",
+    reportDate: "12 Dec 2024",
+    eventType: "Quarterly Results",
+    summary: "Q1 FY25 shows 7.5% revenue growth with strong e-commerce and membership gains",
+    positiveDevelopments: "Net sales up 7.5%, e-commerce sales up 13%, membership growth 7.6%",
+    potentialConcerns: "Slower international growth, inventory levels up 12.5%",
+    structuralChanges: "26 new warehouses planned for FY2025",
+    additionalNotes: "90.4% worldwide membership renewal rate, expanding Kirkland Signature product line"
+  },
+
 ];
 
 // Update the ownershipChanges array with entries for all specified companies
