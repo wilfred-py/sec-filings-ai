@@ -126,9 +126,9 @@ return (
             {darkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
             </button>
         </header>
-        <main className="flex-grow flex flex-col lg:flex-row items-center justify-center gap-12 max-w-6xl mx-auto w-full">
+        <main className="flex-grow flex flex-col lg:flex-row items-center justify-center gap-12 max-w-7xl mx-auto w-full">
             {/* Left Panel */}
-            <div className="w-full lg:w-1/2 max-w-md bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
+            <div className="w-full lg:w-2/5 max-w-md bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg">
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Save hours deciphering SEC filings</h2>
 
             <p className="text-gray-600 dark:text-gray-300 mb-6">
@@ -193,7 +193,7 @@ return (
             </div>
             
             {/* Right Panel - Conditional Carousel */}
-            <div className="w-full lg:w-1/2 max-w-md">
+            <div className="w-full lg:w-3/5 max-w-2xl">
                 <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative">
                     {hoveredSection === 'reports' && (
                         <div>
