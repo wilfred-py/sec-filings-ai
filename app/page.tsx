@@ -258,28 +258,28 @@ return (
 
                                 <div className="text-gray-600 dark:text-gray-300">
                                     <strong>Summary:</strong>
-                                    <p className="mt-1">{transactionRelatedFilings[currentNotification].summary}</p>
+                                    <p className="">{transactionRelatedFilings[currentNotification].summary}</p>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="text-gray-600 dark:text-gray-300">
                                         <strong>Positive Developments:</strong>
-                                        <p className="mt-1">{transactionRelatedFilings[currentNotification].positiveDevelopments}</p>
+                                        <p className="">{transactionRelatedFilings[currentNotification].positiveDevelopments}</p>
                                     </div>
                                     <div className="text-gray-600 dark:text-gray-300">
                                         <strong>Potential Concerns:</strong>
-                                        <p className="mt-1">{transactionRelatedFilings[currentNotification].potentialConcerns}</p>
+                                        <p className="">{transactionRelatedFilings[currentNotification].potentialConcerns}</p>
                                     </div>
                                 </div>
 
                                 <div className="text-gray-600 dark:text-gray-300">
                                     <strong>Structural Changes:</strong>
-                                    <p className="mt-1">{transactionRelatedFilings[currentNotification].structuralChanges}</p>
+                                    <p className="">{transactionRelatedFilings[currentNotification].structuralChanges}</p>
                                 </div>
 
                                 <div className="text-gray-600 dark:text-gray-300">
                                     <strong>Additional Notes:</strong>
-                                    <p className="mt-1">{transactionRelatedFilings[currentNotification].additionalNotes}</p>
+                                    <p className="">{transactionRelatedFilings[currentNotification].additionalNotes}</p>
                                 </div>
                             </div>
                         </div>
