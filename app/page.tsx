@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Bell, Sun, Moon } from 'lucide-react'
+import { Bell, Sun, Moon, Mail } from 'lucide-react'
 import axios from 'axios'
 
-import notifications from '@/components/exampleSummaries'
+import { notifications, transactionRelatedFilings, ownershipChanges } from '@/components/exampleSummaries'
 import GrowthIndicator from '@/components/GrowthIndicator'
 
 export default function LandingPage() {
@@ -15,6 +15,7 @@ const [currentNotification, setCurrentNotification] = useState(0)
 const [progress, setProgress] = useState(0)
 const [darkMode, setDarkMode] = useState(false)
 const [submitStatus, setSubmitStatus] = useState('')
+const [hoveredSection, setHoveredSection] = useState<'reports' | 'events' | 'insider' | null>(null)
 
 useEffect(() => {
   let animationFrame: number;
@@ -74,6 +75,19 @@ setDarkMode(!darkMode)
 document.documentElement.classList.toggle('dark')
 }
 
+const getCurrentData = () => {
+  switch (hoveredSection) {
+    case 'reports':
+      return notifications;
+    case 'events':
+      return transactionRelatedFilings;
+    case 'insider':
+      return ownershipChanges;
+    default:
+      return notifications;
+  }
+};
+
 return (
 <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 relative">
@@ -110,15 +124,36 @@ return (
                 Stay ahead with prompt SEC filing summaries tailored to your investment strategy:
             </p>
                 <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2">
-                    <li className="flex">
+                    <li 
+                        className={`flex p-3 rounded-lg cursor-pointer transition-all duration-200 
+                            ${hoveredSection === 'reports' 
+                                ? 'bg-gray-100 dark:bg-gray-700/50 text-blue-600 dark:text-blue-400' 
+                                : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-blue-600 dark:hover:text-blue-400'
+                            }`}
+                        onMouseEnter={() => setHoveredSection('reports')}
+                    >
                         <div className="min-w-[8px] mr-2">•</div>
                         <div className="flex-1"><strong>10-K & 10-Q Annual and Quarterly Reports</strong>: Deep financial insights condensed into actionable intelligence</div>
                     </li>
-                    <li className="flex">
+                    <li 
+                        className={`flex p-3 rounded-lg cursor-pointer transition-all duration-200 
+                            ${hoveredSection === 'events' 
+                                ? 'bg-gray-100 dark:bg-gray-700/50 text-blue-600 dark:text-blue-400' 
+                                : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-blue-600 dark:hover:text-blue-400'
+                            }`}
+                        onMouseEnter={() => setHoveredSection('events')}
+                    >
                         <div className="min-w-[8px] mr-2">•</div>
-                        <div className="flex-1"><strong>8-K Event Tracking</strong>: Instant alerts on significant corporate changes that could impact your investments</div>
+                        <div className="flex-1"><strong>8-K Material Event Tracking</strong>: Instant alerts on significant corporate changes that could impact your investments</div>
                     </li>
-                    <li className="flex">
+                    <li 
+                        className={`flex p-3 rounded-lg cursor-pointer transition-all duration-200 
+                            ${hoveredSection === 'insider' 
+                                ? 'bg-gray-100 dark:bg-gray-700/50 text-blue-600 dark:text-blue-400' 
+                                : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 hover:text-blue-600 dark:hover:text-blue-400'
+                            }`}
+                        onMouseEnter={() => setHoveredSection('insider')}
+                    >
                         <div className="min-w-[8px] mr-2">•</div>
                         <div className="flex-1"><strong>Form 4 Insider Movement Tracking</strong>: Ownership changes that reveal insider confidence</div>
                     </li>
@@ -146,75 +181,123 @@ return (
             )}
             </div>
             
-            {/* Right Panel - Carousel */}
+            {/* Right Panel - Conditional Carousel */}
             <div className="w-full lg:w-1/2 max-w-md">
-            
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative">
-                <div className="flex items-center mb-4">
-                {notifications[currentNotification].icon}
-                
-                <span className="font-semibold text-gray-900 dark:text-white">{notifications[currentNotification].company} {notifications[currentNotification].period} Summary</span>
-
-
-                </div>
-                <div className="space-y-4">
-                <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">Key Financials:</h3>
-                    <div className="grid grid-cols-2 gap-2">
-                    {notifications[currentNotification].financials.map((item, index) => (
-                        <div key={index} className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
-                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{item.label}</p>
-                        {/* <p className="text-sm text-gray-900 dark:text-white">{item.value}</p> */}
-                        <GrowthIndicator value={item.growth} unit={item.unit} />
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 relative">
+                    {hoveredSection === 'reports' && (
+                        <div>
+                            <div className="flex items-center mb-4">
+                                {notifications[currentNotification].icon}
+                                
+                                <span className="font-semibold text-gray-900 dark:text-white">{notifications[currentNotification].company} {notifications[currentNotification].period} Summary</span>
+                            </div>
+                            <div className="space-y-4">
+                                <div>
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">Key Financials:</h3>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {notifications[currentNotification].financials.map((item, index) => (
+                                            <div key={index} className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
+                                                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{item.label}</p>
+                                                {/* <p className="text-sm text-gray-900 dark:text-white">{item.value}</p> */}
+                                                <GrowthIndicator value={item.growth} unit={item.unit} />
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">Management Insights:</h3>
+                                    <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300">
+                                        {notifications[currentNotification].insights.map((insight, index) => (
+                                            <li key={index}>{insight}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">Risk Factors:</h3>
+                                    <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300">
+                                        {notifications[currentNotification].risks.map((risk, index) => (
+                                            <li key={index}>{risk}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
+                    )}
+                    
+                    {hoveredSection === 'events' && (
+                        <div>
+                            <div className="flex items-center mb-4">
+                                <Mail className="text-blue-500 mr-2" />
+                                <span className="font-semibold text-gray-900 dark:text-white">
+                                    {transactionRelatedFilings[currentNotification].company}
+                                </span>
+                            </div>
+                            <div className="space-y-4">
+                                <p className="text-gray-600 dark:text-gray-300">
+                                    <strong>Event Type:</strong> {transactionRelatedFilings[currentNotification].eventType}
+                                </p>
+                                <p className="text-gray-600 dark:text-gray-300">
+                                    <strong>Summary:</strong> {transactionRelatedFilings[currentNotification].summary}
+                                </p>
+                                <p className="text-gray-600 dark:text-gray-300">
+                                    <strong>Impact:</strong> {transactionRelatedFilings[currentNotification].potentialImpact}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {hoveredSection === 'insider' && (
+                        <div>
+                            <div className="flex items-center mb-4">
+                                <Mail className="text-blue-500 mr-2" />
+                                <span className="font-semibold text-gray-900 dark:text-white">
+                                    {ownershipChanges[currentNotification].company}
+                                </span>
+                            </div>
+                            <div className="space-y-4">
+                                <p className="text-gray-600 dark:text-gray-300">
+                                    <strong>Filer:</strong> {ownershipChanges[currentNotification].filerName}
+                                </p>
+                                <p className="text-gray-600 dark:text-gray-300">
+                                    <strong>Change:</strong> {ownershipChanges[currentNotification].changeType}
+                                    {' '}({ownershipChanges[currentNotification].previousStake} → {ownershipChanges[currentNotification].newStake})
+                                </p>
+                                <p className="text-gray-600 dark:text-gray-300">
+                                    <strong>Summary:</strong> {ownershipChanges[currentNotification].summary}
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Dots navigation - show for all carousel types */}
+                <div className="mt-6 flex justify-center items-center space-x-2">
+                    {getCurrentData().map((_, index) => (
+                        <button
+                            key={index}
+                            onClick={() => handleDotClick(index)}
+                            className="relative h-3 w-3 rounded-full transition-all duration-200 overflow-hidden"
+                            aria-label={`Go to summary ${index + 1}`}
+                            aria-current={index === currentNotification ? 'true' : 'false'}
+                        >
+                            <div className={`absolute inset-0 ${
+                                index === currentNotification ? 'bg-gray-300 dark:bg-gray-600' : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
+                            }`} />
+                            <div
+                                className={`absolute inset-0 bg-blue-500 transition-all duration-100 ease-linear ${
+                                    index === currentNotification ? 'scale-125' : ''
+                                }`}
+                                style={{ 
+                                    width: index === currentNotification ? `${progress}%` : '0%'
+                                }}
+                                role={index === currentNotification ? 'progressbar' : undefined}
+                                aria-valuenow={index === currentNotification ? progress : undefined}
+                                aria-valuemin={index === currentNotification ? 0 : undefined}
+                                aria-valuemax={index === currentNotification ? 100 : undefined}
+                            />
+                        </button>
                     ))}
-                    </div>
                 </div>
-                <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">Management Insights:</h3>
-                    <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300">
-                    {notifications[currentNotification].insights.map((insight, index) => (
-                        <li key={index}>{insight}</li>
-                    ))}
-                    </ul>
-                </div>
-                <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">Risk Factors:</h3>
-                    <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300">
-                    {notifications[currentNotification].risks.map((risk, index) => (
-                        <li key={index}>{risk}</li>
-                    ))}
-                    </ul>
-                </div>
-                </div>
-            </div>
-            <div className="mt-6 flex justify-center items-center space-x-2">
-                {notifications.map((_, index) => (
-                <button
-                    key={index}
-                    onClick={() => handleDotClick(index)}
-                    className="relative h-3 w-3 rounded-full transition-all duration-200 overflow-hidden"
-                    aria-label={`Go to summary ${index + 1}`}
-                    aria-current={index === currentNotification ? 'true' : 'false'}
-                >
-                    <div className={`absolute inset-0 ${
-                    index === currentNotification ? 'bg-gray-300 dark:bg-gray-600' : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
-                    }`} />
-                    <div
-                    className={`absolute inset-0 bg-blue-500 transition-all duration-100 ease-linear ${
-                        index === currentNotification ? 'scale-125' : ''
-                    }`}
-                    style={{ 
-                        width: index === currentNotification ? `${progress}%` : '0%'
-                    }}
-                    role={index === currentNotification ? 'progressbar' : undefined}
-                    aria-valuenow={index === currentNotification ? progress : undefined}
-                    aria-valuemin={index === currentNotification ? 0 : undefined}
-                    aria-valuemax={index === currentNotification ? 100 : undefined}
-                    />
-                </button>
-                ))}
-            </div>
             </div>
         </main>
         </div>

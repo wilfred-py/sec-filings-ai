@@ -47,12 +47,12 @@ const notifications = [
       ],
       insights: [
       "Azure and other cloud services revenue grew 33%",
-      "$75.4 billion Activision Blizzard acquisition completed October 2023, positioning Microsoft for gaming market expansion. Integration focuses on mobile, cloud, and subscription opportunities.",
+      "$75.4 billion Activision Blizzard acquisition completed October 2023, positioning Microsoft for gaming market expansion.",
       "Unprecedented datacenter expansion with '$108.7 billion' in future lease commitments, indicating massive scale of AI/cloud infrastructure buildout." 
       ],
       risks: [
-      "'There are limited suppliers for certain device and datacenter components' particularly GPUs needed for AI infrastructure. Microsoft faces potential bottlenecks in critical hardware supply.",
-      "Nation-state attacks increasing, with specific disclosure of 'password spray attack' in late 2023 compromising email systems. Company acknowledges ongoing source code repository risks.",
+      "Heavy investments in AI computing infrastructure are directly compressing gross margins in the cloud segment.",
+      "Supply chain competition for AI chips and other components could increase input costs and reduce hardware margins.",
       "Company notes EU AI Act and U.S. AI Executive Order may 'increase costs or restrict opportunity' in AI development."
     ]
       } 
@@ -67,9 +67,9 @@ const notifications = [
       { label: "Energy Generation and Storage Segment Revenue", value: "2.38B", growth: 52, unit: "% YoY" }
     ],
     insights: [
-      "Cost Reduction Initiatives Show Early Success. 'Our ongoing cost reduction, including improved production innovation and efficiency at our newest factories and lower logistics costs, and focus on operating leverage will continue to benefit us.'", 
-      "Higher Margin Regulatory Credit Revenue Growth. Automotive regulatory credits revenue increased $714 million, or 53%, in the nine months ended September 30, 2024; growth in regulatory credit sales provides high-margin revenue as these credits have minimal associated costs.",
-      "IRA Manufacturing Credits Boost Energy Storage Margins. 'The increases were primarily due to increases in Megapack and Powerwall deployments, partially offset by increases in IRA manufacturing credits recognized as compared to the prior periods.' Recognition of IRA manufacturing credits directly reduces production costs, expanding gross margins in the energy storage segment.",
+      "Systematic cost reductions across production and logistics could drive sustained margin expansion.",
+      "Growth in regulatory credit sales provides high-margin revenue as these credits have minimal associated costs.",
+      "Recognition of IRA manufacturing credits directly reduces production costs, expanding gross margins in the energy storage segment."
     ],
     risks: [
       "Continued vehicle price cuts directly compress automotive gross margins.",
@@ -77,86 +77,7 @@ const notifications = [
       "Rising labor and supply chain costs could compress margins if unable to offset through pricing or efficiency gains."
     ]
   },
-  {
-    icon: <Mail className="text-blue-500 mr-2" />,
-    company: "Netflix, Inc. (NFLX)",
-    period: "Q2 2023",
-    financials: [
-      { label: "Revenue", value: "$8.19B", growth: 2.7, unit: "% YoY" },
-      { label: "EPS", value: "$3.29", growth: 3.5, unit: "% YoY" },
-      { label: "Paid Memberships", value: "238.39M", growth: 8, unit: "% YoY" }
-    ],
-    insights: [
-      "Successful implementation of paid sharing",
-      "Strong growth in ad-supported tier",
-      "Continued investment in original content production"
-    ],
-    risks: [
-      "Intense competition in the streaming industry",
-      "Content cost inflation and production delays",
-      "Potential market saturation in key regions"
-    ]
-  },
-  {
-    icon: <Mail className="text-gray-500 mr-2" />,
-    company: "Alcoa Corporation (AA)",
-    period: "Q2 2023",
-    financials: [
-      { label: "Revenue", value: "$2.68B", growth: -25.2, unit: "% YoY" },
-      { label: "Adjusted EBITDA", value: "$137M", growth: -87.3, unit: "% YoY" },
-      { label: "Free Cash Flow", value: "-$56M", growth: null }
-    ],
-    insights: [
-      "Focus on operational efficiency and cost reduction",
-      "Progress on sustainability initiatives",
-      "Strategic review of global production assets"
-    ],
-    risks: [
-      "Volatility in aluminum and alumina prices",
-      "Global economic uncertainties affecting demand",
-      "Increasing energy costs impacting production"
-    ]
-  },
-  {
-    icon: <Mail className="text-yellow-500 mr-2" />,
-    company: "Caterpillar Inc. (CAT)",
-    period: "Q2 2023",
-    financials: [
-      { label: "Revenue", value: "$17.32B", growth: 22, unit: "% YoY" },
-      { label: "Adjusted EPS", value: "$5.55", growth: 75, unit: "% YoY" },
-      { label: "Operating Profit Margin", value: "21.1%", growth: 540, unit: " bps YoY" }
-    ],
-    insights: [
-      "Strong demand across all segments and regions",
-      "Continued investment in services and digital capabilities",
-      "Focus on operational excellence and cost management"
-    ],
-    risks: [
-      "Supply chain challenges and material cost inflation",
-      "Potential economic slowdown affecting construction and mining sectors",
-      "Geopolitical tensions impacting global operations"
-    ]
-  },
-  {
-    icon: <Mail className="text-blue-500 mr-2" />,
-    company: "Salesforce, Inc. (CRM)",
-    period: "Q2 FY2024",
-    financials: [
-      { label: "Revenue", value: "$8.60B", growth: 11, unit: "% YoY" },
-      { label: "Non-GAAP EPS", value: "$2.12", growth: 78, unit: "% YoY" },
-      { label: "Operating Cash Flow", value: "$808M", growth: 143, unit: "% YoY" }
-    ],
-    insights: [
-      "Strong adoption of AI-powered CRM solutions",
-      "Expansion of industry-specific cloud offerings",
-      "Focus on profitability and operational efficiency"
-    ],
-    risks: [
-      "Intense competition in the CRM and cloud markets",
-      "Integration challenges from recent acquisitions",
-      "Potential impact of economic uncertainties on enterprise IT spending"
-    ]
-  }
+
 ];
 
 // Update the transactionRelatedFilings array with entries for all specified companies
@@ -320,4 +241,4 @@ const ownershipChanges = [
   }
 ];
 
-  export default notifications
+  export {notifications, transactionRelatedFilings, ownershipChanges}
