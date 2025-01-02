@@ -15,7 +15,7 @@ const [currentNotification, setCurrentNotification] = useState(0)
 const [progress, setProgress] = useState(0)
 const [darkMode, setDarkMode] = useState(false)
 const [submitStatus, setSubmitStatus] = useState('')
-const [hoveredSection, setHoveredSection] = useState<'reports' | 'events' | 'insider' | null>(null)
+const [hoveredSection, setHoveredSection] = useState<'reports' | 'events' | 'insider' | null>('reports')
 
 useEffect(() => {
   let animationFrame: number;
@@ -44,6 +44,15 @@ useEffect(() => {
   };
 }, [currentNotification]); // Add currentNotification as dependency
 
+useEffect(() => {
+  // Check if dark mode preference exists in localStorage
+  const isDarkMode = localStorage.getItem('darkMode') === 'true'
+  setDarkMode(isDarkMode)
+  if (isDarkMode) {
+    document.documentElement.classList.add('dark')
+  }
+}, [])
+
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   try {
@@ -71,8 +80,10 @@ setProgress(0)
 }
 
 const toggleDarkMode = () => {
-setDarkMode(!darkMode)
-document.documentElement.classList.toggle('dark')
+  const newDarkMode = !darkMode
+  setDarkMode(newDarkMode)
+  localStorage.setItem('darkMode', String(newDarkMode))
+  document.documentElement.classList.toggle('dark')
 }
 
 const getCurrentData = () => {
@@ -89,7 +100,7 @@ const getCurrentData = () => {
 };
 
 return (
-<div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
+<div className="min-h-screen">
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 relative">
     <video
         autoPlay
