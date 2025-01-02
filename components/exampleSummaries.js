@@ -241,4 +241,4 @@ const ownershipChanges = [
   }
 ];
 
-  export default notifications
+  export {notifications, transactionRelatedFilings, ownershipChanges}
