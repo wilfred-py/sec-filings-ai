@@ -77,6 +77,27 @@ const notifications = [
       "Rising labor and supply chain costs could compress margins if unable to offset through pricing or efficiency gains."
     ]
   },
+  {
+    icon: <Mail className="text-blue-500 mr-2" />,
+    company: "JPMorgan Chase & Co. (JPM)",
+    period: "Q3 2024",
+    financials: [
+      {
+      label: "Revenue",value: "$42.7 billion",growth: "+7%",unit: "% YoY"},
+      {label: "Operating Margin",value: "53%",growth: "-200 bps",unit: "% YoY"},
+      {label: "CIB Revenue",value: "$17.0 billion",growth: "+8%",unit: "% YoY"}
+      ],
+      insights: [
+        "CIB Markets revenue up 8% YoY with growth in Equity Markets",
+        "Credit card sales volume growth boosts payments revenue",
+        "Commercial lending growth supports net interest income",
+      ],
+      risks: [
+        "Credit losses could increase in an economic downturn",
+        "Deterioration in real estate loans could increase credit costs",
+        "Market volatility negatively impacts CIB's Fixed Income and Equity Markets businesses' revenues",
+      ]
+      }
 
 ];
 
@@ -220,4 +241,4 @@ const ownershipChanges = [
   }
 ];
 
-  export {notifications, transactionRelatedFilings, ownershipChanges}
+export {notifications, transactionRelatedFilings, ownershipChanges}
