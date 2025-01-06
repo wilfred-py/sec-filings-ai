@@ -83,9 +83,9 @@ const notifications = [
     period: "Q3 2024",
     financials: [
       {
-      label: "Revenue",value: "$42.7 billion",growth: "+7%",unit: "% YoY"},
-      {label: "Operating Margin",value: "53%",growth: "-200 bps",unit: "% YoY"},
-      {label: "CIB Revenue",value: "$17.0 billion",growth: "+8%",unit: "% YoY"}
+      label: "Revenue", value: "$42.7 billion", growth: 7, unit: "% YoY"},
+      {label: "Operating Margin", value: "53%", growth: -2, unit: "% YoY"},
+      {label: "CIB Revenue", value: "$17.0 billion", growth: 8, unit: "% YoY"}
       ],
       insights: [
         "CIB Markets revenue up 8% YoY with growth in Equity Markets",
@@ -95,9 +95,35 @@ const notifications = [
       risks: [
         "Credit losses could increase in an economic downturn",
         "Deterioration in real estate loans could increase credit costs",
-        "Market volatility negatively impacts CIB's Fixed Income and Equity Markets businesses' revenues",
+        "Market volatility negatively impacts CIB's Fixed Income and Equity Markets revenues",
       ]
-      }
+      },
+      {
+        icon: <Mail className="text-blue-500 mr-2" />,
+        company: "Costco Wholesale Corporation",
+        period: "Q1 2025",
+        financials: [
+            {
+                label: "Revenue", value: "$62,151M", growth: 7.5, unit: "% YoY"
+            },
+            {
+                label: "Operating Margin", value: "$2,196M", growth: 10.7, unit: "% YoY"
+            },
+            {
+                label: "Core Merchandise Sales", value: "$49,451M", growth: 10.0, unit: "% YoY"
+            }
+        ],
+        insights: [
+            "Membership fees grew 8% with strong Executive member conversion",
+            "E-commerce sales growth outpaced overall company at 13%",
+            "Core merchandise categories showed strong 10% growth"
+        ],
+        risks: [
+            "Foreign currency translation reduced sales by $164M",
+            "SG&A expenses increased as percentage of sales by 14 basis points",
+            "Gasoline price volatility impacting total sales metrics"
+        ]
+    }
 
 ];
 

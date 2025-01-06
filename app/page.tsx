@@ -20,7 +20,7 @@ const [hoveredSection, setHoveredSection] = useState<'reports' | 'events' | 'ins
 useEffect(() => {
   let animationFrame: number;
   const startTime = Date.now();
-  const duration = 6000; // 6 seconds for full cycle
+  const duration = 8000; // 6 seconds for full cycle
 
   const animate = () => {
     const elapsed = Date.now() - startTime;
