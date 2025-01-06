@@ -132,7 +132,7 @@ return (
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Save hours deciphering SEC filings</h2>
 
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Stay ahead with prompt SEC filing summaries tailored to your investment strategy:
+                Stay ahead with prompt SEC filing summaries tailored to your investment strategy, delivered straight to your inbox.
             </p>
                 <ul className="list-disc list-inside text-gray-600 dark:text-gray-300 space-y-2">
                     <li 
