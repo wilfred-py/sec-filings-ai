@@ -20,7 +20,7 @@ const [hoveredSection, setHoveredSection] = useState<'reports' | 'events' | 'ins
 useEffect(() => {
   let animationFrame: number;
   const startTime = Date.now();
-  const duration = 8000; // 6 seconds for full cycle
+  const duration = 8000; // 8 seconds for full cycle
 
   const animate = () => {
     const elapsed = Date.now() - startTime;
@@ -219,7 +219,10 @@ return (
                                     <h3 className="font-bold text-gray-900 dark:text-white mb-2">Management Insights:</h3>
                                     <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300">
                                         {notifications[currentNotification].insights.map((insight, index) => (
-                                            <li key={index}>{insight}</li>
+                                            <li key={index} className="flex items-start">
+                                                <span className="mr-2">•</span>
+                                                <span>{insight}</span>
+                                            </li>
                                         ))}
                                     </ul>
                                 </div>
@@ -227,7 +230,10 @@ return (
                                     <h3 className="font-bold text-gray-900 dark:text-white mb-2">Risk Factors:</h3>
                                     <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300">
                                         {notifications[currentNotification].risks.map((risk, index) => (
-                                            <li key={index}>{risk}</li>
+                                            <li key={index} className="flex items-start">
+                                                <span className="mr-2">•</span>
+                                                <span>{risk}</span>
+                                            </li>
                                         ))}
                                     </ul>
                                 </div>
@@ -237,49 +243,59 @@ return (
                     
                     {hoveredSection === 'events' && (
                         <div>
-                            <div className="flex items-center mb-4">
+                            <div className="flex items-center mb-3">
                                 <Mail className="text-blue-500 mr-2" />
                                 <span className="font-semibold text-gray-900 dark:text-white">
                                     {transactionRelatedFilings[currentNotification].company}
                                 </span>
                             </div>
                             <div className="space-y-4">
+                                <div>
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-1">Event Details:</h3>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
+                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Event Type</p>
+                                            <p className="text-sm text-gray-900 dark:text-white">{transactionRelatedFilings[currentNotification].eventType}</p>
+                                        </div>
+                                        <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
+                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Report Date</p>
+                                            <p className="text-sm text-gray-900 dark:text-white">{transactionRelatedFilings[currentNotification].reportDate}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className='bg-gray-100 dark:bg-gray-700 p-2 rounded'>
+
+
+                                <div className="mb-6">
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-1">Summary</h3>
+                                    <p className="text-sm text-gray-500 dark:text-gray-400">{transactionRelatedFilings[currentNotification].summary}</p>
+                                </div>
+
                                 <div className="grid grid-cols-2 gap-4">
-                                
-                                    <div className="text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 p-2 rounded">
-                                        <strong>Report Date:</strong><br />
-                                        {transactionRelatedFilings[currentNotification].reportDate}
+                                    <div>
+                                        <h3 className="font-bold text-gray-900 dark:text-white mb-1">Positive Developments</h3>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{transactionRelatedFilings[currentNotification].positiveDevelopments}</p>
                                     </div>
-                                    <div className="text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 p-2 rounded">
-                                        <strong>Event Type:</strong><br />
-                                        {transactionRelatedFilings[currentNotification].eventType}
-                                    </div>
-                                </div>
-
-                                <div className="text-gray-600 dark:text-gray-300">
-                                    <strong>Summary:</strong>
-                                    <p className="">{transactionRelatedFilings[currentNotification].summary}</p>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="text-gray-600 dark:text-gray-300">
-                                        <strong>Positive Developments:</strong>
-                                        <p className="">{transactionRelatedFilings[currentNotification].positiveDevelopments}</p>
-                                    </div>
-                                    <div className="text-gray-600 dark:text-gray-300">
-                                        <strong>Potential Concerns:</strong>
-                                        <p className="">{transactionRelatedFilings[currentNotification].potentialConcerns}</p>
+                                    <div>
+                                        <h3 className="font-bold text-gray-900 dark:text-white mb-1">Potential Concerns</h3>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400">{transactionRelatedFilings[currentNotification].potentialConcerns}</p>
                                     </div>
                                 </div>
-
-                                <div className="text-gray-600 dark:text-gray-300">
-                                    <strong>Structural Changes:</strong>
-                                    <p className="">{transactionRelatedFilings[currentNotification].structuralChanges}</p>
                                 </div>
 
-                                <div className="text-gray-600 dark:text-gray-300">
-                                    <strong>Additional Notes:</strong>
-                                    <p className="">{transactionRelatedFilings[currentNotification].additionalNotes}</p>
+                                <div>
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-1">Additional Information</h3>
+                                    <div className="space-y-2">
+                                        <div className="mb-4">
+                                            <p className="text-sm font-semibold text-gray-900 dark:text-white mb-0.5">Structural Changes</p>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">{transactionRelatedFilings[currentNotification].structuralChanges}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-semibold text-gray-900 dark:text-white mb-0.5">Additional Notes</p>
+                                            <p className="text-sm text-gray-600 dark:text-gray-400">{transactionRelatedFilings[currentNotification].additionalNotes}</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
