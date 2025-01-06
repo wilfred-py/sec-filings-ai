@@ -208,7 +208,43 @@ const ownershipChanges = [
     newStake: "70,593.0086 shares",
     summary: "Disposition of 617.402 shares of Common Stock at $447.27 per share through tax withholding (Transaction Code F)"
     },
-  
+    {
+      company: "Tesla, Inc. (TSLA)",
+      filingDate: "31 Dec 2024",
+      filerName: "Elon Musk",
+      relationship: "CEO, Director, 10% Owner",
+      ownershipType: "Indirect (Through Elon Musk Revocable Trust)",
+      totalValue: "$0",
+      percentageChange: "-0.065%",
+      previousStake: "411,062,076",
+      newStake: "410,794,076",
+      summary: "Gifted 268,000 shares of Common Stock to charitable organizations as part of year-end tax planning"
+      },
+      {
+        company: "JPMorgan Chase & Co (JPM)",
+        filingDate: "02 Jan 2025",
+        filerName: "Stephen B. Burke",
+        relationship: "Director",
+        ownershipType: "Direct and Indirect (GRAT and Trust)",
+        totalValue: "$56,250.48",
+        percentageChange: "0.13%",
+        previousStake: "255,543.0525",
+        newStake: "255,777.711",
+        summary: "Acquisition of 234.6585 shares of Common Stock as part of quarterly director retainer deferral program at $239.71 per share"
+        },
+      {
+        company: "Costco Wholesale Corp",
+        filingDate: "23 Dec 2024",
+        filerName: "W Craig Jelinek",
+        relationship: "Director",
+        ownershipType: "Direct and Indirect (Multiple GRATs)",
+        totalValue: "$0 (Gift Transaction)",
+        percentageChange: "-0.98",
+        previousStake: "206,382.061 shares (Direct), 150,027 shares (Indirect)",
+        newStake: "204,365.061 shares (Direct), 150,027 shares (Indirect)",
+        summary: "Gift disposition of 2,017 shares of Common Stock, comprising 17 shares to a charitable non-profit organization and 2,000 shares to a donor advised fund"
+        },
+
 ];
 
 export {notifications, transactionRelatedFilings, ownershipChanges}
