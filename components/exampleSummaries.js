@@ -186,85 +186,29 @@ const transactionRelatedFilings = [
 const ownershipChanges = [
   {
     company: "Apple Inc. (AAPL)",
-    filingDate: "2024-12-05",
-    filerName: "Berkshire Hathaway Inc.",
-    changeType: "Increase",
-    newStake: "6.5%",
-    previousStake: "5.8%",
-    summary: "Berkshire Hathaway increased its stake in Apple, reaffirming its confidence in the company's long-term prospects and strong cash flow generation."
+    filingDate: "18 Dec 2024",
+    filerName: "Jeffrey E. Williams",
+    relationship: "Officer - COO",
+    ownershipType: "Direct (through living trust)", 
+    totalValue: "$24,997,418.27",
+    percentageChange: "-20.41%",
+    previousStake: "489,944 shares",
+    newStake: "389,944 shares",
+    summary: "Apple Inc. COO Jeffrey Williams sold 100,000 shares of Common Stock through four transactions on Dec 16, 2024, with prices ranging from $248.61 to $251.10 per share, totaling $24,997,418.27. The sales were executed under a Rule 10b5-1 trading plan, with shares held through his living trust. This reduced his holdings by 20.41% from 489,944 to 389,944 shares."
   },
   {
-    company: "Microsoft Corporation (MSFT)",
-    filingDate: "2024-11-20",
-    filerName: "The Vanguard Group, Inc.",
-    changeType: "Increase",
-    newStake: "8.4%",
-    previousStake: "8.1%",
-    summary: "Vanguard slightly increased its position in Microsoft, likely reflecting the company's strong performance in cloud computing and AI initiatives."
-  },
-  {
-    company: "The Coca-Cola Company (KO)",
-    filingDate: "2024-10-15",
-    filerName: "BlackRock, Inc.",
-    changeType: "Decrease",
-    newStake: "7.2%",
-    previousStake: "7.8%",
-    summary: "BlackRock reduced its stake in Coca-Cola, possibly due to concerns about changing consumer preferences towards healthier beverages."
-  },
-  {
-    company: "NVIDIA Corporation (NVDA)",
-    filingDate: "2024-09-10",
-    filerName: "FMR LLC",
-    changeType: "Increase",
-    newStake: "6.8%",
-    previousStake: "5.5%",
-    summary: "FMR LLC significantly increased its ownership in NVIDIA, likely betting on the company's continued dominance in the AI chip market."
-  },
-  {
-    company: "Tesla, Inc. (TSLA)",
-    filingDate: "2024-08-25",
-    filerName: "Capital Research Global Investors",
-    changeType: "Decrease",
-    newStake: "4.5%",
-    previousStake: "5.2%",
-    summary: "Capital Research Global Investors reduced its position in Tesla, potentially due to increased competition in the electric vehicle market."
-  },
-  {
-    company: "Netflix, Inc. (NFLX)",
-    filingDate: "2024-07-30",
-    filerName: "T. Rowe Price Associates, Inc.",
-    changeType: "Increase",
-    newStake: "5.8%",
-    previousStake: "4.9%",
-    summary: "T. Rowe Price increased its stake in Netflix, possibly due to the company's strong content pipeline and international growth prospects."
-  },
-  {
-    company: "Alcoa Corporation (AA)",
-    filingDate: "2024-06-20",
-    filerName: "Dimensional Fund Advisors LP",
-    changeType: "Increase",
-    newStake: "6.2%",
-    previousStake: "5.7%",
-    summary: "Dimensional Fund Advisors increased its position in Alcoa, potentially seeing value in the company's focus on sustainable aluminum production."
-  },
-  {
-    company: "Caterpillar Inc. (CAT)",
-    filingDate: "2024-05-15",
-    filerName: "State Street Corporation",
-    changeType: "Decrease",
-    newStake: "7.6%",
-    previousStake: "8.1%",
-    summary: "State Street slightly reduced its stake in Caterpillar, possibly due to concerns about global economic slowdown affecting construction and mining sectors."
-  },
-  {
-    company: "Salesforce, Inc. (CRM)",
-    filingDate: "2024-04-25",
-    filerName: "Primecap Management Company",
-    changeType: "Increase",
-    newStake: "5.5%",
-    previousStake: "4.8%",
-    summary: "Primecap Management increased its ownership in Salesforce, likely due to the company's strong position in the CRM market and its successful AI integration strategies."
-  }
+    company: "Microsoft Corp (MSFT)",
+    filingDate: "16 Dec 2024",
+    filerName: "Alice L. Jolla",
+    relationship: "Chief Accounting Officer",
+    ownershipType: "Direct",
+    totalValue: "$276,147.87",
+    percentageChange: "-0.87%",
+    previousStake: "71,210.4106 shares",
+    newStake: "70,593.0086 shares",
+    summary: "Disposition of 617.402 shares of Common Stock at $447.27 per share through tax withholding (Transaction Code F)"
+    },
+  
 ];
 
 export {notifications, transactionRelatedFilings, ownershipChanges}
