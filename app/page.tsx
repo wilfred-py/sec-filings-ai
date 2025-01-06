@@ -20,7 +20,7 @@ const [hoveredSection, setHoveredSection] = useState<'reports' | 'events' | 'ins
 useEffect(() => {
   let animationFrame: number;
   const startTime = Date.now();
-  const duration = 8000; // 6 seconds for full cycle
+  const duration = 8000; // 8 seconds for full cycle
 
   const animate = () => {
     const elapsed = Date.now() - startTime;
@@ -219,7 +219,10 @@ return (
                                     <h3 className="font-bold text-gray-900 dark:text-white mb-2">Management Insights:</h3>
                                     <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300">
                                         {notifications[currentNotification].insights.map((insight, index) => (
-                                            <li key={index}>{insight}</li>
+                                            <li key={index} className="flex items-start">
+                                                <span className="mr-2">•</span>
+                                                <span>{insight}</span>
+                                            </li>
                                         ))}
                                     </ul>
                                 </div>
@@ -227,7 +230,10 @@ return (
                                     <h3 className="font-bold text-gray-900 dark:text-white mb-2">Risk Factors:</h3>
                                     <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-300">
                                         {notifications[currentNotification].risks.map((risk, index) => (
-                                            <li key={index}>{risk}</li>
+                                            <li key={index} className="flex items-start">
+                                                <span className="mr-2">•</span>
+                                                <span>{risk}</span>
+                                            </li>
                                         ))}
                                     </ul>
                                 </div>

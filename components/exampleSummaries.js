@@ -99,7 +99,7 @@ const notifications = [
       ]
       },
       {
-        icon: <Mail className="text-blue-500 mr-2" />,
+        icon: <Mail className="text-red-500 mr-2" />,
         company: "Costco Wholesale Corporation",
         period: "Q1 2025",
         financials: [
