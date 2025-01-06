@@ -251,15 +251,15 @@ return (
                             </div>
                             <div className="space-y-4">
                                 <div>
-                                    <h3 className="font-bold text-gray-900 dark:text-white mb-1">Event Details:</h3>
+                                    
                                     <div className="grid grid-cols-2 gap-2">
                                         <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
-                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Event Type</p>
-                                            <p className="text-sm text-gray-900 dark:text-white">{transactionRelatedFilings[currentNotification].eventType}</p>
+                                            <p className="font-bold text-gray-700 dark:text-gray-300">Event Type</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">{transactionRelatedFilings[currentNotification].eventType}</p>
                                         </div>
                                         <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
-                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Report Date</p>
-                                            <p className="text-sm text-gray-900 dark:text-white">{transactionRelatedFilings[currentNotification].reportDate}</p>
+                                            <p className="font-bold text-gray-700 dark:text-gray-300">Report Date</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">{transactionRelatedFilings[currentNotification].reportDate}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -284,8 +284,8 @@ return (
                                 </div>
                                 </div>
 
-                                <div>
-                                    <h3 className="font-bold text-gray-900 dark:text-white mb-1">Additional Information</h3>
+                                <div className="pl-1">
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-1 italic">Additional Information</h3>
                                     <div className="space-y-2">
                                         <div className="mb-4">
                                             <p className="text-sm font-semibold text-gray-900 dark:text-white mb-0.5">Structural Changes</p>
