@@ -316,29 +316,42 @@ return (
                                 </span>
                             </div>
                             <div className="space-y-4">
-                                {/* Primary Information Grid */}
-                                <div className="grid grid-cols-2 gap-2">
-                                    <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
-                                        <p className="font-bold text-gray-700 dark:text-gray-300">Filing Date</p>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">{ownershipChanges[currentNotification].filingDate}</p>
-                                    </div>
-                                    <div className="bg-gray-100 dark:bg-gray-700 p-2 rounded">
-                                        <p className="font-bold text-gray-700 dark:text-gray-300">Relationship</p>
-                                        <p className="text-sm text-gray-500 dark:text-gray-400">{ownershipChanges[currentNotification].relationship}</p>
+                                {/* Primary Information Section */}
+                                <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded">
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">Filing Information</h3>
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Filer</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">{ownershipChanges[currentNotification].filerName}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Filing Date</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">{ownershipChanges[currentNotification].filingDate}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Role</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">{ownershipChanges[currentNotification].relationship}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Ownership Type</p>
+                                            <p className="text-sm text-gray-500 dark:text-gray-400">{ownershipChanges[currentNotification].ownershipType}</p>
+                                        </div>
                                     </div>
                                 </div>
 
-                                {/* Ownership Details Section */}
+                                {/* Transaction Details Section */}
                                 <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded">
-                                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">Ownership Details</h3>
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-2">Transaction Details</h3>
                                     <div className="grid grid-cols-2 gap-2">
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Type</p>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">{ownershipChanges[currentNotification].ownershipType}</p>
-                                        </div>
                                         <div>
                                             <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Total Value</p>
                                             <p className="text-sm text-gray-500 dark:text-gray-400">{ownershipChanges[currentNotification].totalValue}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Change</p>
+                                            <p className={`text-sm ${ownershipChanges[currentNotification].percentageChange.includes('-') ? 'text-red-500' : 'text-green-500'}`}>
+                                                {ownershipChanges[currentNotification].percentageChange}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -346,20 +359,14 @@ return (
                                 {/* Stake Changes Section */}
                                 <div className="bg-gray-100 dark:bg-gray-700 p-3 rounded">
                                     <h3 className="font-bold text-gray-900 dark:text-white mb-2">Stake Changes</h3>
-                                    <div className="grid grid-cols-3 gap-2">
+                                    <div className="grid grid-cols-2 gap-2">
                                         <div>
-                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Previous</p>
+                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Previous Stake</p>
                                             <p className="text-sm text-gray-500 dark:text-gray-400">{ownershipChanges[currentNotification].previousStake}</p>
                                         </div>
                                         <div>
-                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">New</p>
+                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">New Stake</p>
                                             <p className="text-sm text-gray-500 dark:text-gray-400">{ownershipChanges[currentNotification].newStake}</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Change</p>
-                                            <p className={`text-sm ${ownershipChanges[currentNotification].percentageChange.includes('-') ? 'text-red-500' : 'text-green-500'}`}>
-                                                {ownershipChanges[currentNotification].percentageChange}
-                                            </p>
                                         </div>
                                     </div>
                                 </div>

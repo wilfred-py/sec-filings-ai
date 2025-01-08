@@ -206,7 +206,7 @@ const ownershipChanges = [
     percentageChange: "-0.87%",
     previousStake: "71,210.4106 shares",
     newStake: "70,593.0086 shares",
-    summary: "Disposition of 617.402 shares of Common Stock at $447.27 per share through tax withholding (Transaction Code F)"
+    summary: "Disposition of 617.402 shares of Common Stock at $447.27 per share through tax withholding (Transaction Code F)."
     },
     {
       company: "Tesla, Inc. (TSLA)",
@@ -218,7 +218,7 @@ const ownershipChanges = [
       percentageChange: "-0.065%",
       previousStake: "411,062,076",
       newStake: "410,794,076",
-      summary: "Gifted 268,000 shares of Common Stock to charitable organizations as part of year-end tax planning"
+      summary: "Gifted 268,000 shares of Common Stock to charitable organizations as part of year-end tax planning."
       },
       {
         company: "JPMorgan Chase & Co (JPM)",
@@ -230,7 +230,7 @@ const ownershipChanges = [
         percentageChange: "0.13%",
         previousStake: "255,543.0525",
         newStake: "255,777.711",
-        summary: "Acquisition of 234.6585 shares of Common Stock as part of quarterly director retainer deferral program at $239.71 per share"
+        summary: "Acquisition of 234.6585 shares of Common Stock as part of quarterly director retainer deferral program at $239.71 per share."
         },
       {
         company: "Costco Wholesale Corp",
@@ -239,10 +239,10 @@ const ownershipChanges = [
         relationship: "Director",
         ownershipType: "Direct and Indirect (Multiple GRATs)",
         totalValue: "$0 (Gift Transaction)",
-        percentageChange: "-0.98",
+        percentageChange: "-0.98%",
         previousStake: "206,382.061 shares (Direct), 150,027 shares (Indirect)",
         newStake: "204,365.061 shares (Direct), 150,027 shares (Indirect)",
-        summary: "Gift disposition of 2,017 shares of Common Stock, comprising 17 shares to a charitable non-profit organization and 2,000 shares to a donor advised fund"
+        summary: "Gift disposition of 2,017 shares of Common Stock, comprising 17 shares to a charitable non-profit organization and 2,000 shares to a donor advised fund."
         },
 
 ];
