@@ -53,8 +53,8 @@ export async function POST(request: Request) {
 
     // Send welcome email
     await resend.emails.send({
-      from: 'SEC Filings AI <onboarding@resend.dev>',
-      to: 'wilfredchen1@gmail.com',
+      from: 'SEC Filings AI <noreply@waitlist.tldrsec.app>',
+      to: 'wilfred.chen.python@gmail.com',
       subject: 'Welcome to SEC Filings AI Waitlist!',
       react: WelcomeEmail({ email }),
     });
