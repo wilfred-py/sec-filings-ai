@@ -53,14 +53,14 @@ export async function POST(request: Request) {
 
     // Send welcome email
     await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: 'SEC Filings AI <onboarding@resend.dev>',
       to: 'wilfredchen1@gmail.com',
       subject: 'Welcome to SEC Filings AI Waitlist!',
       react: WelcomeEmail({ email }),
     });
 
     return NextResponse.json(
-      { message: 'Subscription successful!' },
+      { message: 'You are now on the waitlist!' },
       { status: 201 }
     );
 
