@@ -18,11 +18,11 @@ declare global {
   var mongoose: { conn: null | typeof mongoose; promise: null | Promise<typeof mongoose> };
 }
 
-let cached: Cached = global.mongoose || { conn: null, promise: null };
+let cached: Cached = (global.mongoose as Cached) || { conn: null, promise: null };
 
 if (!global.mongoose) {
   global.mongoose = { conn: null, promise: null };
-  cached = global.mongoose;
+  cached = global.mongoose as Cached;
 }
 
 async function connectDB() {

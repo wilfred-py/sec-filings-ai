@@ -1,19 +1,5 @@
 import { Mail } from 'lucide-react'
-import { FaCaretUp, FaCaretDown } from 'react-icons/fa'
 
-
-const renderGrowth = (value, unit = '') => {
-  if (!value) return null;
-  const isPositive = !String(value).includes('-');
-  const numericValue = String(value).replace(/[-+]/g, '').trim();
-  
-  return (
-    <span className={`inline-flex items-center ${isPositive ? 'text-green-500' : 'text-red-500'}`}>
-      {isPositive ? <FaCaretUp className="mr-1" /> : <FaCaretDown className="mr-1" />}
-      {numericValue}{unit}
-    </span>
-  );
-};
 
 const notifications = [
   {
