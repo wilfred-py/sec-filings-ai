@@ -15,6 +15,7 @@ interface Cached {
 
 // In global namespace
 declare global {
+  // eslint-disable-next-line no-var
   var mongoose: { conn: null | typeof mongoose; promise: null | Promise<typeof mongoose> };
 }
 
