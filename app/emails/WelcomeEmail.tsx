@@ -11,7 +11,7 @@ interface WelcomeEmailProps {
   email: string;
 }
 
-export default function WelcomeEmail({ email }: WelcomeEmailProps) {
+export default function WelcomeEmail({ }: WelcomeEmailProps) {
   return (
     <Html>
       <Preview>Welcome to the SEC Filings AI Waitlist</Preview>
