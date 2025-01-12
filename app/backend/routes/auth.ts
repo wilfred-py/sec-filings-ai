@@ -25,7 +25,12 @@ interface LoginRequest {
     password: string;
 }
 
-const loginHandler: RequestHandler<{}, {}, LoginRequest> = async (req, res) => {
+// Fix empty object types and specify proper response type
+const loginHandler: RequestHandler<
+    Record<string, never>,  // Params
+    { token?: string; error?: string },  // Response
+    LoginRequest  // Request body
+> = async (req, res) => {
     try {
         const { username, password } = req.body;
         const user = await User.findOne({ username });
@@ -42,7 +47,7 @@ const loginHandler: RequestHandler<{}, {}, LoginRequest> = async (req, res) => {
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: '1h' });
         res.json({ token });
-    } catch (err) {
+    } catch (error) {  // Remove unused 'err' variable
         res.status(500).json({ error: 'Error logging in' });
         return;
     }
