@@ -47,7 +47,7 @@ const loginHandler: RequestHandler<
 
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, { expiresIn: '1h' });
         res.json({ token });
-    } catch (error) {  // Remove unused 'err' variable
+    } catch (error) { // eslint-disable-line @typescript-eslint/no-unused-vars
         res.status(500).json({ error: 'Error logging in' });
         return;
     }
