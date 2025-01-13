@@ -14,19 +14,19 @@ interface WelcomeEmailProps {
 export default function WelcomeEmail({ }: WelcomeEmailProps) {
   return (
     <Html>
-      <Preview>Welcome to the SEC Filings AI Waitlist</Preview>
+      <Preview>Welcome to the tldrSEC Waitlist</Preview>
       <Body style={{ backgroundColor: '#ffffff', fontFamily: 'sans-serif' }}>
         <Container>
-          <Heading>Welcome to the SEC Filings AI Waitlist! 🎉</Heading>
+          <Heading>Welcome to the tldrSEC Waitlist! 🎉</Heading>
           <Text>
-            Thanks for signing up to the waitlist. We&apos;re working hard to bring SEC Filings AI to life!
+            Thanks for signing up to the waitlist. We&apos;re working hard to bring this service to life!
           </Text>
           <Text>
             We&apos;ll notify you as soon as our beta launches with SEC filing summaries delivered straight to your inbox.
           </Text>
           <Text style={{ color: '#666666', marginTop: '24px' }}>
             Best regards,<br />
-            Wilfred
+            Wilf
           </Text>
         </Container>
       </Body>
