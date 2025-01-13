@@ -123,7 +123,7 @@ return (
     <div className="relative">
         <div className="container mx-auto px-4 py-8 flex flex-col min-h-screen">
         <header className="flex justify-between items-center mb-12 max-w-6xl mx-auto w-full">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">SEC Filings AI</h1>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">tldrSEC</h1>
             <button
             onClick={toggleDarkMode}
             className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
