@@ -53,9 +53,9 @@ export async function POST(request: Request) {
 
     // Send welcome email
     await resend.emails.send({
-      from: 'SEC Filings AI <noreply@waitlist.tldrsec.app>',
-      to: 'wilfred.chen.python@gmail.com',
-      subject: 'Welcome to SEC Filings AI Waitlist!',
+      from: 'tldrSEC <noreply@waitlist.tldrsec.app>',
+      to: email,
+      subject: 'Welcome to tldrSEC Waitlist!',
       react: WelcomeEmail({ email }),
     });
 
