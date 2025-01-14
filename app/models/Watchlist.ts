@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const SecurityItemSchema = new mongoose.Schema({
-  ticker: String,
+  ticker: { type: String, required: true },
   addedAt: { type: Date, default: Date.now },
   customNotes: String,
   alertSettings: {
@@ -9,8 +9,12 @@ const SecurityItemSchema = new mongoose.Schema({
       upper: Number,
       lower: Number
     },
-    filingTypes: [String]
-  }
+    filingTypes: {
+      type: [String],
+      enum: ['10-K', '10-Q', '8-K', 'Form 4']
+    }
+  },
+  lastNotifiedFilingId: { type: mongoose.Schema.Types.ObjectId, ref: 'FilingCache' }
 });
 
 const WatchlistSchema = new mongoose.Schema({
