@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Bell, Sun, Moon, Mail } from 'lucide-react'
-import axios from 'axios'
+
 
 import { notifications, transactionRelatedFilings, ownershipChanges } from '@/components/exampleSummaries'
 import GrowthIndicator from '@/components/GrowthIndicator'

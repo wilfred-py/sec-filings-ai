@@ -1,29 +1,12 @@
 import { NextResponse } from 'next/server';
-import mongoose from 'mongoose';
+import Subscription from "@/app/models/Subscription"
 import WelcomeEmail from '@/app/emails/WelcomeEmail';
 import { Resend } from 'resend';
 import connectDB from '@/lib/mongodb';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// Email Subscription Schema
-const SubscriptionSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: [true, 'Email is required'],
-    unique: true,
-    trim: true,
-    lowercase: true,
-    match: [/^\S+@\S+\.\S+$/, 'Please enter a valid email']
-  },
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
-  }
-});
 
-// Get or create model
-const Subscription = mongoose.models.Subscription || mongoose.model('Subscription', SubscriptionSchema);
 
 // Add these utility functions at the top of the file
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -77,7 +60,7 @@ export async function POST(request: Request) {
     }
 
     // Create new subscription
-    const subscription = await Subscription.create({
+    await Subscription.create({
       email,
       createdAt: new Date()
     });
