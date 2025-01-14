@@ -56,14 +56,6 @@ async function sendEmailWithRetry(email: string, maxRetries = 3) {
 
 export async function POST(request: Request) {
   try {
-    // Add timeout to MongoDB connection
-    await Promise.race([
-      connectDB(),
-      new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database connection timeout')), 5000)
-      )
-    ]);
-    
     const { email } = await request.json();
     
     if (!email) {
@@ -73,19 +65,33 @@ export async function POST(request: Request) {
       );
     }
 
-    // Check if email already exists
-    const existingSubscription = await Subscription.findOne({ email }).maxTimeMS(3000);
-    if (existingSubscription) {
+    // Use findOneAndUpdate with upsert to atomically check and create
+    // This eliminates the need for separate find and create operations
+    const result = await Subscription.findOneAndUpdate(
+      { email },
+      { 
+        email,
+        updatedAt: new Date()
+      },
+      { 
+        upsert: true, 
+        new: true,
+        setDefaultsOnInsert: true,
+        maxTimeMS: 3000
+      }
+    );
+
+    // Check if this was a new document
+    const isNewSubscription = result.createdAt.getTime() === result.updatedAt.getTime();
+
+    if (!isNewSubscription) {
       return NextResponse.json(
         { message: 'Email already subscribed' },
         { status: 400 }
       );
     }
 
-    // Create new subscription
-    await Subscription.create({ email });
-
-    // Send welcome email with retry mechanism
+    // Send welcome email asynchronously
     sendEmailWithRetry(email).catch(error => {
       console.error('Welcome email error after retries:', error);
     });
@@ -97,8 +103,6 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Subscription error:', error);
-    
-    // Improved error handling with specific messages
     const errorMessage = error instanceof Error ? error.message : 'An error occurred';
     const status = errorMessage.includes('timeout') ? 504 : 500;
     
