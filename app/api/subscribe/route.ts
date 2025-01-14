@@ -25,13 +25,47 @@ const SubscriptionSchema = new mongoose.Schema({
 // Get or create model
 const Subscription = mongoose.models.Subscription || mongoose.model('Subscription', SubscriptionSchema);
 
+// Add these utility functions at the top of the file
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function sendEmailWithRetry(email: string, maxRetries = 3) {
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await resend.emails.send({
+        from: 'tldrSEC <noreply@waitlist.tldrsec.app>',
+        to: email,
+        subject: 'Welcome to tldrSEC Waitlist!',
+        react: WelcomeEmail({ email }),
+      });
+      return; // Success, exit the function
+    } catch (error) {
+      console.error(`Email attempt ${attempt} failed:`, error);
+      
+      if (attempt === maxRetries) {
+        // Log final failure
+        console.error(`Failed to send email to ${email} after ${maxRetries} attempts`);
+        throw error;
+      }
+      
+      // Exponential backoff: 2^attempt * 1000ms (1s, 2s, 4s)
+      const backoffTime = Math.min(1000 * Math.pow(2, attempt), 10000);
+      await sleep(backoffTime);
+    }
+  }
+}
+
 export async function POST(request: Request) {
   try {
-    await connectDB();
+    // Add timeout to MongoDB connection
+    await Promise.race([
+      connectDB(),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database connection timeout')), 5000)
+      )
+    ]);
     
     const { email } = await request.json();
     
-    // Validate email
     if (!email) {
       return NextResponse.json(
         { message: 'Email is required' },
@@ -40,7 +74,7 @@ export async function POST(request: Request) {
     }
 
     // Check if email already exists
-    const existingSubscription = await Subscription.findOne({ email });
+    const existingSubscription = await Subscription.findOne({ email }).maxTimeMS(3000);
     if (existingSubscription) {
       return NextResponse.json(
         { message: 'Email already subscribed' },
@@ -51,12 +85,9 @@ export async function POST(request: Request) {
     // Create new subscription
     await Subscription.create({ email });
 
-    // Send welcome email
-    await resend.emails.send({
-      from: 'tldrSEC <noreply@waitlist.tldrsec.app>',
-      to: email,
-      subject: 'Welcome to tldrSEC Waitlist!',
-      react: WelcomeEmail({ email }),
+    // Send welcome email with retry mechanism
+    sendEmailWithRetry(email).catch(error => {
+      console.error('Welcome email error after retries:', error);
     });
 
     return NextResponse.json(
@@ -66,9 +97,14 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Subscription error:', error);
+    
+    // Improved error handling with specific messages
+    const errorMessage = error instanceof Error ? error.message : 'An error occurred';
+    const status = errorMessage.includes('timeout') ? 504 : 500;
+    
     return NextResponse.json(
-      { message: 'An error occurred while processing your subscription' },
-      { status: 500 }
+      { message: errorMessage },
+      { status }
     );
   }
 } 
