@@ -56,6 +56,7 @@ async function sendEmailWithRetry(email: string, maxRetries = 3) {
 
 export async function POST(request: Request) {
   try {
+    await connectDB();
     const { email } = await request.json();
     
     if (!email) {
@@ -65,31 +66,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // Use findOneAndUpdate with upsert to atomically check and create
-    // This eliminates the need for separate find and create operations
-    const result = await Subscription.findOneAndUpdate(
-      { email },
-      { 
-        email,
-        updatedAt: new Date()
-      },
-      { 
-        upsert: true, 
-        new: true,
-        setDefaultsOnInsert: true,
-        maxTimeMS: 3000
-      }
-    );
-
-    // Check if this was a new document
-    const isNewSubscription = result.createdAt.getTime() === result.updatedAt.getTime();
-
-    if (!isNewSubscription) {
+    // Find existing subscription first
+    const existing = await Subscription.findOne({ email });
+    
+    if (existing) {
       return NextResponse.json(
         { message: 'Email already subscribed' },
         { status: 400 }
       );
     }
+
+    // Create new subscription
+    const subscription = await Subscription.create({
+      email,
+      createdAt: new Date()
+    });
 
     // Send welcome email asynchronously
     sendEmailWithRetry(email).catch(error => {
