@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import WelcomeEmail from '@/app/emails/WelcomeEmail';
 import { Resend } from 'resend';
+import connectDB from '@/lib/mongodb';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 

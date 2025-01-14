@@ -55,19 +55,28 @@ useEffect(() => {
 
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
+  setSubmitStatus(''); // Clear any previous status
+  
   try {
-    await fetch('/api/subscribe', {
+    const response = await fetch('/api/subscribe', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ email }),
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Subscription failed');
+    }
+
     setSubmitStatus('Subscription successful!')
     setEmail('')
   } catch (error) {
-    if (axios.isAxiosError(error) && error.response) {
-      setSubmitStatus(error.response.data.message)
+    console.error('Subscription error:', error);
+    if (error instanceof Error) {
+      setSubmitStatus(error.message)
     } else {
       setSubmitStatus('An error occurred. Please try again.')
     }
