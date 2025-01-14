@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import connectDB from '@/lib/mongodb';
 import mongoose from 'mongoose';
 import WelcomeEmail from '@/app/emails/WelcomeEmail';
 import { Resend } from 'resend';
