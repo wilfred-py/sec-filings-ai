@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 
 const SecurityItemSchema = new mongoose.Schema({
   ticker: String,
-  tickerName: String,
   addedAt: { type: Date, default: Date.now },
   customNotes: String,
   alertSettings: {
