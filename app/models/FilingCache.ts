@@ -106,4 +106,19 @@ FilingCacheSchema.index({ ticker: 1, filingType: 1, filingDate: -1 });
 FilingCacheSchema.index({ cacheExpiry: 1 }, { expireAfterSeconds: 0 });
 FilingCacheSchema.index({ securityId: 1, filingType: 1 });
 
+FilingCacheSchema.index({ 
+  "structuredAnalysis.insiderFiling.filerName": 1,
+  filingDate: -1 
+});
+
+FilingCacheSchema.index({ 
+  "structuredAnalysis.currentReport.eventType": 1,
+  filingDate: -1 
+});
+
+FilingCacheSchema.index({ 
+  "structuredAnalysis.periodicalFiling.financials.label": 1,
+  filingDate: -1 
+});
+
 export default mongoose.models.FilingCache || mongoose.model('FilingCache', FilingCacheSchema); 
