@@ -27,6 +27,12 @@ async function sendEmailWithRetry(email: string, maxRetries = 3) {
   }
 }
 
+// Define headers once
+const headers = {
+  'Content-Type': 'application/json',
+  'Cache-Control': 'no-store'
+};
+
 export async function POST(request: Request) {
   try {
     // Add timeout to DB connection
@@ -43,7 +49,7 @@ export async function POST(request: Request) {
     if (!email) {
       return NextResponse.json(
         { message: 'Email is required' },
-        { status: 400 }
+        { status: 400, headers }
       );
     }
 
@@ -54,15 +60,9 @@ export async function POST(request: Request) {
       console.error('Database connection error:', error);
       return NextResponse.json(
         { message: 'Service temporarily unavailable' },
-        { status: 503 }
+        { status: 503, headers }
       );
     }
-
-    // Add response headers
-    const headers = {
-      'Content-Type': 'application/json',
-      'Cache-Control': 'no-store'
-    };
 
     // Find existing subscription first
     const existing = await Subscription.findOne({ email });
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
     if (existing) {
       return NextResponse.json(
         { message: 'Email already subscribed' },
-        { status: 400 }
+        { status: 400, headers }
       );
     }
 
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { message: 'You are now on the waitlist!' },
-      { status: 201 }
+      { status: 201, headers }
     );
 
   } catch (error) {
@@ -97,13 +97,13 @@ export async function POST(request: Request) {
     if (error instanceof SyntaxError) {
       return NextResponse.json(
         { message: 'Invalid request format' },
-        { status: 400 }
+        { status: 400, headers }
       );
     }
 
     return NextResponse.json(
       { message: 'An unexpected error occurred' },
-      { status: 500 }
+      { status: 500, headers }
     );
   }
 } 
