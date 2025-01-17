@@ -6,12 +6,19 @@ on:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+      contents: write
     steps:
-      - uses: actions/checkout@v3
-      - name: Enable Auto-merge
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        
+      - name: Enable auto-merge
         if: github.event.pull_request.draft == false
-        run: |
-          gh auth login --with-token <<< "${{ secrets.PAT_TOKEN }}"
-          gh pr merge --auto --merge "$PR_URL"
         env:
-          PR_URL: ${{github.event.pull_request.html_url}}
+          GH_TOKEN: ${{ secrets.AUTO_PR_AND_AUTO_MERGE }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          echo "Attempting to enable auto-merge for $PR_URL"
+          gh auth status
+          gh pr merge --auto --merge --repo ${{ github.repository }} ${{ github.event.pull_request.number }}
