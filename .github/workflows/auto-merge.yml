@@ -12,14 +12,21 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        
+
+      - name: Configure Git
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          
       - name: Enable auto-merge
         if: github.event.pull_request.draft == false
-        env:
-          GH_TOKEN: ${{ secrets.AUTO_PR_AND_AUTO_MERGE }}
-          PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
-          echo "Attempting to enable auto-merge for $PR_URL"
-          gh auth status
-          gh pr review --approve "$PR_URL"
-          gh pr merge --auto --merge --repo ${{ github.repository }} ${{ github.event.pull_request.number }}
+          # Authenticate using the token
+          echo "${{ secrets.AUTO_PR_AND_AUTO_MERGE }}" | gh auth login --with-token
+          
+          # Enable auto-merge
+          gh pr merge "${{ github.event.pull_request.number }}" --auto --merge
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.AUTO_PR_AND_AUTO_MERGE }}
+          GH_TOKEN: ${{ secrets.AUTO_PR_AND_AUTO_MERGE }}
