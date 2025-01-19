@@ -36,7 +36,7 @@ const SubscriptionSchema = new mongoose.Schema<ISubscription>({
   },
   confirmationToken: String,
   confirmationExpires: Date
-});
+}, {collection: "subscriptions"});
 
 // Add indexes for common queries
 SubscriptionSchema.index({ email: 1, status: 1 });

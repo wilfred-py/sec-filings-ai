@@ -36,7 +36,13 @@ const UserSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
   emailVerified: { type: Boolean, default: false },
   preferences: PreferencesSchema,
-  subscription: SubscriptionSchema
-}, { timestamps: true });
+  subscription: SubscriptionSchema,
+  createdAt: { 
+    type: Date, 
+    default: Date.now 
+  }
+}, { 
+  collection: 'users' // explicitly specify collection name
+});
 
 export default mongoose.models.User || mongoose.model('User', UserSchema); 

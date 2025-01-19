@@ -3,6 +3,7 @@ import Subscription from "@/app/models/Subscription"
 import WelcomeEmail from '@/app/emails/WelcomeEmail';
 import { Resend } from 'resend';
 import connectDB from '@/lib/mongodb';
+import { User } from '@/app/models';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -16,8 +17,8 @@ async function sendEmailWithRetry(email: string, maxRetries = 3) {
     try {
       await resend.emails.send({
         from: 'tldrSEC <noreply@waitlist.tldrsec.app>',
-        to: email,
         subject: 'Welcome to tldrSEC Waitlist!',
+        to: email,
         react: WelcomeEmail({ email }),
       });
       return; // Success, exit the function
@@ -34,7 +35,7 @@ async function sendEmailWithRetry(email: string, maxRetries = 3) {
       const backoffTime = Math.min(1000 * Math.pow(2, attempt), 10000);
       await sleep(backoffTime);
     }
-  }
+  } 
 }
 
 export async function POST(request: Request) {
@@ -61,6 +62,12 @@ export async function POST(request: Request) {
 
     // Create new subscription
     await Subscription.create({
+      email,
+      createdAt: new Date()
+    });
+
+    // Create new user
+    await User.create({
       email,
       createdAt: new Date()
     });
