@@ -1,15 +1,14 @@
 import { NextResponse } from 'next/server';
-import Subscription from "@/app/models/Subscription"
-import WelcomeEmail from '@/app/emails/WelcomeEmail';
-import { Resend } from 'resend';
 import connectDB from '@/lib/mongodb';
+import { Subscription } from '@/app/models/index';
+import { Resend } from 'resend';
+import WelcomeEmail from '@/app/emails/WelcomeEmail';
+
+// Add error handling and timeout
+export const maxDuration = 10; // Set max duration to 10 seconds
+export const dynamic = 'force-dynamic'; // Disable static optimization
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-
-
-
-// Add these utility functions at the top of the file
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function sendEmailWithRetry(email: string, maxRetries = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -18,34 +17,50 @@ async function sendEmailWithRetry(email: string, maxRetries = 3) {
         from: 'tldrSEC <noreply@waitlist.tldrsec.app>',
         to: email,
         subject: 'Welcome to tldrSEC Waitlist!',
-        react: WelcomeEmail({ email }),
+        react: WelcomeEmail({ email })
       });
-      return; // Success, exit the function
+      return;
     } catch (error) {
-      console.error(`Email attempt ${attempt} failed:`, error);
-      
-      if (attempt === maxRetries) {
-        // Log final failure
-        console.error(`Failed to send email to ${email} after ${maxRetries} attempts`);
-        throw error;
-      }
-      
-      // Exponential backoff: 2^attempt * 1000ms (1s, 2s, 4s)
-      const backoffTime = Math.min(1000 * Math.pow(2, attempt), 10000);
-      await sleep(backoffTime);
+      if (attempt === maxRetries) throw error;
+      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
     }
   }
 }
 
+// Define headers once
+const headers = {
+  'Content-Type': 'application/json',
+  'Cache-Control': 'no-store'
+};
+
 export async function POST(request: Request) {
   try {
-    await connectDB();
+    // Add timeout to DB connection
+    const dbPromise = Promise.race([
+      connectDB(),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Database connection timeout')), 5000)
+      )
+    ]);
+
+    // Parse request body
     const { email } = await request.json();
-    
+
     if (!email) {
       return NextResponse.json(
         { message: 'Email is required' },
-        { status: 400 }
+        { status: 400, headers }
+      );
+    }
+
+    // Wait for DB connection with error handling
+    try {
+      await dbPromise;
+    } catch (error) {
+      console.error('Database connection error:', error);
+      return NextResponse.json(
+        { message: 'Service temporarily unavailable' },
+        { status: 503, headers }
       );
     }
 
@@ -55,7 +70,7 @@ export async function POST(request: Request) {
     if (existing) {
       return NextResponse.json(
         { message: 'Email already subscribed' },
-        { status: 400 }
+        { status: 400, headers }
       );
     }
 
@@ -72,17 +87,23 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { message: 'You are now on the waitlist!' },
-      { status: 201 }
+      { status: 201, headers }
     );
 
   } catch (error) {
     console.error('Subscription error:', error);
-    const errorMessage = error instanceof Error ? error.message : 'An error occurred';
-    const status = errorMessage.includes('timeout') ? 504 : 500;
     
+    // Check for JSON parsing error
+    if (error instanceof SyntaxError) {
+      return NextResponse.json(
+        { message: 'Invalid request format' },
+        { status: 400, headers }
+      );
+    }
+
     return NextResponse.json(
-      { message: errorMessage },
-      { status }
+      { message: 'An unexpected error occurred' },
+      { status: 500, headers }
     );
   }
 } 

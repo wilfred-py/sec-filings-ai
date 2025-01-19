@@ -29,6 +29,9 @@ const PromptVersionSchema = new mongoose.Schema({
 });
 
 // Ensure unique version per filing type
-PromptVersionSchema.index({ version: 1, filingType: 1 }, { unique: true });
+PromptVersionSchema.index({ 
+  filingType: 1,
+  version: 1 
+}, { unique: true });
 
 export default mongoose.models.PromptVersion || mongoose.model('PromptVersion', PromptVersionSchema); 

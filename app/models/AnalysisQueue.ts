@@ -40,7 +40,11 @@ const AnalysisQueueSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-AnalysisQueueSchema.index({ status: 1, priority: -1, createdAt: 1 });
-AnalysisQueueSchema.index({ ticker: 1, filingType: 1 });
+AnalysisQueueSchema.index({ 
+  status: 1,
+  filingType: 1,
+  priority: -1,
+  createdAt: 1 
+});
 
 export default mongoose.models.AnalysisQueue || mongoose.model('AnalysisQueue', AnalysisQueueSchema); 
