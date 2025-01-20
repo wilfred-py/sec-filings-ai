@@ -5,7 +5,7 @@ import { Resend } from 'resend';
 import WelcomeEmail from '@/app/emails/WelcomeEmail';
 
 // Add error handling and timeout
-export const maxDuration = 10; // Set max duration to 10 seconds
+export const maxDuration = 3; // Set max duration to 10 seconds
 export const dynamic = 'force-dynamic'; // Disable static optimization
 
 const resend = new Resend(process.env.RESEND_API_KEY);
