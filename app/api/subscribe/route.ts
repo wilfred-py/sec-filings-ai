@@ -1,14 +1,23 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import { Subscription } from '@/app/models/index';
+import { Subscription } from '@/app/models/index';  
 import { Resend } from 'resend';
 import WelcomeEmail from '@/app/emails/WelcomeEmail';
 
 // Add error handling and timeout
-export const maxDuration = 3; // Set max duration to 10 seconds
+export const maxDuration = 3; // Set max duration to 3 seconds
 export const dynamic = 'force-dynamic'; // Disable static optimization
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+// Utility function for exponential backoff with jitter
+function calculateBackoff(attempt: number, baseDelay = 1000, maxDelay = 10000) {
+  // Calculate exponential backoff: 2^attempt * baseDelay
+  const exponentialDelay = Math.min(baseDelay * Math.pow(2, attempt - 1), maxDelay);
+  // Add random jitter (±10%) to prevent thundering herd
+  const jitter = exponentialDelay * 0.1 * (Math.random() * 2 - 1);
+  return exponentialDelay + jitter;
+}
 
 async function sendEmailWithRetry(email: string, maxRetries = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -21,8 +30,11 @@ async function sendEmailWithRetry(email: string, maxRetries = 3) {
       });
       return;
     } catch (error) {
+      console.error(`Email attempt ${attempt} failed:`, error);
       if (attempt === maxRetries) throw error;
-      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+      
+      const backoffTime = calculateBackoff(attempt);
+      await new Promise(resolve => setTimeout(resolve, backoffTime));
     }
   }
 }
@@ -57,7 +69,12 @@ export async function POST(request: Request) {
     try {
       await dbPromise;
     } catch (error) {
-      console.error('Database connection error:', error);
+      console.error('Database connection error details:', {
+        error:(error as Error).message,
+        code:(error as {code?: string}).code,
+        name:(error as Error).name,
+        stack:(error as Error).stack
+      });
       return NextResponse.json(
         { message: 'Service temporarily unavailable' },
         { status: 503, headers }
