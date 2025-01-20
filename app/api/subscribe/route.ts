@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import { Subscription } from '@/app/models/index';
+import { Subscription } from '@/app/models/index';  
 import { Resend } from 'resend';
 import WelcomeEmail from '@/app/emails/WelcomeEmail';
 
 // Add error handling and timeout
-export const maxDuration = 3; // Set max duration to 10 seconds
+export const maxDuration = 3; // Set max duration to 3 seconds
 export const dynamic = 'force-dynamic'; // Disable static optimization
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -57,7 +57,12 @@ export async function POST(request: Request) {
     try {
       await dbPromise;
     } catch (error) {
-      console.error('Database connection error:', error);
+      console.error('Database connection error details:', {
+        error: error.message,
+        code: error.code,
+        name: error.name,
+        stack: error.stack
+      });
       return NextResponse.json(
         { message: 'Service temporarily unavailable' },
         { status: 503, headers }
