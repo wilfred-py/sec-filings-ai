@@ -10,6 +10,9 @@ export const dynamic = 'force-dynamic'; // Disable static optimization
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+// Calculate safe timeout duration (80% of maxDuration to leave buffer for cleanup)
+const DB_TIMEOUT_MS = Math.floor(maxDuration * 1000 * 0.8);
+
 // Utility function for exponential backoff with jitter
 function calculateBackoff(attempt: number, baseDelay = 1000, maxDelay = 10000) {
   // Calculate exponential backoff: 2^attempt * baseDelay
@@ -47,16 +50,28 @@ const headers = {
 
 export async function POST(request: Request) {
   try {
-    // Add timeout to DB connection
+    // Add timeout to DB connection using dynamic timeout
     const dbPromise = Promise.race([
       connectDB(),
       new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database connection timeout')), 5000)
+        setTimeout(
+          () => reject(new Error(`Database connection timeout after ${DB_TIMEOUT_MS}ms`)), 
+          DB_TIMEOUT_MS
+        )
       )
     ]);
 
-    // Parse request body
-    const { email } = await request.json();
+    // Parse request body first to fail fast if invalid
+    let email: string;
+    try {
+      const body = await request.json();
+      email = body.email;
+    } catch (error) {
+      return NextResponse.json(
+        { message: 'Invalid request format' },
+        { status: 400, headers }
+      );
+    }
 
     if (!email) {
       return NextResponse.json(
@@ -65,18 +80,25 @@ export async function POST(request: Request) {
       );
     }
 
-    // Wait for DB connection with error handling
+    // Wait for DB connection with improved error handling
     try {
       await dbPromise;
     } catch (error) {
       console.error('Database connection error details:', {
-        error:(error as Error).message,
-        code:(error as {code?: string}).code,
-        name:(error as Error).name,
-        stack:(error as Error).stack
+        error: error instanceof Error ? error.message : 'Unknown error',
+        type: error instanceof Error ? error.name : 'Unknown type',
+        stack: error instanceof Error ? error.stack : undefined
       });
+      
+      const isTimeout = error instanceof Error && 
+        (error.message.includes('timeout') || error.message.includes('ETIMEDOUT'));
+      
       return NextResponse.json(
-        { message: 'Service temporarily unavailable' },
+        { 
+          message: isTimeout ? 
+            'Service is experiencing high load, please try again' : 
+            'Service temporarily unavailable'
+        },
         { status: 503, headers }
       );
     }
