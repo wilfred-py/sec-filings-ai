@@ -6,27 +6,10 @@ on:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
-      contents: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Configure Git
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          
-      - name: Enable auto-merge
-        if: github.event.pull_request.draft == false
-        run: |
-          # Authenticate using the token
-          echo "${{ secrets.AUTO_PR_AND_AUTO_MERGE }}" | gh auth login --with-token
-          
-          # Enable auto-merge
-          gh pr merge "${{ github.event.pull_request.number }}" --auto --merge
-
-        env:
-          GITHUB_TOKEN: ${{ secrets.AUTO_PR_AND_AUTO_MERGE }}
-          GH_TOKEN: ${{ secrets.AUTO_PR_AND_AUTO_MERGE }}
+      - name: Enable Auto-Merge
+        uses: peter-evans/enable-pull-request-automerge@v3
+        with:
+          token: ${{ secrets.AUTO_PR_AND_AUTO_MERGE }}
+          pull-request-number: ${{ github.event.pull_request.number }}
+          merge-method: merge
