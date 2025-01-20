@@ -68,12 +68,12 @@ export async function POST(request: Request) {
     // Wait for DB connection with error handling
     try {
       await dbPromise;
-    } catch (error:any) {
+    } catch (error) {
       console.error('Database connection error details:', {
-        error: error.message,
-        code: error.code,
-        name: error.name,
-        stack: error.stack
+        error:(error as Error).message,
+        code:(error as {code?: string}).code,
+        name:(error as Error).name,
+        stack:(error as Error).stack
       });
       return NextResponse.json(
         { message: 'Service temporarily unavailable' },
