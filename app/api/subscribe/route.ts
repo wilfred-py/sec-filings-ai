@@ -5,7 +5,7 @@ import { Resend } from 'resend';
 import WelcomeEmail from '@/app/emails/WelcomeEmail';
 
 // Add error handling and timeout
-export const maxDuration = 3; // Set max duration to 3 seconds
+export const maxDuration = 10; // Set max duration to 3 seconds
 export const dynamic = 'force-dynamic'; // Disable static optimization
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -67,9 +67,10 @@ export async function POST(request: Request) {
       const body = await request.json();
       email = body.email;
     } catch (error) {
+      console.error('Invalid request format', error);
       return NextResponse.json(
         { message: 'Invalid request format' },
-        { status: 400, headers }
+        { status: 400, headers },
       );
     }
 
