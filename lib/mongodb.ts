@@ -55,11 +55,16 @@ async function connectDB() {
 }
 
 mongoose.connection.on('connected', () => {
-  console.log('MongoDB connected successfully');
+  console.log('[MongoDB] Connected successfully', {
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV
+  });
 });
 
 mongoose.connection.on('error', (err) => {
   console.error('MongoDB connection error:', err);
 });
+
+console.log('Current environment:', process.env.NODE_ENV);
 
 export default connectDB; 
