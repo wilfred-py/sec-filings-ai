@@ -21,18 +21,22 @@ async function sendEmailWithRetry(email: string, maxRetries = 3) {
         to: email,
         react: WelcomeEmail({ email }),
       });
-      return;
+      return; // Success, exit the function
     } catch (error) {
-      if (attempt === maxRetries) throw error;
-      await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+      console.error(`Email attempt ${attempt} failed:`, error);
+      
+      if (attempt === maxRetries) {
+        // Log final failure
+        console.error(`Failed to send email to ${email} after ${maxRetries} attempts`);
+        throw error;
+      }
+      
+      // Exponential backoff: 2^attempt * 1000ms (1s, 2s, 4s)
+      const backoffTime = Math.min(1000 * Math.pow(2, attempt), 10000);
+      await sleep(backoffTime);
     }
   } 
 }
-
-const headers = {
-  'Content-Type': 'application/json',
-  'Cache-Control': 'no-store'
-};
 
 export async function POST(request: Request) {
   try {
