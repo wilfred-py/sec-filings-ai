@@ -97,13 +97,26 @@ export async function POST(request: Request) {
       createdAt: new Date()
     });
 
-    // Send welcome email asynchronously
-    sendEmailWithRetry(email).catch(error => {
+    // Send welcome email and wait for it to complete
+    try {
+      await sendEmailWithRetry(email);
+    } catch (error) {
       console.error('Welcome email error after retries:', error);
-    });
+      
+      return NextResponse.json(
+        { 
+          message: 'You are now on the waitlist! Please check your email for a confirmation.',
+          emailStatus: 'delayed'
+        },
+        { status: 201, headers }
+      );
+    }
 
     return NextResponse.json(
-      { message: 'You are now on the waitlist!' },
+      { 
+        message: 'You are now on the waitlist!',
+        emailStatus: 'sent'
+      },
       { status: 201, headers }
     );
 
