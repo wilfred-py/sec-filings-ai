@@ -2,20 +2,23 @@ name: Auto Pull Request
 on:
   push:
     branches:
-      - 'feature/*'   # Triggers on any branch starting with 'feature/'
-      - 'bugfix/*'    # Triggers on any branch starting with 'bugfix/'
+      - 'feature/*'
+      - 'bugfix/*'
 
 jobs:
   auto-pull-request:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.AUTO_PR_AND_AUTO_MERGE }}  # Using the same PAT that worked for auto-merge
+          commit-message: 'Auto PR from ${{ github.ref_name }}'
           title: 'Auto PR: ${{ github.ref_name }}'
-          base: 'main'  # Your target branch
-          branch: ${{ github.ref }}
           body: |
-            Automated pull request created from ${{ github.ref_name }}f
+            Automated pull request created from ${{ github.ref_name }}
+          base: 'main'
+          branch: ${{ github.ref }}
+          delete-branch: false
