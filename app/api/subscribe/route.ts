@@ -159,4 +159,30 @@ export async function POST(request: Request) {
       { status: 500, headers }
     );
   }
+}
+
+// Add OPTIONS handler for CORS if needed
+export async function OPTIONS(request: Request) {
+  return NextResponse.json(
+    {},
+    {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Methods': 'POST',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Origin': '*'
+      }
+    }
+  );
+}
+
+// Add a GET handler that returns 405
+export async function GET(request: Request) {
+  return NextResponse.json(
+    { message: 'Method not allowed' },
+    { 
+      status: 405,
+      headers: { 'Allow': 'POST' }
+    }
+  );
 } 
