@@ -162,9 +162,8 @@ export async function POST(request: Request) {
 }
 
 // Add OPTIONS handler for CORS if needed
-export async function OPTIONS(request: Request) {
+export async function OPTIONS() {
   return NextResponse.json(
-    {},
     {
       status: 200,
       headers: {
@@ -177,7 +176,7 @@ export async function OPTIONS(request: Request) {
 }
 
 // Add a GET handler that returns 405
-export async function GET(request: Request) {
+export async function GET() {
   return NextResponse.json(
     { message: 'Method not allowed' },
     { 
