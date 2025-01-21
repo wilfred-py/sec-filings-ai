@@ -1,12 +1,15 @@
 import mongoose from 'mongoose';
 
-const uri = `${process.env.MONGODB_URI}&tls=true&tlsInsecure=false&retryWrites=true&w=majority&ssl=true`;
+const uri = process.env.MONGODB_URI;
 
 if (!uri) {
   throw new Error(
     'Please define the MONGODB_URI environment variable inside .env.local'
   );
 }
+
+// Ensure uri is defined for TypeScript
+const MONGODB_URI: string = uri;
 
 interface Cached {
   conn: typeof mongoose | null;
@@ -32,14 +35,19 @@ async function connectDB() {
   }
 
   if (!cached.promise) {
-    const opts = {
+    const opts: mongoose.ConnectOptions = {
       bufferCommands: true,
       maxPoolSize: 10,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 10000,
+      ssl: true,
+      tls: true,
+      tlsInsecure: false,
+      retryWrites: true,
+      w: 1
     };
 
-    cached.promise = mongoose.connect(uri, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
       return mongoose;
     });
   }

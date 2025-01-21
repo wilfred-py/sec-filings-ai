@@ -64,6 +64,7 @@ export async function POST(request: Request) {
     // Parse request body first to fail fast if invalid
     let email: string;
     try {
+      console.log(request)
       const body = await request.json();
       email = body.email;
     } catch (error) {
