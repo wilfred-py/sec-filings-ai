@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/your_database';
+const uri = `${process.env.MONGODB_URI}&tls=true&tlsInsecure=false&retryWrites=true&w=majority&ssl=true`;
 
-if (!MONGODB_URI) {
+if (!uri) {
   throw new Error(
     'Please define the MONGODB_URI environment variable inside .env.local'
   );
@@ -39,7 +39,7 @@ async function connectDB() {
       socketTimeoutMS: 10000,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(uri, opts).then((mongoose) => {
       return mongoose;
     });
   }
