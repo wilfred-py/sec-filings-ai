@@ -115,7 +115,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // DB Operations timing
+    // DB Operations (these are fast, keep them synchronous)
     const dbOpStartTime = Date.now();
     const existing = await Subscription.findOne({ email });
     logTiming('DB Find Operation', dbOpStartTime);
@@ -134,28 +134,22 @@ export async function POST(request: Request) {
     });
     logTiming('DB Create Operation', createStartTime);
 
-    // Email timing
+    // Start email send asynchronously without awaiting
     const emailStartTime = Date.now();
-    try {
-      await sendEmailWithRetry(email);
-      logTiming('Email Send', emailStartTime);
-    } catch (error) {
-      console.error('Welcome email error after retries:', error);
-      
-      return NextResponse.json(
-        { 
-          message: 'You are now on the waitlist! Please check your email for a confirmation.',
-          emailStatus: 'delayed'
-        },
-        { status: 201, headers }
-      );
-    }
+    sendEmailWithRetry(email)
+      .then(() => {
+        logTiming('Async Email Send', emailStartTime);
+      })
+      .catch((error) => {
+        console.error('Async email sending error:', error);
+      });
 
+    // Return response immediately without waiting for email
     logTiming('Total Request Duration', startTime);
     return NextResponse.json(
       { 
-        message: 'You are now on the waitlist!',
-        emailStatus: 'sent'
+        message: 'You are now on the waitlist! Please check your email shortly.',
+        emailStatus: 'queued'
       },
       { status: 201, headers }
     );
