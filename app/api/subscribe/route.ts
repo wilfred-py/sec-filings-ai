@@ -48,25 +48,23 @@ const headers = {
   'Cache-Control': 'no-store'
 };
 
-export async function POST(request: Request) {
-  try {
-    // Add timeout to DB connection using dynamic timeout
-    const dbPromise = Promise.race([
-      connectDB(),
-      new Promise((_, reject) => 
-        setTimeout(
-          () => reject(new Error(`Database connection timeout after ${DB_TIMEOUT_MS}ms`)), 
-          DB_TIMEOUT_MS
-        )
-      )
-    ]);
+// Add performance monitoring
+const logTiming = (label: string, startTime: number) => {
+  const duration = Date.now() - startTime;
+  console.log(`[Timing] ${label}: ${duration}ms`);
+  return Date.now(); // Return current time for next measurement
+};
 
+export async function POST(request: Request) {
+  const startTime = Date.now();
+  
+  try {
     // Parse request body first to fail fast if invalid
     let email: string;
     try {
-      console.log(request)
       const body = await request.json();
       email = body.email;
+      logTiming('Request parsing', startTime);
     } catch (error) {
       console.error('Invalid request format', error);
       return NextResponse.json(
@@ -82,9 +80,21 @@ export async function POST(request: Request) {
       );
     }
 
-    // Wait for DB connection with improved error handling
+    // DB Connection timing
+    const dbStartTime = Date.now();
+    const dbPromise = Promise.race([
+      connectDB(),
+      new Promise((_, reject) => 
+        setTimeout(
+          () => reject(new Error(`Database connection timeout after ${DB_TIMEOUT_MS}ms`)), 
+          DB_TIMEOUT_MS
+        )
+      )
+    ]);
+
     try {
       await dbPromise;
+      logTiming('DB Connection', dbStartTime);
     } catch (error) {
       console.error('Database connection error details:', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -105,8 +115,10 @@ export async function POST(request: Request) {
       );
     }
 
-    // Find existing subscription first
+    // DB Operations timing
+    const dbOpStartTime = Date.now();
     const existing = await Subscription.findOne({ email });
+    logTiming('DB Find Operation', dbOpStartTime);
     
     if (existing) {
       return NextResponse.json(
@@ -115,15 +127,18 @@ export async function POST(request: Request) {
       );
     }
 
-    // Create new subscription
+    const createStartTime = Date.now();
     await Subscription.create({
       email,
       createdAt: new Date()
     });
+    logTiming('DB Create Operation', createStartTime);
 
-    // Send welcome email and wait for it to complete
+    // Email timing
+    const emailStartTime = Date.now();
     try {
       await sendEmailWithRetry(email);
+      logTiming('Email Send', emailStartTime);
     } catch (error) {
       console.error('Welcome email error after retries:', error);
       
@@ -136,6 +151,7 @@ export async function POST(request: Request) {
       );
     }
 
+    logTiming('Total Request Duration', startTime);
     return NextResponse.json(
       { 
         message: 'You are now on the waitlist!',
