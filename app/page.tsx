@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Bell, Sun, Moon, Mail } from 'lucide-react'
-
+import { LoadingButton } from '@/components/ui/loadingButton'
 
 import { notifications, transactionRelatedFilings, ownershipChanges } from '@/components/exampleSummaries'
 import GrowthIndicator from '@/components/GrowthIndicator'
@@ -16,6 +16,7 @@ const [progress, setProgress] = useState(0)
 const [darkMode, setDarkMode] = useState(false)
 const [submitStatus, setSubmitStatus] = useState('')
 const [hoveredSection, setHoveredSection] = useState<'reports' | 'events' | 'insider' | null>('reports')
+const [isJoiningWaitlist, setIsJoiningWaitlist] = useState(false)
 
 useEffect(() => {
   let animationFrame: number;
@@ -56,6 +57,7 @@ useEffect(() => {
 const handleSubmit = async (e: React.FormEvent) => {
   e.preventDefault();
   setSubmitStatus(''); // Clear any previous status
+  setIsJoiningWaitlist(true); // Start loading
   
   try {
     const response = await fetch('/api/subscribe', {
@@ -80,6 +82,8 @@ const handleSubmit = async (e: React.FormEvent) => {
     } else {
       setSubmitStatus('An error occurred. Please try again.')
     }
+  } finally {
+    setIsJoiningWaitlist(false); // Stop loading regardless of success/failure
   }
 }
 
@@ -195,10 +199,14 @@ return (
                 required
                 className="w-full bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600 focus:border-blue-500"
                 />
-                <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">
-                <Bell className="mr-2 h-4 w-4" />
-                Join the Waitlist
-                </Button>
+                <LoadingButton 
+                  loading={isJoiningWaitlist} 
+                  type="submit" 
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                >
+                  <Bell className="mr-2 h-4 w-4" />
+                  Join the Waitlist
+                </LoadingButton>
             </form>
             {submitStatus && (
                 <p className={`mt-4 text-sm ${submitStatus.includes('successful') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
