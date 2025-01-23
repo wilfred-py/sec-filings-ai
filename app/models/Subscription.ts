@@ -3,8 +3,16 @@ import isEmail from 'validator/lib/isEmail';
 
 export interface ISubscription extends mongoose.Document {
   email: string;
-  status: 'pending' | 'confirmed';
+  status: 'active' | 'cancelled' | 'past_due';
+  plan: 'free' | 'premium';
   createdAt: Date;
+  startDate: Date;
+  endDate: Date;
+  paymentMethod: {
+    type: string;
+    last4: string;
+    expiryDate: string;
+  };
   confirmationToken?: string;
   confirmationExpires?: Date;
 }
@@ -24,15 +32,23 @@ const SubscriptionSchema = new mongoose.Schema<ISubscription>({
     },
     index: true
   },
-  status: {
+  status: { type: String, enum: ['active', 'cancelled', 'past_due'], default: 'active' },
+  plan: {
     type: String,
-    enum: ['pending', 'confirmed'],
-    default: 'pending'
+    enum: ['free', 'premium'],
+    default: 'free'
   },
   createdAt: { 
     type: Date, 
     default: Date.now,
     index: true
+  },
+  startDate: Date,
+  endDate: Date,
+  paymentMethod: {
+    type: String,
+    last4: String,
+    expiryDate: String
   },
   confirmationToken: String,
   confirmationExpires: Date
