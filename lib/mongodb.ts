@@ -39,7 +39,6 @@ async function connectDB() {
       bufferCommands: true,
       minPoolSize: 10,
       maxPoolSize: 100,
-      serverSelectionTimeoutMS: 5000,
       ssl: true,
       tls: true,
       tlsInsecure: false,
