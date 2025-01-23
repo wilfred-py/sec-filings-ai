@@ -1,48 +1,84 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import isEmail from 'validator/lib/isEmail';
 
-const PreferencesSchema = new mongoose.Schema({
-  emailFrequency: { type: String, enum: ['daily', 'weekly', 'realtime'], default: 'daily' },
-  timezone: String,
-  summaryFormat: { type: String, enum: ['detailed', 'concise'], default: 'detailed' },
-  notificationPreferences: {
-    newFilings: { type: Boolean, default: true },
-    subscriptionAlerts: { type: Boolean, default: true },
-    priceAlerts: { type: Boolean, default: true }
-  }
-});
+export interface IUser extends mongoose.Document {
+  email: string;
+  password: string;
+  roles: string[];
+  subscribedTickers: string[];
+  createdAt: Date;
+  resetPasswordToken?: string;
+  resetPasswordExpires?: Date;
+  lastLogin?: Date;
+  isActive: boolean;
+  comparePassword(candidatePassword: string): Promise<boolean>;
+}
 
-const SubscriptionSchema = new mongoose.Schema({
-  status: { type: String, enum: ['active', 'cancelled', 'past_due'], default: 'active' },
-  plan: { type: String, enum: ['free', 'basic', 'premium'], default: 'free' },
-  startDate: Date,
-  endDate: Date,
-  paymentMethod: {
-    type: String,
-    last4: String,
-    expiryDate: String
-  }
-});
-
-const UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema<IUser>({
   email: {
     type: String,
-    required: true,
+    required: [true, 'Email is required'],
     unique: true,
     trim: true,
-    lowercase: true
+    lowercase: true,
+    validate: {
+      validator: (email: string) => isEmail(email),
+      message: 'Please enter a valid email'
+    }
   },
-  name: String,
-  password: String,
-  isActive: { type: Boolean, default: true },
-  emailVerified: { type: Boolean, default: false },
-  preferences: PreferencesSchema,
-  subscription: SubscriptionSchema,
-  createdAt: { 
-    type: Date, 
-    default: Date.now 
+  password: {
+    type: String,
+    required: [true, 'Password is required'],
+    minlength: [8, 'Password must be at least 8 characters long']
+  },
+  roles: {
+    type: [String],
+    enum: ['user', 'admin'],
+    default: ['user']
+  },
+  subscribedTickers: [{
+    type: String,
+    trim: true,
+    uppercase: true
+  }],
+  createdAt: {
+    type: Date,
+    default: Date.now,
+    immutable: true
+  },
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
+  lastLogin: Date,
+  isActive: {
+    type: Boolean,
+    default: true
   }
-}, { 
-  collection: 'users' // explicitly specify collection name
+}, {
+  timestamps: true,
+  collection: 'users'
 });
 
-export default mongoose.models.User || mongoose.model('User', UserSchema); 
+// Index for performance
+UserSchema.index({ email: 1 }, { unique: true });
+UserSchema.index({ resetPasswordToken: 1 }, { sparse: true });
+
+// Hash password before saving
+UserSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) return next();
+  
+  try {
+    const salt = await bcrypt.genSalt(12);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error as Error);
+  }
+});
+
+// Compare password method
+UserSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, this.password);
+};
+
+export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);
