@@ -7,12 +7,14 @@ const JWT_EXPIRES_IN = '24h';
 export interface JWTPayload {
   email: string;
   roles: string[];
+  emailVerified: boolean;
 }
 
 export function generateToken(user: IUser): string {
   const payload: JWTPayload = {
     email: user.email,
-    roles: user.roles
+    roles: user.roles,
+    emailVerified: user.emailVerified
   };
 
   return jwt.sign(payload, JWT_SECRET, {
