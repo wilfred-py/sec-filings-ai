@@ -39,6 +39,16 @@ export async function middleware(request: NextRequest) {
       });
     }
 
+    // Check email verification status for protected routes
+    if (!decoded.emailVerified && !request.nextUrl.pathname.startsWith('/api/auth/')) {
+      return new NextResponse(JSON.stringify({ 
+        error: 'Email not verified',
+        code: 'EMAIL_NOT_VERIFIED'
+      }), { 
+        status: 403 
+      });
+    }
+
     // Add user info to request
     request.headers.set('user', JSON.stringify(decoded));
     
