@@ -12,6 +12,8 @@ export interface IUser extends mongoose.Document {
   resetPasswordExpires?: Date;
   lastLogin?: Date;
   isActive: boolean;
+  emailVerified: boolean;
+  verificationToken: string;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -53,6 +55,14 @@ const UserSchema = new mongoose.Schema<IUser>({
   isActive: {
     type: Boolean,
     default: true
+  },
+  emailVerified: {
+    type: Boolean,
+    default: false
+  },
+  verificationToken: {
+    type: String,
+    required: true
   }
 }, {
   timestamps: true,
