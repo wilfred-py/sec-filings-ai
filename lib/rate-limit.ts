@@ -10,7 +10,7 @@ const WINDOW_SIZE = 60; // 1 minute
 const MAX_REQUESTS = 100;
 
 export async function rateLimit(request: NextRequest) {
-  const ip = request.ip || 'anonymous';
+  const ip = request.headers.get('x-forwarded-for') || 'anonymous';
   const key = `rate-limit:${ip}`;
 
   const current = await redis.incr(key);
