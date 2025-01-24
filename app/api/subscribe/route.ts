@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import { Subscription } from '@/app/models/index';  
 import { Resend } from 'resend';
-import WelcomeEmail from '@/app/emails/WelcomeEmail';
+import WaitlistEmail from '@/app/emails/WaitlistEmail';
 
 // Add error handling and timeout
 export const maxDuration = 10; // Set max duration to 3 seconds
@@ -29,7 +29,7 @@ async function sendEmailWithRetry(email: string, maxRetries = 3) {
         from: 'tldrSEC <noreply@waitlist.tldrsec.app>',
         to: email,
         subject: 'Welcome to tldrSEC Waitlist!',
-        react: WelcomeEmail({ email })
+        react: WaitlistEmail({ email })
       });
       return;
     } catch (error) {
