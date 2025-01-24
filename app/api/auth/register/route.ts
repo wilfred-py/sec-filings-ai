@@ -4,6 +4,7 @@ import { generateToken } from '@/lib/jwt';
 import WelcomeEmail from '@/app/emails/WelcomeEmail';
 import connectDB from '@/lib/mongodb';
 import { Resend } from 'resend';
+import crypto from 'crypto';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -16,14 +17,14 @@ function calculateBackoff(attempt: number, baseDelay = 1000, maxDelay = 10000) {
     return exponentialDelay + jitter;
   }
 
-  async function sendEmailWithRetry(email: string, maxRetries = 3) {
+  async function sendEmailWithRetry(email: string, verificationToken: string, maxRetries = 3) {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         await resend.emails.send({
           from: 'tldrSEC <noreply@waitlist.tldrsec.app>',
           to: email,
           subject: 'Welcome to tldrSEC Waitlist!',
-          react: WelcomeEmail({ })
+          react: WelcomeEmail({ token: verificationToken })
         });
         return;
       } catch (error) {
@@ -53,24 +54,30 @@ export async function POST(request: Request) {
       });
     }
 
+    // Generate verification token
+    const verificationToken = crypto.randomBytes(32).toString('hex');
+
     // Create user
     const user = await User.create({
       email,
       password,
-      roles: ['user']
+      roles: ['user'],
+      emailVerified: false,
+      verificationToken
     });
 
-    // Generate token
+    // Generate JWT token
     const token = generateToken(user);
 
-    // Send welcome email
-    await sendEmailWithRetry(email);
+    // Send welcome email with verification token
+    await sendEmailWithRetry(email, verificationToken);
 
     return NextResponse.json({
       token,
       user: {
         email: user.email,
-        roles: user.roles
+        roles: user.roles,
+        emailVerified: user.emailVerified
       }
     }, { 
       status: 201 
