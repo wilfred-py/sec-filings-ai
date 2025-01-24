@@ -24,6 +24,7 @@ export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
     return jwt.verify(token, JWT_SECRET) as JWTPayload;
   } catch (error) {
+    console.error('Error verifying token:', error);
     return null;
   }
 } 
