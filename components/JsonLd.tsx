@@ -1,5 +1,9 @@
 type JsonLdProps = {
-  data: Record<string, any>;
+  data: {
+    '@context': string;
+    '@type': string;
+    [key: string]: unknown;
+  };
 };
 
 export default function JsonLd({ data }: JsonLdProps) {
