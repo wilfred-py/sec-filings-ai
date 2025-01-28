@@ -16,8 +16,41 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "tldrsec",
-  description: "AI-powered SEC Filings Email Summary Service",
+  title: "tldrSEC - AI-Powered SEC Filings Summary Service",
+  description: "Get instant, AI-powered summaries of SEC filings delivered to your inbox. Track 10-K, 10-Q, 8-K reports and insider trading movements.",
+  keywords: "SEC filings, AI summary, financial reports, stock market, insider trading, investment research",
+  openGraph: {
+    title: "tldrSEC - AI-Powered SEC Filings Summary Service",
+    description: "Get instant, AI-powered summaries of SEC filings delivered to your inbox",
+    type: "website",
+    url: process.env.NEXT_PUBLIC_APP_URL,
+    images: [{
+      url: "/og-image.jpg",
+      width: 1200,
+      height: 630,
+      alt: "tldrSEC Preview"
+    }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "tldrSEC - AI-Powered SEC Filings Summary Service",
+    description: "Get instant, AI-powered summaries of SEC filings delivered to your inbox",
+    images: ["/og-image.jpg"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  verification: {
+    google: "your-google-verification-code",
+  }
 };
 
 export default function RootLayout({
