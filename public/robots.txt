@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /    
+Sitemap: https://tldrsec.app/sitemap.xml 
