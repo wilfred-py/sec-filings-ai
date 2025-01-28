@@ -117,6 +117,28 @@ useEffect(() => {
   setProgress(0);
 }, [hoveredSection]);
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "tldrSEC",
+  "applicationCategory": "FinanceApplication",
+  "description": "AI-powered SEC filings summary service",
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "",
+    "ratingCount": "",
+    "bestRating": "5",
+    "worstRating": "1"
+  },
+  // Requirements
+  "requirements": "Modern web browser with JavaScript enabled",
+  "softwareRequirements": "Chrome 80+, Firefox 75+, Safari 13+",
+  
+  // Additional Properties
+  "softwareVersion": "1.0.0",
+  "keywords": "SEC filings, AI summary, financial analysis"
+};
+
 return (
 <div className="min-h-screen">
     <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 relative">
