@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import { Input } from "@/components/ui/input"
 import { Bell, Sun, Moon, Mail } from 'lucide-react'
 import { LoadingButton } from '@/components/ui/loadingButton'
-import JsonLd from '@/components/JsonLd'
 
 import { notifications, transactionRelatedFilings, ownershipChanges } from '@/components/exampleSummaries'
 import GrowthIndicator from '@/components/GrowthIndicator'
+import { schemas } from '@/lib/json-ld-schemas'
 
 export default function LandingPage() {
 const [email, setEmail] = useState('')
@@ -117,26 +117,6 @@ useEffect(() => {
   setCurrentNotification(0);
   setProgress(0);
 }, [hoveredSection]);
-
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "tldrSEC",
-  "applicationCategory": "FinanceApplication",
-  "description": "AI-powered SEC filings summary service that delivers insights straight to your inbox",
-  "offers": {
-    "@type": "Offer",
-    "price": "159",
-    "priceCurrency": "USD"
-  },
-  // Requirements
-  "requirements": "Modern web browser with JavaScript enabled",
-  "softwareRequirements": "Chrome 80+, Firefox 75+, Safari 13+",
-  
-  // Additional Properties
-  "softwareVersion": "1.0.0",
-  "keywords": "SEC filings, AI summary, financial analysis"
-};
 
 return (
 <div className="min-h-screen">
@@ -454,7 +434,7 @@ return (
     </div>
 </div>
 
-<JsonLd data={jsonLd} />
+<JsonLd data={schemas.landingPage} />
 
 {/* 
 <a 

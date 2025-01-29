@@ -9,7 +9,9 @@ export const schemas = {
       "price": "159",
       "priceCurrency": "USD"
     },
-    "operatingSystem": "Web"
+    "operatingSystem": "Web",
+    "softwareVersion": "1.0.0",
+    "keywords": "SEC filings, AI summary, financial analysis, email alerts"
   },
   
  
@@ -23,6 +25,8 @@ export const schemas = {
       "price": "159",
       "priceCurrency": "USD"
     },
-    "operatingSystem": "Web"
+    "operatingSystem": "Web",
+    "softwareVersion": "1.0.0",
+    "keywords": "SEC filings, AI summary, financial analysis, email alerts"
   }
 }; 
