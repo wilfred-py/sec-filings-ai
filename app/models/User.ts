@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import isEmail from 'validator/lib/isEmail';
+import { randomBytes } from 'crypto';
 
 export interface IUser extends mongoose.Document {
   email: string;
@@ -13,8 +14,18 @@ export interface IUser extends mongoose.Document {
   lastLogin?: Date;
   isActive: boolean;
   emailVerified: boolean;
-  verificationToken: string;
+  verificationToken?: string;
+  lastPasswordChange?: Date;
+  failedLoginAttempts: number;
+  lockUntil?: Date;
+  gdprConsent: {
+    accepted: boolean;
+    date: Date;
+  };
+  dataRetentionApproved: boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
+  generatePasswordReset(): Promise<void>;
+  generateEmailVerification(): Promise<string>;
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
@@ -63,7 +74,15 @@ const UserSchema = new mongoose.Schema<IUser>({
   verificationToken: {
     type: String,
     required: true
-  }
+  },
+  lastPasswordChange: Date,
+  failedLoginAttempts: { type: Number, default: 0 },
+  lockUntil: Date,
+  gdprConsent: {
+    accepted: { type: Boolean, default: false },
+    date: Date
+  },
+  dataRetentionApproved: { type: Boolean, default: false }
 }, {
   timestamps: true,
   collection: 'users'
@@ -89,6 +108,20 @@ UserSchema.pre('save', async function(next) {
 // Compare password method
 UserSchema.methods.comparePassword = async function(candidatePassword: string): Promise<boolean> {
   return bcrypt.compare(candidatePassword, this.password);
+};
+
+// Add methods for password reset and email verification
+UserSchema.methods.generatePasswordReset = async function() {
+  this.resetPasswordToken = randomBytes(32).toString('hex');
+  this.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
+  await this.save();
+};
+
+UserSchema.methods.generateEmailVerification = async function() {
+  const token = randomBytes(32).toString('hex');
+  this.verificationToken = token;
+  await this.save();
+  return token;
 };
 
 export default mongoose.models.User || mongoose.model<IUser>('User', UserSchema);

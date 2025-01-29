@@ -10,7 +10,7 @@ export const schemas = {
       "priceCurrency": "USD"
     },
     "operatingSystem": "Web",
-    "softwareVersion": "1.0.0",
+    "softwareVersion": "1.0.0", 
     "keywords": "SEC filings, AI summary, financial analysis, email alerts"
   },
   
