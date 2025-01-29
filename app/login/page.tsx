@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import Link from "next/link";
+import { LuLock, LuSun, LuMoon } from "react-icons/lu";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -75,9 +76,9 @@ export default function LoginPage() {
                 aria-label="Toggle dark mode"
               >
                 {darkMode ? (
-                  <Sun className="h-5 w-5" />
+                  <LuSun className="h-5 w-5" />
                 ) : (
-                  <Moon className="h-5 w-5" />
+                  <LuMoon className="h-5 w-5" />
                 )}
               </button>
             </header>
@@ -126,7 +127,7 @@ export default function LoginPage() {
                     type="submit"
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                   >
-                    <Lock className="mr-2 h-4 w-4" />
+                    <LuLock className="mr-2 h-4 w-4" />
                     Login
                   </LoadingButton>
                 </form>
