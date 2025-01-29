@@ -2,13 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Metadata } from "next";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-  title: "Email Verified - tldrSEC",
-  description: "Your email has been verified",
-};
 
 export default function EmailVerifiedPage() {
   const router = useRouter();
