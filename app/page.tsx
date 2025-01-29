@@ -8,6 +8,7 @@ import { LoadingButton } from '@/components/ui/loadingButton'
 import { notifications, transactionRelatedFilings, ownershipChanges } from '@/components/exampleSummaries'
 import GrowthIndicator from '@/components/GrowthIndicator'
 import { schemas } from '@/lib/json-ld-schemas'
+import JsonLd from '@/components/JsonLd'
 
 export default function LandingPage() {
 const [email, setEmail] = useState('')
