@@ -21,7 +21,6 @@
     "clsx": "^2.1.1",
     "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",
-    "lucide-react": "^0.468.0",
     "mongoose": "^8.8.4",
     "next": "15.0.4",
     "react": "^19.0.0",

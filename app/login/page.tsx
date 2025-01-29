@@ -1,9 +1,7 @@
 "use client";
 
-import { Metadata } from "next";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
-import { Sun, Moon, Lock } from "lucide-react";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import Link from "next/link";
 
