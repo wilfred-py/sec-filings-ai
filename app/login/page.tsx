@@ -5,6 +5,9 @@ import { Input } from "@/components/ui/input";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import Link from "next/link";
 import { LuLock, LuSun, LuMoon } from "react-icons/lu";
+import { FiGithub } from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc";
+import { FaXTwitter } from "react-icons/fa6";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -138,6 +141,39 @@ export default function LoginPage() {
                     {submitStatus}
                   </p>
                 )}
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300 dark:border-gray-600"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm mt-6">
+                    <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+                      Or continue with
+                    </span>
+                  </div>
+                </div>
+                <div className="mt-6 grid grid-cols-3 gap-3">
+                  <button
+                    onClick={() => handleOAuthSignIn("github")}
+                    className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
+                  >
+                    <FiGithub className="h-5 w-5" />
+                    <span className="sr-only">Sign up with GitHub</span>
+                  </button>
+                  <button
+                    onClick={() => handleOAuthSignIn("google")}
+                    className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
+                  >
+                    <FcGoogle className="h-5 w-5" />
+                    <span className="sr-only">Sign up with Gmail</span>
+                  </button>
+                  <button
+                    onClick={() => handleOAuthSignIn("twitter")}
+                    className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
+                  >
+                    <FaXTwitter className="h-5 w-5" />
+                    <span className="sr-only">Sign up with X</span>
+                  </button>
+                </div>
                 <div className="mt-6 text-center">
                   <Link
                     href="/forgot-password"
@@ -150,7 +186,7 @@ export default function LoginPage() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Don't have an account?{" "}
                     <Link
-                      href="/signup"
+                      href="/sign-up"
                       className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                     >
                       Sign up
