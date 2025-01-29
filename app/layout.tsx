@@ -60,6 +60,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta property="og:title" content="tldrSEC" />
+        <meta property="og:description" content="AI-powered SEC filings summary sent straight to your email" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
