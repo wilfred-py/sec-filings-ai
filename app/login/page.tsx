@@ -52,11 +52,16 @@ export default function LoginPage() {
     document.documentElement.classList.toggle("dark");
   };
 
-  const handleOAuthSignIn = (provider: string) => {
-    signIn(provider, {
-      callbackUrl: "/dashboard",
-      redirect: true,
-    });
+  const handleOAuthSignIn = async (provider: string) => {
+    try {
+      await signIn(provider, {
+        callbackUrl: "/dashboard",
+        redirect: true,
+      });
+    } catch (error) {
+      console.error("OAuth sign in error:", error);
+      setSubmitStatus("Authentication failed");
+    }
   };
 
   useEffect(() => {
