@@ -8,6 +8,8 @@ import { LuLock, LuSun, LuMoon } from "react-icons/lu";
 import { FiGithub } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { FaXTwitter } from "react-icons/fa6";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -15,6 +17,7 @@ export default function LoginPage() {
   const [darkMode, setDarkMode] = useState(false);
   const [submitStatus, setSubmitStatus] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,12 +25,18 @@ export default function LoginPage() {
     setIsLoggingIn(true); // Start loading
 
     try {
-      // Simulating an API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      });
 
-      // For demonstration purposes, always "succeed"
-      setSubmitStatus("Login successful!");
-      // In a real app, you would handle the login response here
+      if (result?.error) {
+        setSubmitStatus("Invalid credentials");
+      } else {
+        setSubmitStatus("Login successful!");
+        router.push("/dashboard");
+      }
     } catch (error) {
       console.error("Login error:", error);
       setSubmitStatus("An error occurred. Please try again.");
@@ -41,6 +50,10 @@ export default function LoginPage() {
     setDarkMode(newDarkMode);
     localStorage.setItem("darkMode", String(newDarkMode));
     document.documentElement.classList.toggle("dark");
+  };
+
+  const handleOAuthSignIn = (provider: string) => {
+    signIn(provider, { callbackUrl: "/dashboard" });
   };
 
   useEffect(() => {

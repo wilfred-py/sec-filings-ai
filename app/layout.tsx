@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { SessionProvider } from "next-auth/react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -17,24 +18,30 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "tldrSEC - AI-Powered SEC Filings Summary Service",
-  description: "Get instant, AI-powered summaries of SEC filings delivered to your inbox. Track 10-K, 10-Q, 8-K reports and insider trading movements.",
-  keywords: "SEC filings, AI summary, financial reports, stock market, insider trading, investment research",
+  description:
+    "Get instant, AI-powered summaries of SEC filings delivered to your inbox. Track 10-K, 10-Q, 8-K reports and insider trading movements.",
+  keywords:
+    "SEC filings, AI summary, financial reports, stock market, insider trading, investment research",
   openGraph: {
     title: "tldrSEC - AI-Powered SEC Filings Summary Service",
-    description: "Get instant, AI-powered summaries of SEC filings delivered to your inbox",
+    description:
+      "Get instant, AI-powered summaries of SEC filings delivered to your inbox",
     type: "website",
     url: process.env.NEXT_PUBLIC_APP_URL,
-    images: [{
-      url: "/og-image.jpg",
-      width: 1200,
-      height: 630,
-      alt: "tldrSEC Preview"
-    }],
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "tldrSEC Preview",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "tldrSEC - AI-Powered SEC Filings Summary Service",
-    description: "Get instant, AI-powered summaries of SEC filings delivered to your inbox",
+    description:
+      "Get instant, AI-powered summaries of SEC filings delivered to your inbox",
     images: ["/og-image.jpg"],
   },
   robots: {
@@ -43,14 +50,14 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
   verification: {
     google: "your-google-verification-code",
-  }
+  },
 };
 
 export default function RootLayout({
@@ -62,14 +69,19 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <meta property="og:title" content="tldrSEC" />
-        <meta property="og:description" content="AI-powered SEC filings summary sent straight to your email" />
+        <meta
+          property="og:description"
+          content="AI-powered SEC filings summary sent straight to your email"
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
-        <Analytics />
-        <SpeedInsights />
+        <SessionProvider>
+          {children}
+          <Analytics />
+          <SpeedInsights />
+        </SessionProvider>
       </body>
     </html>
   );
