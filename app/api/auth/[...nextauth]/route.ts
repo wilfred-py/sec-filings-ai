@@ -72,7 +72,27 @@ export const authOptions = {
     signIn: "/login",
     error: "/login",
   },
-};
+  secret: process.env.NEXTAUTH_SECRET,
+  events: {
+    async signIn({ user }) {
+      // Log successful sign-ins if needed
+    },
+    async signOut() {
+      // Clean up on sign out if needed
+    },
+  },
+  logger: {
+    error: (code, ...message) => {
+      console.error(code, message);
+    },
+    warn: (code, ...message) => {
+      console.warn(code, message);
+    },
+    debug: (code, ...message) => {
+      console.debug(code, message);
+    },
+  },
+} as AuthOptions;
 
 const handler = NextAuth(authOptions as AuthOptions);
 export { handler as GET, handler as POST };
