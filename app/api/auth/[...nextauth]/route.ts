@@ -49,6 +49,8 @@ const handler = NextAuth({
       clientSecret: process.env.TWITTER_SECRET!,
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
   callbacks: {
     async jwt({ token, user }) {
       if (user) {

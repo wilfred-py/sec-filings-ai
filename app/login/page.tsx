@@ -53,7 +53,10 @@ export default function LoginPage() {
   };
 
   const handleOAuthSignIn = (provider: string) => {
-    signIn(provider, { callbackUrl: "/dashboard" });
+    signIn(provider, {
+      callbackUrl: "/dashboard",
+      redirect: true,
+    });
   };
 
   useEffect(() => {
