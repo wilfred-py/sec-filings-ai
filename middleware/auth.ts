@@ -10,11 +10,19 @@ const publicPaths = [
   "/api/auth/signin",
   "/api/auth/signout",
   "/api/auth/_log",
+  "/api/auth/providers",
+  "/api/auth/error",
+  "/login",
+  "/auth",
 ];
 
 export async function middleware(request: NextRequest) {
-  // Skip middleware for NextAuth.js paths
-  if (publicPaths.some((path) => request.nextUrl.pathname.startsWith(path))) {
+  // Check if the current path is public
+  const isPublicPath = publicPaths.some((path) =>
+    request.nextUrl.pathname.startsWith(path),
+  );
+
+  if (isPublicPath) {
     return NextResponse.next();
   }
 
@@ -95,5 +103,9 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/user/:path*", "/api/admin/:path*", "/((?!api/auth/).*)"],
+  matcher: [
+    "/api/user/:path*",
+    "/api/admin/:path*",
+    "/((?!api/auth/|login|auth/).*)", // Exclude all auth-related paths
+  ],
 };
