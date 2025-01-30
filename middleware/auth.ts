@@ -3,7 +3,21 @@ import { NextRequest } from "next/server";
 import { verifyToken } from "@/lib/jwt";
 import { rateLimit } from "@/lib/rate-limit";
 
+// Add paths that should bypass auth
+const publicPaths = [
+  "/api/auth/callback",
+  "/api/auth/session",
+  "/api/auth/signin",
+  "/api/auth/signout",
+  "/api/auth/_log",
+];
+
 export async function middleware(request: NextRequest) {
+  // Skip middleware for NextAuth.js paths
+  if (publicPaths.some((path) => request.nextUrl.pathname.startsWith(path))) {
+    return NextResponse.next();
+  }
+
   try {
     // Apply rate limiting
     const limiter = await rateLimit(request);

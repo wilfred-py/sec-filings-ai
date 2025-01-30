@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { SessionProvider } from "next-auth/react";
+import { Providers } from "./Session-Providers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -62,9 +62,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <head>
@@ -74,14 +74,12 @@ export default function RootLayout({
           content="AI-powered SEC filings summary sent straight to your email"
         />
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <SessionProvider>
+      <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
+        <Providers>
           {children}
           <Analytics />
           <SpeedInsights />
-        </SessionProvider>
+        </Providers>
       </body>
     </html>
   );
