@@ -7,6 +7,7 @@ import { FcGoogle } from "react-icons/fc";
 import { FaXTwitter } from "react-icons/fa6";
 import { LoadingButton } from "@/components/ui/loadingButton";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -71,8 +72,16 @@ export default function SignupPage() {
     }
   };
 
-  const handleOAuthSignIn = (provider: string) => {
-    signIn(provider, { callbackUrl: "/dashboard" });
+  const handleOAuthSignIn = async (provider: string) => {
+    try {
+      await signIn(provider, {
+        callbackUrl: "/dashboard",
+        redirect: true,
+      });
+    } catch (error) {
+      console.error("OAuth sign in error:", error);
+      setSubmitStatus("Authentication failed");
+    }
   };
 
   const toggleDarkMode = () => {
