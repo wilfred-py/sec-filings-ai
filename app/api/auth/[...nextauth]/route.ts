@@ -1,98 +1,52 @@
-import NextAuth, { AuthOptions } from "next-auth";
-import GithubProvider from "next-auth/providers/github";
-import TwitterProvider from "next-auth/providers/twitter";
-import GoogleProvider from "next-auth/providers/google";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { AuthService } from "@/lib/auth-service";
+import NextAuth from "next-auth";
+import credentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import connectDB from "@/lib/mongodb";
+import { User } from "@/app/models";
 
 export const authOptions = {
-  // Configure one or more authentication providers
   providers: [
-    CredentialsProvider({
+    credentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        username: {
+          label: "Username",
+          type: "text",
+          placeholder: "First Name",
+        },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
-
         try {
-          const token = await AuthService.authenticateUser(
-            credentials.email,
-            credentials.password,
+          await connectDB();
+
+          // Find user in database
+          const user = await User.findOne({ username: credentials?.username });
+
+          if (!user) {
+            return null;
+          }
+
+          // Compare passwords
+          const passwordMatch = await bcrypt.compare(
+            credentials?.password || "",
+            user.password,
           );
 
-          return {
-            id: credentials.email,
-            email: credentials.email,
-            token,
-          };
+          if (!passwordMatch) {
+            return null;
+          }
+
+          return user;
         } catch (error) {
+          console.log("Error: ", error);
           return null;
         }
       },
     }),
-    GithubProvider({
-      clientId: process.env.GITHUB_ID as string,
-      clientSecret: process.env.GITHUB_SECRET as string,
-    }),
-    TwitterProvider({
-      clientId: process.env.TWITTER_ID as string,
-      clientSecret: process.env.TWITTER_SECRET as string,
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID as string,
-      clientSecret: process.env.GOOGLE_SECRET as string,
-    }),
   ],
-  session: {
-    strategy: "jwt",
-    maxAge: 24 * 60 * 60, // 24 hours
-  },
-  callbacks: {
-    async jwt({ token, user }: { token: any; user: any }) {
-      if (user) {
-        token.email = user.email;
-        token.token = user.token;
-      }
-      return token;
-    },
-    async session({ session, token }: { session: any; token: any }) {
-      if (token) {
-        session.user.email = token.email;
-        session.user.token = token.token;
-      }
-      return session;
-    },
-  },
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
-  secret: process.env.NEXTAUTH_SECRET,
-  events: {
-    async signIn({ user }) {
-      // Log successful sign-ins if needed
-    },
-    async signOut() {
-      // Clean up on sign out if needed
-    },
-  },
-  logger: {
-    error: (code, ...message) => {
-      console.error(code, message);
-    },
-    warn: (code, ...message) => {
-      console.warn(code, message);
-    },
-    debug: (code, ...message) => {
-      console.debug(code, message);
-    },
-  },
-} as AuthOptions;
+};
 
-const handler = NextAuth(authOptions as AuthOptions);
+const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };
