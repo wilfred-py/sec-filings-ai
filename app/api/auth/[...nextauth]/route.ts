@@ -9,11 +9,7 @@ export const authOptions = {
     credentialsProvider({
       name: "Credentials",
       credentials: {
-        username: {
-          label: "Username",
-          type: "text",
-          placeholder: "First Name",
-        },
+        email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
@@ -21,7 +17,7 @@ export const authOptions = {
           await connectDB();
 
           // Find user in database
-          const user = await User.findOne({ username: credentials?.username });
+          const user = await User.findOne({ email: credentials?.email });
 
           if (!user) {
             return null;
