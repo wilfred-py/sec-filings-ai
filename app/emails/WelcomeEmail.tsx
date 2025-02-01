@@ -9,9 +9,10 @@ import {
 
 interface WelcomeEmailProps {
   token: string;
+  baseUrl: string;
 }
 
-export default function WelcomeEmail({ token }: WelcomeEmailProps) {
+export default function WelcomeEmail({ token, baseUrl }: WelcomeEmailProps) {
   return (
     <Html>
       <Preview>Welcome to the tldrSEC</Preview>
@@ -25,9 +26,7 @@ export default function WelcomeEmail({ token }: WelcomeEmailProps) {
             Please click on the below link to confirm your email address.
           </Text>
           <Text>
-            <a
-              href={`${process.env.NEXT_PUBLIC_APP_URL_DEV}/api/auth/verify-email?token=${token}`}
-            >
+            <a href={`${baseUrl}/api/auth/verify-email?token=${token}`}>
               Confirm Email
             </a>
           </Text>
