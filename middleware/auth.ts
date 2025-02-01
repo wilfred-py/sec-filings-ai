@@ -15,13 +15,13 @@ const publicPaths = [
   "/api/auth/error",
   "/login",
   "/auth",
+  "/",
 ];
 
 // Role-protected paths configuration
 const roleProtectedPaths = {
   "/api/admin": ["admin"],
   "/api/user": ["user", "admin"],
-  // Add more role-protected paths as needed
 };
 
 export async function middleware(request: NextRequest) {

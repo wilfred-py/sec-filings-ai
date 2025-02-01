@@ -1,5 +1,8 @@
 import NextAuth, { AuthOptions } from "next-auth";
 import credentialsProvider from "next-auth/providers/credentials";
+import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
+import TwitterProvider from "next-auth/providers/twitter";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/mongodb";
 import { User } from "@/app/models";
@@ -40,6 +43,18 @@ export const authOptions = {
         }
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
+    TwitterProvider({
+      clientId: process.env.TWITTER_CLIENT_ID!,
+      clientSecret: process.env.TWITTER_CLIENT_SECRET!,
+    }),
   ],
 
   session: {
@@ -53,12 +68,16 @@ export const authOptions = {
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.id = user._id;
+        token.roles = user.roles;
+        token.emailVerified = user.emailVerified;
       }
       return token;
     },
     async session({ session, token }: { session: any; token: any }) {
       if (token) {
         session.user.id = token.id;
+        session.user.roles = token.roles;
+        session.user.emailVerified = token.emailVerified;
       }
       return session;
     },
