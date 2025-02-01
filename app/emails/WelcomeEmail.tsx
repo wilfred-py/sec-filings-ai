@@ -1,11 +1,11 @@
-import { 
+import {
   Html,
   Body,
   Container,
   Text,
   Preview,
   Heading,
-} from '@react-email/components';
+} from "@react-email/components";
 
 interface WelcomeEmailProps {
   token: string;
@@ -15,7 +15,7 @@ export default function WelcomeEmail({ token }: WelcomeEmailProps) {
   return (
     <Html>
       <Preview>Welcome to the tldrSEC</Preview>
-      <Body style={{ backgroundColor: '#ffffff', fontFamily: 'sans-serif' }}>
+      <Body style={{ backgroundColor: "#ffffff", fontFamily: "sans-serif" }}>
         <Container>
           <Heading>Welcome to tldrSEC! 🎉</Heading>
           <Text>
@@ -23,16 +23,21 @@ export default function WelcomeEmail({ token }: WelcomeEmailProps) {
           </Text>
           <Text>
             Please click on the below link to confirm your email address.
-            <a href={`${process.env.NEXT_PUBLIC_APP_URL}/api/auth/verify-email?token=${token}`}>
+          </Text>
+          <Text>
+            <a
+              href={`${process.env.NEXT_PUBLIC_APP_URL_DEV}/api/auth/verify-email?token=${token}`}
+            >
               Confirm Email
             </a>
           </Text>
-          <Text style={{ color: '#666666', marginTop: '24px' }}>
-            Best regards,<br />
+          <Text style={{ color: "#666666", marginTop: "24px" }}>
+            Best regards,
+            <br />
             Wilf
           </Text>
         </Container>
       </Body>
     </Html>
   );
-} 
+}
