@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import credentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import connectDB from "@/lib/mongodb";
@@ -41,8 +41,37 @@ export const authOptions = {
       },
     }),
   ],
+
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+    // Add these for more stability
+    updateAge: 24 * 60 * 60, // 24 hours
+  },
+
+  callbacks: {
+    async jwt({ token, user }: { token: any; user: any }) {
+      if (user) {
+        token.id = user._id;
+      }
+      return token;
+    },
+    async session({ session, token }: { session: any; token: any }) {
+      if (token) {
+        session.user.id = token.id;
+      }
+      return session;
+    },
+  },
+
+  pages: {
+    signIn: "/login",
+    error: "/auth/error",
+  },
+
+  debug: process.env.NODE_ENV === "development",
 };
 
-const handler = NextAuth(authOptions);
+const handler = NextAuth(authOptions as AuthOptions);
 
 export { handler as GET, handler as POST };
