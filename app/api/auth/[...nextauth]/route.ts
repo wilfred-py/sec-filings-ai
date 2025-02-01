@@ -14,6 +14,7 @@ export const authOptions = {
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
+        emailVerified: { label: "Email Verified", type: "boolean" },
       },
       async authorize(credentials) {
         try {
