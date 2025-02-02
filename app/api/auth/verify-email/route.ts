@@ -24,6 +24,8 @@ export async function GET(request: Request) {
     // Find user with matching verification token
     const user = await User.findOne({ verificationToken: token });
 
+    console.log("user", user);
+
     if (!user) {
       return NextResponse.json(
         {
@@ -37,7 +39,7 @@ export async function GET(request: Request) {
 
     // Update user's emailVerified status
     user.emailVerified = true;
-    user.verificationToken = undefined;
+    user.verificationToken = null;
     await user.save();
 
     return NextResponse.redirect(new URL("/email-verified", request.url));
