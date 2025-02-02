@@ -14,7 +14,7 @@ export interface IUser extends mongoose.Document {
   lastLogin?: Date;
   isActive: boolean;
   emailVerified: boolean;
-  verificationToken?: string;
+  verificationToken?: string | null;
   lastPasswordChange?: Date;
   failedLoginAttempts: number;
   lockUntil?: Date;
@@ -76,10 +76,6 @@ const UserSchema = new mongoose.Schema<IUser>(
     },
     verificationToken: {
       type: String,
-      required: function () {
-        // Only required if email is not verified
-        return !this.emailVerified;
-      },
     },
     lastPasswordChange: Date,
     failedLoginAttempts: { type: Number, default: 0 },
