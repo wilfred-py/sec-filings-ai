@@ -59,6 +59,10 @@ export class EmailService {
 
   // Public methods for specific email types
   static async sendWelcomeEmail(email: string, token: string): Promise<void> {
+    if (!this.baseUrl) {
+      throw new Error("APP_URL environment variable is not set");
+    }
+
     await this.sendEmail({
       to: email,
       subject: "Welcome to tldrSEC!",

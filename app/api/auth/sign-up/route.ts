@@ -5,6 +5,7 @@ import WelcomeEmail from "@/app/emails/WelcomeEmail";
 import connectDB from "@/lib/mongodb";
 import { Resend } from "resend";
 import crypto from "crypto";
+import { EmailService } from "@/lib/email-service";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -54,12 +55,8 @@ export async function POST(request: Request) {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
-        {
-          error: "Email already registered",
-        },
-        {
-          status: 400,
-        },
+        { error: "Email already registered" },
+        { status: 400 },
       );
     }
 
@@ -75,37 +72,22 @@ export async function POST(request: Request) {
       verificationToken,
     });
 
-    // Generate JWT token with better error handling
-    let token;
+    // Use EmailService instead of direct email sending
     try {
-      token = generateToken(user);
-    } catch (tokenError) {
-      console.error("Token generation error:", tokenError);
-      return NextResponse.json(
-        {
-          error: "Authentication setup failed",
-        },
-        {
-          status: 500,
-        },
-      );
+      await EmailService.sendWelcomeEmail(email, verificationToken);
+    } catch (emailError) {
+      console.error("Failed to send welcome email:", emailError);
+      // Optionally delete the user if email fails
+      await User.findByIdAndDelete(user._id);
+      throw emailError;
     }
-
-    // Send welcome email with verification token
-    await sendEmailWithRetry(email, verificationToken);
 
     return NextResponse.json(
       {
-        token,
-        user: {
-          email: user.email,
-          roles: user.roles,
-          emailVerified: user.emailVerified,
-        },
+        message:
+          "Registration successful. Please check your email to verify your account.",
       },
-      {
-        status: 201,
-      },
+      { status: 201 },
     );
   } catch (error) {
     console.error("Registration error:", error);

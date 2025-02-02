@@ -9,7 +9,7 @@ import {
 
 interface WelcomeEmailProps {
   token: string;
-  baseUrl: string;
+  baseUrl?: string;
 }
 
 export default function WelcomeEmail({ token, baseUrl }: WelcomeEmailProps) {
