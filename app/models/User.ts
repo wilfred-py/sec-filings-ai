@@ -76,10 +76,6 @@ const UserSchema = new mongoose.Schema<IUser>(
     },
     verificationToken: {
       type: String,
-      required: function () {
-        // Only required if email is not verified
-        return !this.emailVerified;
-      },
     },
     lastPasswordChange: Date,
     failedLoginAttempts: { type: Number, default: 0 },
