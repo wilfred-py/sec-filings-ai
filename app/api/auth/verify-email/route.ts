@@ -43,7 +43,7 @@ export async function GET(request: Request) {
 
     // Update user's emailVerified status
     user.emailVerified = true;
-    user.verificationToken = "";
+    user.verificationToken = null;
     await user.save();
 
     return NextResponse.redirect(new URL("/email-verified", request.url));

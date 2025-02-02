@@ -14,7 +14,7 @@ export interface IUser extends mongoose.Document {
   lastLogin?: Date;
   isActive: boolean;
   emailVerified: boolean;
-  verificationToken?: string;
+  verificationToken?: string | null;
   lastPasswordChange?: Date;
   failedLoginAttempts: number;
   lockUntil?: Date;
