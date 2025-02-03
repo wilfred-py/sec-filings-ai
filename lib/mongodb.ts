@@ -1,15 +1,10 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
-const uri = process.env.MONGODB_URI;
-
-if (!uri) {
-  throw new Error(
-    'Please define the MONGODB_URI environment variable inside .env.local'
-  );
+if (!process.env.MONGODB_URI) {
+  throw new Error("Please add your MONGODB_URI to .env.local");
 }
 
-// Ensure uri is defined for TypeScript
-const MONGODB_URI: string = uri;
+const MONGODB_URI: string = process.env.MONGODB_URI;
 
 interface Cached {
   conn: typeof mongoose | null;
@@ -19,10 +14,16 @@ interface Cached {
 // In global namespace
 declare global {
   // eslint-disable-next-line no-var
-  var mongoose: { conn: null | typeof mongoose; promise: null | Promise<typeof mongoose> };
+  var mongoose: {
+    conn: null | typeof mongoose;
+    promise: null | Promise<typeof mongoose>;
+  };
 }
 
-let cached: Cached = (global.mongoose as Cached) || { conn: null, promise: null };
+let cached: Cached = (global.mongoose as Cached) || {
+  conn: null,
+  promise: null,
+};
 
 if (!global.mongoose) {
   global.mongoose = { conn: null, promise: null };
@@ -37,18 +38,31 @@ async function connectDB() {
   if (!cached.promise) {
     const opts: mongoose.ConnectOptions = {
       bufferCommands: true,
-      minPoolSize: 10,
-      maxPoolSize: 100,
+      minPoolSize: 5,
+      maxPoolSize: 10,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 45000,
+      family: 4,
       ssl: true,
       tls: true,
       tlsInsecure: false,
       retryWrites: true,
-      w: 1
+      w: "majority",
+      maxIdleTimeMS: 60000,
+      compressors: "zlib",
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
-      return mongoose;
-    });
+    cached.promise = mongoose
+      .connect(MONGODB_URI, opts)
+      .then((mongoose) => {
+        console.log("MongoDB connected successfully");
+        return mongoose;
+      })
+      .catch((error) => {
+        console.error("MongoDB connection error:", error);
+        cached.promise = null;
+        throw error;
+      });
   }
 
   try {
@@ -58,20 +72,47 @@ async function connectDB() {
     throw e;
   }
 
+  mongoose.connection.on("disconnected", async () => {
+    console.log("MongoDB disconnected, attempting to reconnect...");
+    cached.conn = null;
+    cached.promise = null;
+    await connectDB();
+  });
+
   return cached.conn;
 }
 
-mongoose.connection.on('connected', () => {
-  console.log('[MongoDB] Connected successfully', {
-    timestamp: new Date().toISOString(),
-    environment: process.env.NODE_ENV
-  });
+// Add connection error handlers
+mongoose.connection.on("error", (err) => {
+  console.error("MongoDB connection error:", err);
+  if (err.name === "MongoNetworkError") {
+    console.log("Network error detected, attempting to reconnect...");
+    cached.conn = null;
+    cached.promise = null;
+  }
 });
 
-mongoose.connection.on('error', (err) => {
-  console.error('MongoDB connection error:', err);
+mongoose.connection.on("connecting", () => {
+  console.log("Connecting to MongoDB...");
 });
 
-console.log('Current environment:', process.env.NODE_ENV);
+mongoose.connection.on("connected", () => {
+  console.log("MongoDB connected successfully");
+});
 
-export default connectDB; 
+mongoose.connection.on("reconnected", () => {
+  console.log("MongoDB reconnected successfully");
+});
+
+process.on("SIGINT", async () => {
+  try {
+    await mongoose.connection.close();
+    console.log("MongoDB connection closed through app termination");
+    process.exit(0);
+  } catch (err) {
+    console.error("Error closing MongoDB connection:", err);
+    process.exit(1);
+  }
+});
+
+export default connectDB;
