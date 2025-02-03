@@ -38,8 +38,8 @@ async function connectDB() {
   if (!cached.promise) {
     const opts: mongoose.ConnectOptions = {
       bufferCommands: true,
-      minPoolSize: 10,
-      maxPoolSize: 100,
+      minPoolSize: 5,
+      maxPoolSize: 10,
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
       family: 4,
@@ -47,7 +47,9 @@ async function connectDB() {
       tls: true,
       tlsInsecure: false,
       retryWrites: true,
-      w: 1,
+      w: "majority",
+      maxIdleTimeMS: 60000,
+      compressors: "zlib",
     };
 
     cached.promise = mongoose
@@ -58,6 +60,7 @@ async function connectDB() {
       })
       .catch((error) => {
         console.error("MongoDB connection error:", error);
+        cached.promise = null;
         throw error;
       });
   }
@@ -69,20 +72,47 @@ async function connectDB() {
     throw e;
   }
 
+  mongoose.connection.on("disconnected", async () => {
+    console.log("MongoDB disconnected, attempting to reconnect...");
+    cached.conn = null;
+    cached.promise = null;
+    await connectDB();
+  });
+
   return cached.conn;
 }
 
 // Add connection error handlers
 mongoose.connection.on("error", (err) => {
   console.error("MongoDB connection error:", err);
+  if (err.name === "MongoNetworkError") {
+    console.log("Network error detected, attempting to reconnect...");
+    cached.conn = null;
+    cached.promise = null;
+  }
 });
 
-mongoose.connection.on("disconnected", () => {
-  console.log("MongoDB disconnected. Attempting to reconnect...");
+mongoose.connection.on("connecting", () => {
+  console.log("Connecting to MongoDB...");
 });
 
 mongoose.connection.on("connected", () => {
-  console.log("MongoDB connected");
+  console.log("MongoDB connected successfully");
+});
+
+mongoose.connection.on("reconnected", () => {
+  console.log("MongoDB reconnected successfully");
+});
+
+process.on("SIGINT", async () => {
+  try {
+    await mongoose.connection.close();
+    console.log("MongoDB connection closed through app termination");
+    process.exit(0);
+  } catch (err) {
+    console.error("Error closing MongoDB connection:", err);
+    process.exit(1);
+  }
 });
 
 export default connectDB;
