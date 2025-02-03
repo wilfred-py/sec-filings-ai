@@ -1,4 +1,5 @@
-import NextAuth, { AuthOptions } from "next-auth";
+import NextAuth, { AuthOptions, DefaultSession, DefaultUser } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import credentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
@@ -7,7 +8,30 @@ import bcrypt from "bcryptjs";
 import connectDB from "@/lib/mongodb";
 import { User } from "@/app/models";
 
-export const authOptions = {
+// Extend the built-in session types
+interface ExtendedSession extends DefaultSession {
+  user: {
+    id: string;
+    roles: string[];
+    emailVerified: boolean;
+  } & DefaultSession["user"];
+}
+
+// Extend the built-in user types
+interface ExtendedUser extends DefaultUser {
+  _id: string;
+  roles: string[];
+  emailVerified: boolean;
+}
+
+// Extend the built-in JWT types
+interface ExtendedJWT extends JWT {
+  id: string;
+  roles: string[];
+  emailVerified: boolean;
+}
+
+export const authOptions: AuthOptions = {
   providers: [
     credentialsProvider({
       name: "Credentials",
@@ -82,21 +106,25 @@ export const authOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user }: { token: any; user: any }) {
+    async jwt({ token, user }) {
       if (user) {
-        token.id = user._id;
-        token.roles = user.roles;
-        token.emailVerified = user.emailVerified;
+        const extendedUser = user as ExtendedUser;
+        token.id = extendedUser._id;
+        token.roles = extendedUser.roles;
+        token.emailVerified = extendedUser.emailVerified;
       }
-      return token;
+      return token as ExtendedJWT;
     },
-    async session({ session, token }: { session: any; token: any }) {
+    async session({ session, token }) {
+      const extendedToken = token as ExtendedJWT;
+      const extendedSession = session as ExtendedSession;
+
       if (token) {
-        session.user.id = token.id;
-        session.user.roles = token.roles;
-        session.user.emailVerified = token.emailVerified;
+        extendedSession.user.id = extendedToken.id;
+        extendedSession.user.roles = extendedToken.roles;
+        extendedSession.user.emailVerified = extendedToken.emailVerified;
       }
-      return session;
+      return extendedSession;
     },
   },
 
@@ -108,6 +136,6 @@ export const authOptions = {
   debug: process.env.NODE_ENV === "development",
 };
 
-const handler = NextAuth(authOptions as AuthOptions);
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

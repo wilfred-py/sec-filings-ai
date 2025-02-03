@@ -9,7 +9,6 @@ interface ProvidersProps {
 }
 
 export function Providers({ children, session }: ProvidersProps) {
-  console.log(`Session: ${session}`);
   return (
     <SessionProvider session={session} refetchOnWindowFocus={false}>
       {children}
