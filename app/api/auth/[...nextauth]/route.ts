@@ -14,32 +14,48 @@ export const authOptions = {
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
-        emailVerified: { label: "Email Verified", type: "boolean" },
       },
       async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Please provide both email and password");
+        }
+
         try {
-          await connectDB();
-
-          // Find user in database
-          const user = await User.findOne({ email: credentials?.email });
-
-          if (!user) {
-            return null;
+          // Establish DB connection with retry logic
+          let retries = 3;
+          while (retries > 0) {
+            try {
+              await connectDB();
+              break;
+            } catch (error) {
+              retries--;
+              if (retries === 0) throw error;
+              await new Promise((resolve) => setTimeout(resolve, 1000)); // Wait 1 second before retry
+            }
           }
 
-          // Compare passwords
+          const user = await User.findOne({ email: credentials.email }).select(
+            "+password",
+          );
+
+          if (!user) {
+            throw new Error("No user found with this email");
+          }
+
           const passwordMatch = await bcrypt.compare(
-            credentials?.password || "",
+            credentials.password,
             user.password,
           );
 
           if (!passwordMatch) {
-            return null;
+            throw new Error("Invalid password");
           }
 
-          return user;
+          // Return user without password
+          const { password, ...userWithoutPassword } = user.toObject();
+          return userWithoutPassword;
         } catch (error) {
-          console.log("Error: ", error);
+          console.error("Authorization error:", error);
           return null;
         }
       },
