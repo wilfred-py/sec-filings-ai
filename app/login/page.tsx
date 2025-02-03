@@ -31,8 +31,16 @@ export default function LoginPage() {
         redirect: false,
       });
 
-      if (result?.error) {
-        setSubmitStatus("Invalid credentials");
+      if (!result) {
+        throw new Error("Sign in failed. Please try again.");
+      }
+
+      if (result.error) {
+        setSubmitStatus(
+          result.error === "CredentialsSignin"
+            ? "Invalid email or password"
+            : "An error occurred during sign in",
+        );
       } else {
         setSubmitStatus("Login successful!");
         router.push("/dashboard");
@@ -59,7 +67,7 @@ export default function LoginPage() {
         redirect: true,
       });
     } catch (error) {
-      console.error("OAuth sign in error:", error);
+      console.error(`${provider} sign in error:`, error);
       setSubmitStatus("Authentication failed");
     }
   };
