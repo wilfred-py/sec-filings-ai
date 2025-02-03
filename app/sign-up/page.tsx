@@ -49,6 +49,8 @@ export default function SignupPage() {
         body: JSON.stringify({ email, password }),
       });
 
+      const data = await response.json();
+
       if (response.ok) {
         setSubmitStatus(
           "Sign up successful! Please check your email to verify your account.",
@@ -57,15 +59,22 @@ export default function SignupPage() {
         setPassword("");
         setConfirmPassword("");
       } else {
-        const data = await response.json();
-        throw new Error(data.message || "Something went wrong");
+        // Handle different error cases based on status code
+        switch (response.status) {
+          case 409: // Conflict - User exists
+          case 400: // Bad request - Validation errors
+            setSubmitStatus(data.message);
+            break;
+          default:
+            setSubmitStatus(
+              data.message || "An unexpected error occurred. Please try again.",
+            );
+        }
       }
     } catch (error) {
       console.error("Sign up error:", error);
       setSubmitStatus(
-        error instanceof Error
-          ? error.message
-          : "An error occurred. Please try again.",
+        "Network error. Please check your connection and try again.",
       );
     } finally {
       setIsSigningUp(false);
