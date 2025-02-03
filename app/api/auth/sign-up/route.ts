@@ -14,8 +14,11 @@ export async function POST(request: Request) {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return NextResponse.json(
-        { error: "Email already registered" },
-        { status: 400 },
+        {
+          message:
+            "This email is already registered. Please try logging in instead.",
+        },
+        { status: 409 }, // Using 409 Conflict for existing resource
       );
     }
 
@@ -50,16 +53,26 @@ export async function POST(request: Request) {
     );
   } catch (error) {
     console.error("Registration error:", error);
-    // Add more specific error messages based on error type
-    const errorMessage =
-      error instanceof Error ? error.message : "Registration failed";
+
+    // More specific error handling
+    if (error instanceof Error) {
+      if (error.message.includes("email")) {
+        return NextResponse.json(
+          { message: "Please provide a valid email address." },
+          { status: 400 },
+        );
+      }
+      if (error.message.includes("password")) {
+        return NextResponse.json(
+          { message: "Password must be at least 8 characters long." },
+          { status: 400 },
+        );
+      }
+    }
+
     return NextResponse.json(
-      {
-        error: errorMessage,
-      },
-      {
-        status: 500,
-      },
+      { message: "An unexpected error occurred. Please try again later." },
+      { status: 500 },
     );
   }
 }
