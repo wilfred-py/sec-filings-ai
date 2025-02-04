@@ -17,6 +17,9 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL_PROD || "https://tldrsec.app",
+  ),
   title: "tldrSEC - AI-Powered SEC Filings Summary Service",
   description:
     "Get instant, AI-powered summaries of SEC filings delivered to your inbox. Track 10-K, 10-Q, 8-K reports and insider trading movements.",
