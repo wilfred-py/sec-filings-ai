@@ -1,30 +1,33 @@
-import { Redis } from '@upstash/redis';
-import { NextRequest } from 'next/server';
-
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_URL!,
-  token: process.env.UPSTASH_REDIS_TOKEN!
-});
-
-const WINDOW_SIZE = 60; // 1 minute
-const MAX_REQUESTS = 100;
+import { redis } from "./redis";
+import { NextRequest } from "next/server";
 
 export async function rateLimit(request: NextRequest) {
-  const ip = request.headers.get('x-forwarded-for') || 'anonymous';
-  const key = `rate-limit:${ip}`;
+  const ip = request.headers.get("x-forwarded-for") || "anonymous";
+  const key = `ratelimit:${ip}`;
 
-  const current = await redis.incr(key);
-  
-  if (current === 1) {
-    await redis.expire(key, WINDOW_SIZE);
-  }
+  const now = Date.now();
+  const windowSize = 60 * 1000; // 1 minute
+  const limit = 100; // requests per window
 
-  if (current > MAX_REQUESTS) {
+  try {
+    const result = await redis
+      .pipeline()
+      .zremrangebyscore(key, 0, now - windowSize) // Remove old entries
+      .zadd(key, { score: now, member: now.toString() }) // Fixed type here
+      .zcard(key) // Get number of requests in window
+      .expire(key, 60) // Set expiry
+      .exec();
+
+    const count = result?.[2] as number;
+
     return {
-      success: false,
-      retryAfter: WINDOW_SIZE
+      success: count <= limit,
+      retryAfter:
+        count > limit ? Math.ceil((windowSize - (now % windowSize)) / 1000) : 0,
     };
+  } catch (error) {
+    console.error("Rate limiting error:", error);
+    // Fail open - allow request if Redis is down
+    return { success: true };
   }
-
-  return { success: true };
-} 
+}
