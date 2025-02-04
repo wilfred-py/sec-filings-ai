@@ -1,7 +1,8 @@
-import { redis } from "./redis";
+import { getRedisClient } from "./redis";
 import { NextRequest } from "next/server";
 
 export async function rateLimit(request: NextRequest) {
+  const client = await getRedisClient();
   const ip = request.headers.get("x-forwarded-for") || "anonymous";
   const key = `ratelimit:${ip}`;
 
@@ -10,15 +11,17 @@ export async function rateLimit(request: NextRequest) {
   const limit = 100; // requests per window
 
   try {
-    const result = await redis
-      .pipeline()
-      .zremrangebyscore(key, 0, now - windowSize) // Remove old entries
-      .zadd(key, { score: now, member: now.toString() }) // Fixed type here
-      .zcard(key) // Get number of requests in window
-      .expire(key, 60) // Set expiry
-      .exec();
+    // Using Redis Multi for atomic operations
+    const multi = client.multi();
 
-    const count = result?.[2] as number;
+    multi
+      .zRemRangeByScore(key, 0, now - windowSize)
+      .zAdd(key, { score: now, value: now.toString() })
+      .zCard(key)
+      .expire(key, 60);
+
+    const results = await multi.exec();
+    const count = results?.[2] as number;
 
     return {
       success: count <= limit,
