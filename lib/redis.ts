@@ -24,20 +24,34 @@ const redisConfig: RedisConfig = {
 class RedisService {
   private static instance: RedisService;
   private client: ReturnType<typeof createClient>;
+  private connectionAttempts = 0;
+  private readonly maxRetries = 3;
 
   private constructor() {
     this.client = createClient(redisConfig);
+    this.setupErrorHandling();
+  }
 
-    this.client.on("error", (err) => {
-      console.error("Redis Client Error:", err);
-    });
-
-    this.client.on("connect", () => {
-      console.log("Redis Client Connected");
+  private setupErrorHandling() {
+    this.client.on("error", async (err) => {
+      console.error("Redis error:", err);
+      if (this.connectionAttempts < this.maxRetries) {
+        this.connectionAttempts++;
+        await this.reconnect();
+      }
     });
   }
 
-  public static getInstance(): RedisService {
+  private async reconnect() {
+    try {
+      await this.client.connect();
+      this.connectionAttempts = 0;
+    } catch (error) {
+      console.error("Reconnection failed:", error);
+    }
+  }
+
+  public static getInstance() {
     if (!RedisService.instance) {
       RedisService.instance = new RedisService();
     }
