@@ -116,28 +116,38 @@ export const authOptions: AuthOptions = {
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
-    updateAge: 24 * 60 * 60,
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        const extendedUser = user as ExtendedUser;
-        token.id = extendedUser._id;
-        token.roles = extendedUser.roles;
-        token.emailVerified = extendedUser.emailVerified;
+      try {
+        if (user) {
+          const extendedUser = user as ExtendedUser;
+          token.id = extendedUser._id;
+          token.roles = extendedUser.roles;
+          token.emailVerified = extendedUser.emailVerified;
+        }
+        return token as ExtendedJWT;
+      } catch (error) {
+        console.error("JWT Callback Error:", error);
+        return token;
       }
-      return token as ExtendedJWT;
     },
     async session({ session, token }) {
-      const extendedToken = token as ExtendedJWT;
-      const extendedSession = session as ExtendedSession;
+      try {
+        const extendedToken = token as ExtendedJWT;
+        const extendedSession = session as ExtendedSession;
+        console.log("extendedSession", extendedSession);
 
-      if (token) {
-        extendedSession.user.id = extendedToken.id;
-        extendedSession.user.roles = extendedToken.roles;
-        extendedSession.user.emailVerified = extendedToken.emailVerified;
+        if (token) {
+          extendedSession.user.id = extendedToken.id;
+          extendedSession.user.roles = extendedToken.roles;
+          extendedSession.user.emailVerified = extendedToken.emailVerified;
+        }
+        return extendedSession;
+      } catch (error) {
+        console.error("Session Callback Error:", error);
+        return session;
       }
-      return extendedSession;
     },
   },
   pages: {
@@ -145,4 +155,15 @@ export const authOptions: AuthOptions = {
     error: "/auth/error",
   },
   debug: process.env.NODE_ENV === "development",
+  logger: {
+    error: (code, metadata) => {
+      console.error("Auth Error:", { code, metadata });
+    },
+    warn: (code) => {
+      console.warn("Auth Warning:", code);
+    },
+    debug: (code, metadata) => {
+      console.debug("Auth Debug:", { code, metadata });
+    },
+  },
 };
