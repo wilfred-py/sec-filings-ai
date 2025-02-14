@@ -32,16 +32,16 @@ if (!global.mongoose) {
 
 async function connectDB() {
   if (cached.conn) {
+    console.log("Using cached connection");
     return cached.conn;
   }
 
   if (!cached.promise) {
-    const opts: mongoose.ConnectOptions = {
-      bufferCommands: true,
-      minPoolSize: 5,
-      maxPoolSize: 10,
+    const opts = {
+      bufferCommands: false, // Disable buffering
+      maxPoolSize: 1, // Reduce pool size
       serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
+      socketTimeoutMS: 30000,
       family: 4,
       ssl: true,
       tls: true,
@@ -50,7 +50,7 @@ async function connectDB() {
       w: "majority",
       maxIdleTimeMS: 60000,
       compressors: "zlib",
-    };
+    } as const;
 
     cached.promise = mongoose
       .connect(MONGODB_URI, opts)
