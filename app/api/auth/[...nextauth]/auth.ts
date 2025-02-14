@@ -58,11 +58,13 @@ export const authOptions: AuthOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        console.log("Authorize function called"); // Debug log
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Please provide both email and password");
         }
 
         try {
+          console.log("Attempting DB connection in authorize"); // Debug log
           const connected = await connectWithRetry();
           if (!connected) {
             console.error(
