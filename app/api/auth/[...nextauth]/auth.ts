@@ -36,6 +36,7 @@ async function connectWithRetry() {
   for (let i = 0; i < MAX_RETRIES; i++) {
     try {
       await connectDB();
+      console.log("Database connected successfully");
       return true;
     } catch (error) {
       console.error(`Connection attempt ${i + 1} failed:`, error);
@@ -46,6 +47,7 @@ async function connectWithRetry() {
       }
     }
   }
+  console.error("All database connection attempts failed");
   return false;
 }
 
@@ -121,13 +123,18 @@ export const authOptions: AuthOptions = {
   },
   callbacks: {
     async jwt({ token, user }) {
+      console.log("JWT Callback - Input:", {
+        tokenId: token?.id,
+        userId: user?.id,
+      });
       try {
         if (user) {
           const extendedUser = user as ExtendedUser;
           token.id = extendedUser._id;
-          token.roles = extendedUser.roles;
-          token.emailVerified = extendedUser.emailVerified;
+          token.roles = extendedUser.roles || [];
+          token.emailVerified = extendedUser.emailVerified || false;
         }
+        console.log("JWT Callback - Output:", token);
         return token as ExtendedJWT;
       } catch (error) {
         console.error("JWT Callback Error:", error);
@@ -135,17 +142,17 @@ export const authOptions: AuthOptions = {
       }
     },
     async session({ session, token }) {
+      console.log("Session Callback - Input:", { session, token });
       try {
         const extendedToken = token as ExtendedJWT;
-        const extendedSession = session as ExtendedSession;
-        console.log("extendedSession", extendedSession);
-
-        if (token) {
-          extendedSession.user.id = extendedToken.id;
-          extendedSession.user.roles = extendedToken.roles;
-          extendedSession.user.emailVerified = extendedToken.emailVerified;
-        }
-        return extendedSession;
+        (session as ExtendedSession).user = {
+          ...session.user,
+          id: extendedToken.id,
+          roles: extendedToken.roles || [],
+          emailVerified: extendedToken.emailVerified || false,
+        };
+        console.log("Session Callback - Output:", session);
+        return session as ExtendedSession;
       } catch (error) {
         console.error("Session Callback Error:", error);
         return session;
