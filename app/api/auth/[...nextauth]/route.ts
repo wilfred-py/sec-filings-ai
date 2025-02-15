@@ -10,9 +10,15 @@ const handler = NextAuth({
     error: (code, metadata) => {
       console.error("NextAuth Error:", { code, metadata });
     },
-    warn: (code) => console.warn("NextAuth Warning:", code),
+    warn: (code) => {
+      console.warn("NextAuth Warning:", code);
+    },
     debug: (code, metadata) => {
       console.log("NextAuth Debug:", { code, metadata });
+      // Log session-specific issues
+      if (code === "session") {
+        console.log("Session details:", metadata);
+      }
     },
   },
 });

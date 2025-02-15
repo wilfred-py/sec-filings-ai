@@ -10,7 +10,11 @@ interface ProvidersProps {
 
 export function Providers({ children, session }: ProvidersProps) {
   return (
-    <SessionProvider session={session} refetchOnWindowFocus={false}>
+    <SessionProvider
+      session={session}
+      refetchInterval={5 * 60} // Refetch session every 5 minutes
+      refetchOnWindowFocus={false}
+    >
       {children}
     </SessionProvider>
   );
