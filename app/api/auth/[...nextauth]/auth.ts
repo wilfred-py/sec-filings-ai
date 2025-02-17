@@ -1,12 +1,11 @@
 import { AuthOptions, DefaultSession, DefaultUser } from "next-auth";
-import { JWT } from "next-auth/jwt";
 import credentialsProvider from "next-auth/providers/credentials";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import TwitterProvider from "next-auth/providers/twitter";
 import connectDB from "@/lib/mongodb";
 import { User } from "@/app/models";
-import bcrypt from "bcryptjs";
+import type { User as AuthUser } from "next-auth";
 
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
@@ -38,48 +37,67 @@ export const authOptions: AuthOptions = {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) {
-        console.log("Authorize function called"); // Debug log
+      async authorize(credentials): Promise<AuthUser | null> {
+        const authStart = Date.now();
+        console.log(
+          `[${new Date().toISOString()}] Auth Start: Attempting login for ${credentials?.email}`,
+        );
+
         if (!credentials?.email || !credentials?.password) {
+          console.log("Missing credentials");
           throw new Error("Please provide both email and password");
         }
 
         try {
-          console.log("Attempting DB connection in authorize"); // Debug log
-          const connected = await connectWithRetry();
+          console.log(`[${new Date().toISOString()}] Connecting to DB...`);
+          const connected = await Promise.race([
+            connectWithRetry(),
+            new Promise((_, reject) =>
+              setTimeout(
+                () => reject(new Error("DB Connection timeout")),
+                5000,
+              ),
+            ),
+          ]);
+
           if (!connected) {
-            console.error(
-              "Failed to connect to database after multiple retries",
-            );
+            console.error("DB Connection failed");
             throw new Error("Database connection failed");
           }
+          console.log("DB Connected successfully");
 
+          console.log("Finding user...");
           const user = await User.findOne({ email: credentials.email })
             .select("+password")
-            .maxTimeMS(5000);
+            .maxTimeMS(5000)
+            .exec();
 
           if (!user) {
             throw new Error("No user found with this email");
           }
+          console.log("User found, comparing password...");
 
-          const passwordMatch = await bcrypt.compare(
+          const passwordMatch = await user.comparePassword(
             credentials.password,
-            user.password,
           );
+          console.log("Password comparison complete:", passwordMatch);
 
           if (!passwordMatch) {
             throw new Error("Invalid password");
           }
 
-          // Return user without password
-          const { ...userWithoutPassword } = user.toObject();
-          return userWithoutPassword;
+          const duration = Date.now() - authStart;
+          console.log(`Auth completed in ${duration}ms`);
+
+          return {
+            id: user._id.toString(),
+            email: user.email,
+            name: user.name || user.email,
+          };
         } catch (error) {
-          console.error("Authorization error:", error);
-          if (error instanceof Error) {
-            throw new Error(error.message);
-          }
-          throw new Error("An unexpected error occurred");
+          const duration = Date.now() - authStart;
+          console.error(`Auth failed after ${duration}ms:`, error);
+          return null;
         }
       },
     }),
