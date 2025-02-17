@@ -8,27 +8,6 @@ import connectDB from "@/lib/mongodb";
 import { User } from "@/app/models";
 import bcrypt from "bcryptjs";
 
-// Your type definitions
-interface ExtendedSession extends DefaultSession {
-  user: {
-    id: string;
-    roles: string[];
-    emailVerified: boolean;
-  } & DefaultSession["user"];
-}
-
-interface ExtendedUser extends DefaultUser {
-  _id: string;
-  roles: string[];
-  emailVerified: boolean;
-}
-
-interface ExtendedJWT extends JWT {
-  id: string;
-  roles: string[];
-  emailVerified: boolean;
-}
-
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
 
@@ -107,10 +86,16 @@ export const authOptions: AuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      httpOptions: {
+        timeout: 10000,
+      },
     }),
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
       clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      httpOptions: {
+        timeout: 10000,
+      },
     }),
     TwitterProvider({
       clientId: process.env.TWITTER_CLIENT_ID!,
@@ -121,46 +106,53 @@ export const authOptions: AuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
   },
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60,
+  },
   callbacks: {
-    async jwt({ token, user }) {
-      console.log("JWT Callback - Input:", {
-        tokenId: token?.id,
-        userId: user?.id,
-      });
+    async jwt({ token, user, account }) {
       try {
-        if (user) {
-          const extendedUser = user as ExtendedUser;
-          token.id = extendedUser._id;
-          token.roles = extendedUser.roles || [];
-          token.emailVerified = extendedUser.emailVerified || false;
+        if (account && user) {
+          return {
+            ...token,
+            accessToken: account.access_token,
+            userId: user.id,
+          };
         }
-        console.log("JWT Callback - Output:", token);
-        return token as ExtendedJWT;
+        return token;
       } catch (error) {
         console.error("JWT Callback Error:", error);
         return token;
       }
     },
     async session({ session, token }) {
-      console.log("Session Callback - Input:", { session, token });
       try {
-        const extendedToken = token as ExtendedJWT;
-        (session as ExtendedSession).user = {
-          ...session.user,
-          id: extendedToken.id,
-          roles: extendedToken.roles || [],
-          emailVerified: extendedToken.emailVerified || false,
+        if (!token) {
+          throw new Error("No token available");
+        }
+        return {
+          ...session,
+          user: {
+            ...session.user,
+            id: token.userId,
+          },
         };
-        console.log("Session Callback - Output:", session);
-        return session as ExtendedSession;
       } catch (error) {
         console.error("Session Callback Error:", error);
-        return session;
+        throw error; // Let NextAuth handle the error
+      }
+    },
+    async signIn({ user, account, profile }) {
+      try {
+        return true;
+      } catch (error) {
+        console.error("SignIn Error:", error);
+        return false;
       }
     },
   },
   pages: {
-    signIn: "/login",
+    signIn: "/auth/signin",
     error: "/auth/error",
   },
   debug: process.env.NODE_ENV === "development",
