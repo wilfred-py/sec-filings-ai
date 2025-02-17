@@ -148,6 +148,7 @@ export const config = {
   matcher: [
     "/api/user/:path*",
     "/api/admin/:path*",
-    "/((?!api/auth/|_next/|login|register|auth/|favicon.ico).*)",
+    // Exclude landing page and other public routes
+    "/((?!api/auth/|_next/|login|register|auth/|favicon.ico|$).*)",
   ],
 };

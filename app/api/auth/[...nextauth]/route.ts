@@ -8,7 +8,10 @@ const handler = NextAuth({
   debug: true, // Enable debug logs
   logger: {
     error: (code, metadata) => {
-      console.error("NextAuth Error:", { code, metadata });
+      console.error(`[${new Date().toISOString()}] Session Error:`, {
+        code,
+        metadata,
+      });
     },
     warn: (code) => {
       console.warn("NextAuth Warning:", code);
