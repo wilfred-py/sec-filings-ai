@@ -203,7 +203,5 @@ UserSchema.methods.removeOAuthProfile = async function (
   }
 };
 
-export default mongoose.models.User ||
-  mongoose.model<IUser>("User", UserSchema);
-
-mongoose.model<IUser>("User", UserSchema);
+export const User =
+  mongoose.models.User || mongoose.model<IUser>("User", UserSchema);
