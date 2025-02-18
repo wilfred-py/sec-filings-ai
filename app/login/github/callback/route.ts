@@ -5,9 +5,9 @@ import {
 } from "@/lib/session";
 import { github } from "@/lib/oauth";
 import { cookies } from "next/headers";
-
 import type { OAuth2Tokens } from "arctic";
 import { User } from "@/app/models";
+import connectDB from "@/lib/mongodb";
 
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -15,6 +15,8 @@ export async function GET(request: Request): Promise<Response> {
   const state = url.searchParams.get("state");
   const cookieStore = await cookies();
   const storedState = cookieStore.get("github_oauth_state")?.value ?? null;
+
+  //  Validate OAuth parameters before attempting DB operations
   if (code === null || state === null || storedState === null) {
     return new Response(null, {
       status: 400,
@@ -24,6 +26,14 @@ export async function GET(request: Request): Promise<Response> {
     return new Response(null, {
       status: 400,
     });
+  }
+
+  //   Connect to DB
+  try {
+    await connectDB();
+  } catch (error) {
+    console.error("Database connection error:", error);
+    return new Response(null, { status: 500 });
   }
 
   let tokens: OAuth2Tokens;
