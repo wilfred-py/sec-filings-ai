@@ -1,3 +1,4 @@
+import { globalGETRateLimit } from "@/lib/request";
 import {
   generateSessionToken,
   createSession,
@@ -12,6 +13,12 @@ import connectDB from "@/lib/mongodb";
 import mongoose from "mongoose";
 
 export async function GET(request: Request): Promise<Response> {
+  if (!(await globalGETRateLimit())) {
+    return new Response("Too many requests", {
+      status: 429,
+    });
+  }
+
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
