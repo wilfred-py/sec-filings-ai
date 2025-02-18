@@ -11,6 +11,7 @@ import { IUser } from "@/app/models/User";
 import connectDB from "@/lib/mongodb";
 import { redirect } from "next/navigation";
 import mongoose from "mongoose";
+import { LinkingToken } from "@/app/models/LinkingToken";
 
 // Custom error for account linking scenarios
 class AccountLinkingError extends Error {
@@ -159,8 +160,10 @@ async function handleSuccessfulLogin(user: IUser): Promise<Response> {
 }
 
 async function storeLinkingData(token: string, data: OAuthLinkingData) {
-  // Store in Redis or similar with short expiry
-  await redis.setex(`linking:${token}`, 600, JSON.stringify(data));
+  await LinkingToken.create({
+    token,
+    data
+  });
 }
 
 interface OAuthLinkingData {
