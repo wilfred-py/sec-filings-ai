@@ -7,12 +7,14 @@ import { github } from "@/lib/oauth";
 import { cookies } from "next/headers";
 
 import type { OAuth2Tokens } from "arctic";
+import { User } from "@/app/models";
 
 export async function GET(request: Request): Promise<Response> {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const state = url.searchParams.get("state");
-  const storedState = cookies().get("github_oauth_state")?.value ?? null;
+  const cookieStore = await cookies();
+  const storedState = cookieStore.get("github_oauth_state")?.value ?? null;
   if (code === null || state === null || storedState === null) {
     return new Response(null, {
       status: 400,
@@ -42,8 +44,14 @@ export async function GET(request: Request): Promise<Response> {
   const githubUserId = githubUser.id;
   const githubUsername = githubUser.login;
 
-  // TODO: Replace this with your own DB query.
-  const existingUser = await getUserFromGitHubId(githubUserId);
+  const existingUser = await User.findOne({
+    oauthprofiles: {
+      $elemMatch: {
+        provider: "github",
+        providerId: githubUserId.toString(),
+      },
+    },
+  });
 
   if (existingUser !== null) {
     const sessionToken = generateSessionToken();
@@ -57,8 +65,18 @@ export async function GET(request: Request): Promise<Response> {
     });
   }
 
-  // TODO: Replace this with your own DB query.
-  const user = await createUser(githubUserId, githubUsername);
+  const user = await User.create({
+    email: githubUser.email,
+    oauthProfiles: [
+      {
+        provider: "github",
+        providerId: githubUserId.toString(),
+        email: githubUser.email,
+        displayName: githubUsername,
+        photoURL: githubUser.avatar_url,
+      },
+    ],
+  });
 
   const sessionToken = generateSessionToken();
   const session = await createSession(sessionToken, user.id);
@@ -70,4 +88,3 @@ export async function GET(request: Request): Promise<Response> {
     },
   });
 }
-V;
