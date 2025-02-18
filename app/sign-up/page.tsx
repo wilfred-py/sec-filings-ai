@@ -6,10 +6,11 @@ import { FiSun, FiMoon, FiUserPlus, FiGithub } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { FaXTwitter } from "react-icons/fa6";
 import { LoadingButton } from "@/components/ui/loadingButton";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -82,15 +83,7 @@ export default function SignupPage() {
   };
 
   const handleOAuthSignIn = async (provider: string) => {
-    try {
-      await signIn(provider, {
-        callbackUrl: "/dashboard",
-        redirect: true,
-      });
-    } catch (error) {
-      console.error("OAuth sign in error:", error);
-      setSubmitStatus("Authentication failed");
-    }
+    router.push(`/login/${provider}`);
   };
 
   const toggleDarkMode = () => {

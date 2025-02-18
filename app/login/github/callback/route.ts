@@ -56,7 +56,7 @@ export async function GET(request: Request): Promise<Response> {
     }
 
     const githubUser = await githubUserResponse.json();
-    console.log("GitHub user data:", githubUser); // Debug user data
+    // console.log("GitHub user data:", githubUser); // Debug user data
     const githubUserId = githubUser.id;
 
     try {
@@ -110,6 +110,6 @@ async function handleSuccessfulLogin(user: IUser): Promise<Response> {
 
   return new Response(null, {
     status: 302,
-    headers: { Location: "/" },
+    headers: { Location: "/dashboard" },
   });
 }
