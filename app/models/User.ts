@@ -3,9 +3,23 @@ import bcrypt from "bcryptjs";
 import isEmail from "validator/lib/isEmail";
 import { randomBytes } from "crypto";
 
+// Add these new types before IUser interface
+type OAuthProvider = "google" | "twitter" | "github";
+
+interface IOAuthProfile {
+  provider: OAuthProvider;
+  providerId: string;
+  email: string;
+  displayName?: string;
+  photoURL?: string;
+  accessToken?: string;
+  refreshToken?: string;
+}
+
 export interface IUser extends mongoose.Document {
   email: string;
-  password: string;
+  password?: string; // Make password optional since OAuth users won't have one
+  oauthProfiles?: IOAuthProfile[];
   roles: string[];
   subscribedTickers: string[];
   createdAt: Date;
@@ -43,9 +57,33 @@ const UserSchema = new mongoose.Schema<IUser>(
     },
     password: {
       type: String,
-      required: [true, "Password is required"],
+      required: function (this: IUser) {
+        // Password is required only if no OAuth profiles exist
+        return !this.oauthProfiles || this.oauthProfiles.length === 0;
+      },
       minlength: [8, "Password must be at least 8 characters long"],
     },
+    oauthProfiles: [
+      {
+        provider: {
+          type: String,
+          enum: ["google", "twitter", "github"],
+          required: true,
+        },
+        providerId: {
+          type: String,
+          required: true,
+        },
+        email: {
+          type: String,
+          required: true,
+        },
+        displayName: String,
+        photoURL: String,
+        accessToken: String,
+        refreshToken: String,
+      },
+    ],
     roles: {
       type: [String],
       enum: ["user", "admin"],
@@ -96,13 +134,19 @@ const UserSchema = new mongoose.Schema<IUser>(
 UserSchema.index({ email: 1 }, { unique: true });
 UserSchema.index({ resetPasswordToken: 1 }, { sparse: true });
 
+// Add index for OAuth lookups
+UserSchema.index({
+  "oauthProfiles.provider": 1,
+  "oauthProfiles.providerId": 1,
+});
+
 // Hash password before saving
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   try {
     const salt = await bcrypt.genSalt(12);
-    this.password = await bcrypt.hash(this.password, salt);
+    this.password = await bcrypt.hash(this.password as string, salt);
     next();
   } catch (error) {
     next(error as Error);
@@ -130,5 +174,36 @@ UserSchema.methods.generateEmailVerification = async function () {
   return token;
 };
 
+// Add these methods before the model export
+UserSchema.methods.addOAuthProfile = async function (profile: IOAuthProfile) {
+  const existingProfile = this.oauthProfiles?.find(
+    (p: IOAuthProfile) => p.provider === profile.provider,
+  );
+
+  if (existingProfile) {
+    Object.assign(existingProfile, profile);
+  } else {
+    if (!this.oauthProfiles) {
+      this.oauthProfiles = [];
+    }
+    this.oauthProfiles.push(profile);
+  }
+
+  await this.save();
+};
+
+UserSchema.methods.removeOAuthProfile = async function (
+  provider: OAuthProvider,
+) {
+  if (this.oauthProfiles) {
+    this.oauthProfiles = this.oauthProfiles.filter(
+      (p: IOAuthProfile) => p.provider !== provider,
+    );
+    await this.save();
+  }
+};
+
 export default mongoose.models.User ||
   mongoose.model<IUser>("User", UserSchema);
+
+mongoose.model<IUser>("User", UserSchema);
