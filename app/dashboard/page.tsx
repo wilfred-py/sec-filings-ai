@@ -13,6 +13,7 @@ export default async function Dashboard() {
   return (
     <div>
       <div>Dashboard</div>
+      <div>{user.oauthProfiles?.[0]?.displayName}</div>
       <form action={logout}>
         <button type="submit">Logout</button>
       </form>
@@ -20,7 +21,7 @@ export default async function Dashboard() {
   );
 }
 
-async function logout(formData: FormData): Promise<void> {
+async function logout(): Promise<void> {
   "use server";
   const { session } = await getCurrentSession();
   if (!session) {
@@ -30,8 +31,4 @@ async function logout(formData: FormData): Promise<void> {
   await invalidateSession(session.id);
   await deleteSessionTokenCookie();
   redirect("/login");
-}
-
-interface ActionResult {
-  error: string | null;
 }
