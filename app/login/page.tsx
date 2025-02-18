@@ -11,12 +11,12 @@ import { FaXTwitter } from "react-icons/fa6";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [submitStatus, setSubmitStatus] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +31,9 @@ export default function LoginPage() {
     document.documentElement.classList.toggle("dark");
   };
 
-  const handleOAuthSignIn = async (provider: string) => {};
+  const handleOAuthSignIn = async (provider: string) => {
+    router.push(`/login/${provider}`);
+  };
 
   useEffect(() => {
     // Check if dark mode preference exists in localStorage
