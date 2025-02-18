@@ -157,7 +157,7 @@ export default function LoginPage() {
                     <span className="sr-only">Sign up with Gmail</span>
                   </button>
                   <button
-                    onClick={() => handleOAuthSignIn("twitter")}
+                    onClick={() => handleOAuthSignIn("x")}
                     className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm bg-white dark:bg-gray-700 text-sm font-medium text-gray-500 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600"
                   >
                     <FaXTwitter className="h-5 w-5" />
