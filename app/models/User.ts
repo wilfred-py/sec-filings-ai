@@ -4,7 +4,7 @@ import isEmail from "validator/lib/isEmail";
 import { randomBytes } from "crypto";
 
 // Add these new types before IUser interface
-type OAuthProvider = "google" | "twitter" | "github";
+type OAuthProvider = "google" | "x" | "github";
 
 interface IOAuthProfile {
   provider: OAuthProvider;
@@ -67,7 +67,7 @@ const UserSchema = new mongoose.Schema<IUser>(
       {
         provider: {
           type: String,
-          enum: ["google", "twitter", "github"],
+          enum: ["google", "x", "github"],
           required: true,
         },
         providerId: {
