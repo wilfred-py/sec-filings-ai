@@ -8,49 +8,20 @@ import { LuLock, LuSun, LuMoon } from "react-icons/lu";
 import { FiGithub } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { FaXTwitter } from "react-icons/fa6";
-import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [darkMode, setDarkMode] = useState(false);
   const [submitStatus, setSubmitStatus] = useState("");
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitStatus(""); // Clear any previous status
     setIsLoggingIn(true); // Start loading
-
-    try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
-
-      if (!result) {
-        throw new Error("Sign in failed. Please try again.");
-      }
-
-      if (result.error) {
-        setSubmitStatus(
-          result.error === "CredentialsSignin"
-            ? "Invalid email or password"
-            : "An error occurred during sign in",
-        );
-      } else {
-        setSubmitStatus("Login successful!");
-        router.push("/dashboard");
-      }
-    } catch (error) {
-      console.error("Login error:", error);
-      setSubmitStatus("An error occurred. Please try again.");
-    } finally {
-      setIsLoggingIn(false); // Stop loading regardless of success/failure
-    }
   };
 
   const toggleDarkMode = () => {
@@ -61,15 +32,7 @@ export default function LoginPage() {
   };
 
   const handleOAuthSignIn = async (provider: string) => {
-    try {
-      await signIn(provider, {
-        callbackUrl: "/dashboard",
-        redirect: true,
-      });
-    } catch (error) {
-      console.error(`${provider} sign in error:`, error);
-      setSubmitStatus("Authentication failed");
-    }
+    router.push(`/login/${provider}`);
   };
 
   useEffect(() => {
