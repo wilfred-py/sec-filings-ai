@@ -1,5 +1,10 @@
 import { GitHub, Google, Twitter } from "arctic";
 
+const xCallbackUrl =
+  process.env.NODE_ENV === "production"
+    ? `${process.env.NEXT_PUBLIC_APP_URL_PROD}/login/x/callback`
+    : `${process.env.NEXT_PUBLIC_APP_URL_DEV}/login/x/callback`;
+
 export const github = new GitHub(
   process.env.GITHUB_CLIENT_ID ?? "",
   process.env.GITHUB_CLIENT_SECRET ?? "",
@@ -15,5 +20,5 @@ export const google = new Google(
 export const x = new Twitter(
   process.env.X_CLIENT_ID ?? "",
   process.env.X_CLIENT_SECRET ?? "",
-  "http://localhost:3000/login/x/callback",
+  xCallbackUrl,
 );
