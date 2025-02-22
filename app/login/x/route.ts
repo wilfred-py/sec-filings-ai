@@ -12,31 +12,9 @@ export async function GET(): Promise<Response> {
 
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
-  const scopes = ["users.read", "offline.access"];
+  const scopes = ["tweet.read", "users.read", "offline.access"];
 
   const url = x.createAuthorizationURL(state, codeVerifier, scopes);
-  console.log("Full OAuth URL details:", {
-    url: url.toString(),
-    protocol: url.protocol,
-    hostname: url.hostname,
-    pathname: url.pathname,
-  });
-
-  // Add environment check logging
-  console.log("Environment:", {
-    NODE_ENV: process.env.NODE_ENV,
-    currentHost:
-      process.env.NODE_ENV === "production"
-        ? process.env.NEXT_PUBLIC_APP_URL_PROD
-        : process.env.NEXT_PUBLIC_APP_URL_DEV || "not set",
-  });
-
-  // Add scope logging
-  console.log("OAuth Configuration:", {
-    scopes,
-    state,
-    hasCodeVerifier: !!codeVerifier,
-  });
 
   const cookiesStore = await cookies();
 
