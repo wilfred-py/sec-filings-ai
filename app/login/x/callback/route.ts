@@ -49,30 +49,80 @@ export async function GET(request: Request): Promise<Response> {
     return new Response(null, { status: 500 });
   }
 
-  //   Get X user details
+  //   Get access token
   let tokens: OAuth2Tokens;
   try {
     tokens = await x.validateAuthorizationCode(code, codeVerifier);
+    console.log("Tokens received:", {
+      hasAccessToken: !!tokens.accessToken,
+      hasRefreshToken: !!tokens.refreshToken,
+      scope: tokens.scopes,
+    });
   } catch (error) {
     console.error("X token validation error:", error);
     return new Response(null, { status: 400 });
   }
 
+  // Clear the OAuth cookies
+  cookieStore.delete("x_oauth_state");
+  cookieStore.delete("x_code_verifier");
+
+  //   Get X user details from v2 API
+  let xUserResponse: Response;
   try {
-    const xUserResponse = await fetch("https://api.twitter.com/2/users/me", {
+    console.log("Received tokens structure:", {
+      tokenKeys: Object.keys(tokens),
+      tokenData: tokens.data,
+      hasAccessToken: !!(tokens.data as { access_token?: string })
+        ?.access_token,
+    });
+
+    xUserResponse = await fetch("https://api.twitter.com/2/users/me", {
       headers: {
-        Authorization: `Bearer ${tokens.accessToken()}`,
+        Authorization: `Bearer ${(tokens.data as { access_token?: string })?.access_token}`,
+        "Content-Type": "application/json",
       },
     });
 
     if (!xUserResponse.ok) {
-      console.error("X API error:", await xUserResponse.text());
-      return new Response(null, { status: 500 });
+      const errorText = await xUserResponse.text();
+      console.error("X API error response:", errorText);
+      return new Response("Failed to fetch user info", { status: 500 });
     }
 
     const xUser = await xUserResponse.json();
+    console.log("X User data:", xUser);
+
     const xUserId = xUser.data.id;
 
+    // Fetch email from v1.1 API
+    let email: string | undefined;
+    try {
+      const emailResponse = await fetch(
+        "https://api.twitter.com/1.1/account/verify_credentials.json",
+        {
+          headers: {
+            Authorization: `Bearer ${(tokens.data as { access_token?: string })?.access_token}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (!emailResponse.ok) {
+        const errorText = await emailResponse.text();
+        console.error("x API v1.1 error response:", errorText);
+        // Continue without email if not available
+      } else {
+        const emailData = await emailResponse.json();
+        email = emailData.email;
+        console.log("User email from v1.1:", email);
+      }
+    } catch (error) {
+      console.error("Error fetching email:", error);
+      //   Continue without email if the call fails
+    }
+
+    // Database operations
     try {
       console.log("Searching for existing user with X ID:", xUserId);
       const existingUser = await User.findOne({
@@ -82,17 +132,22 @@ export async function GET(request: Request): Promise<Response> {
       console.log("Existing user found:", existingUser);
 
       if (existingUser) {
+        // Optionally update email if it's changed
+        if (email && existingUser.email !== email) {
+          existingUser.email = email;
+          await existingUser.save();
+        }
         return await handleSuccessfulLogin(existingUser);
       }
 
       console.log("Creating new user with X data");
       const newUser = await User.create({
-        email: xUser.data.email, // Note: Requires email scope
+        email: email, // Use email from v1.1 API, may be undefined if not available
         oauthProfiles: [
           {
             provider: "x",
             providerId: xUser.data.id.toString(),
-            email: xUser.data.email,
+            email: email,
             displayName: xUser.data.username,
             photoURL: xUser.data.profile_image_url,
           },
@@ -111,8 +166,11 @@ export async function GET(request: Request): Promise<Response> {
       return new Response(null, { status: 500 });
     }
   } catch (error) {
-    console.error("X user fetch error:", error);
-    return new Response(null, { status: 500 });
+    console.error("Token debug info:", {
+      tokens,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return new Response("Failed to fetch user info", { status: 500 });
   }
 }
 
