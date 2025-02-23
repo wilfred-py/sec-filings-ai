@@ -95,33 +95,6 @@ export async function GET(request: Request): Promise<Response> {
 
     const xUserId = xUser.data.id;
 
-    // Fetch email from v1.1 API
-    let email: string | undefined;
-    try {
-      const emailResponse = await fetch(
-        "https://api.twitter.com/1.1/account/verify_credentials.json",
-        {
-          headers: {
-            Authorization: `Bearer ${(tokens.data as { access_token?: string })?.access_token}`,
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (!emailResponse.ok) {
-        const errorText = await emailResponse.text();
-        console.error("x API v1.1 error response:", errorText);
-        // Continue without email if not available
-      } else {
-        const emailData = await emailResponse.json();
-        email = emailData.email;
-        console.log("User email from v1.1:", email);
-      }
-    } catch (error) {
-      console.error("Error fetching email:", error);
-      //   Continue without email if the call fails
-    }
-
     // Database operations
     try {
       console.log("Searching for existing user with X ID:", xUserId);
@@ -132,22 +105,16 @@ export async function GET(request: Request): Promise<Response> {
       console.log("Existing user found:", existingUser);
 
       if (existingUser) {
-        // Optionally update email if it's changed
-        if (email && existingUser.email !== email) {
-          existingUser.email = email;
-          await existingUser.save();
-        }
         return await handleSuccessfulLogin(existingUser);
       }
 
       console.log("Creating new user with X data");
       const newUser = await User.create({
-        email: email, // Use email from v1.1 API, may be undefined if not available
         oauthProfiles: [
           {
             provider: "x",
             providerId: xUser.data.id.toString(),
-            email: email,
+            email: xUser.data.email,
             displayName: xUser.data.username,
             photoURL: xUser.data.profile_image_url,
           },
