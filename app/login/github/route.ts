@@ -26,7 +26,6 @@ export async function GET(): Promise<Response> {
     status: 302,
     headers: {
       Location: url.toString(),
-      x,
     },
   });
 }

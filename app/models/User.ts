@@ -46,12 +46,18 @@ const UserSchema = new mongoose.Schema<IUser>(
   {
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: [
+        function (this: IUser) {
+          // Email is required only if no OAuth profiles exist
+          return !this.oauthProfiles || this.oauthProfiles.length === 0;
+        },
+        "Email is required",
+      ],
       unique: true,
       trim: true,
       lowercase: true,
       validate: {
-        validator: (email: string) => isEmail(email),
+        validator: (email: string) => !email || isEmail(email), // Allow empty email for OAuth
         message: "Please enter a valid email",
       },
     },
