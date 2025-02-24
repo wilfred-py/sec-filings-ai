@@ -1,12 +1,8 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import {
-  deleteSessionTokenCookie,
-  getCurrentSession,
-  invalidateSession,
-} from "@/lib/session";
-
+import { getCurrentSession } from "@/lib/session";
+import { logout } from "@/app/actions/log-out";
 import { useState } from "react";
 import { Plus, Settings, Send, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -331,15 +327,3 @@ const resendSummary = async (symbol: string) => {
   // Implement email resend logic here
   console.log(`Resending summary for ${symbol}`);
 };
-
-async function logout(): Promise<void> {
-  "use server";
-  const { session } = await getCurrentSession();
-  if (!session) {
-    redirect("/login");
-  }
-
-  await invalidateSession(session.id);
-  await deleteSessionTokenCookie();
-  redirect("/login");
-}
