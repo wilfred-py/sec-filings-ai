@@ -1,7 +1,7 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import { getCurrentSession } from "@/lib/session";
+import { getCurrentSession } from "@/lib/session-server";
 import { logout } from "@/app/actions/log-out";
 import { useState } from "react";
 import { Plus, Settings, Send, X } from "lucide-react";

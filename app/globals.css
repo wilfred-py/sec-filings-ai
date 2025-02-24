@@ -6,7 +6,7 @@
   .bg-background {
     background-color: #f0f0f0; /* Replace with your desired color */
   }
-    .text-foreground {
+  .text-foreground {
     color: #333; /* Replace with your desired color */
   }
   .border-border {
@@ -83,11 +83,9 @@ body {
   }
 }
 
-
-
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border ring-1;
   }
   body {
     @apply bg-background text-foreground;
