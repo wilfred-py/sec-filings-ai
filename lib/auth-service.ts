@@ -1,4 +1,4 @@
-import { User } from "@/app/models/User";
+import User from "@/app/models/User";
 import { generateToken } from "@/lib/jwt";
 
 export class AuthService {
