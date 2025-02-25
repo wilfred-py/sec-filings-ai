@@ -52,7 +52,7 @@ const loginHandler: RequestHandler<
     });
     res.json({ token });
   } catch (error) {
-    // eslint-disable-line @typescript-eslint/no-unused-vars
+    console.error("Auth error:", error);
     res.status(500).json({ error: "Error logging in" });
     return;
   }
