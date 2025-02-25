@@ -1,13 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { AuthService } from "@/lib/auth-service";
-import { rateLimit } from "@/lib/rate-limit";
+import { TokenBucket } from "@/lib/rate-limit";
 
 // Request password reset
 export async function POST(request: NextRequest) {
   try {
     // Apply rate limiting
-    const limiter = await rateLimit(request);
-    if (!limiter.success) {
+    const limiter = new TokenBucket(10, 60);
+    const ip = request.headers.get("x-forwarded-for") || "127.0.0.1";
+    if (!limiter.check(ip, 1)) {
       return NextResponse.json({ error: "Too many requests" }, { status: 429 });
     }
 

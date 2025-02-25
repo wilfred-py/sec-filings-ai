@@ -1,9 +1,9 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import { getCurrentSession } from "@/lib/session-server";
+import { getSession } from "@/lib/session-client";
 import { logout } from "@/app/actions/log-out";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Settings, Send, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -52,10 +52,106 @@ const tagColors = [
   { hex: "#C084FC", name: "Violet" },
 ];
 
-export default async function Dashboard() {
-  const { session, user } = await getCurrentSession();
-  if (session === null || user === null) {
-    return redirect("/login");
+export default function DashboardPage() {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [tickers, setTickers] = useState<Ticker[]>([
+    {
+      symbol: "AAPL",
+      name: "Apple Inc.",
+      price: 175.84,
+      marketCap: "2.8T",
+      tags: ["Tech", "Consumer Electronics"],
+      lastFiling: "2024-02-15",
+    },
+    {
+      symbol: "GOOGL",
+      name: "Alphabet Inc.",
+      price: 143.96,
+      marketCap: "1.8T",
+      tags: ["Tech", "Internet"],
+      lastFiling: "2024-02-10",
+    },
+    {
+      symbol: "MSFT",
+      name: "Microsoft Corporation",
+      price: 402.65,
+      marketCap: "3.1T",
+      tags: ["Tech", "Software"],
+      lastFiling: "2024-02-01",
+    },
+  ]);
+
+  const [tags, setTags] = useState<Tag[]>([
+    { id: "1", name: "Tech", color: "#60A5FA" },
+    { id: "2", name: "Consumer Electronics", color: "#34D399" },
+    { id: "3", name: "Internet", color: "#F87171" },
+    { id: "4", name: "Software", color: "#FBBF24" },
+  ]);
+
+  const [newTicker, setNewTicker] = useState("");
+  const [newTag, setNewTag] = useState("");
+  const [selectedColor, setSelectedColor] = useState(tagColors[0].hex);
+
+  const addTicker = () => {
+    if (newTicker) {
+      setTickers([
+        ...tickers,
+        {
+          symbol: newTicker.toUpperCase(),
+          name: "New Company",
+          price: 0,
+          marketCap: "N/A",
+          tags: [],
+        },
+      ]);
+      setNewTicker("");
+    }
+  };
+
+  const removeTicker = (symbol: string) => {
+    setTickers(tickers.filter((ticker) => ticker.symbol !== symbol));
+  };
+
+  const addTag = () => {
+    if (newTag && !tags.some((tag) => tag.name === newTag)) {
+      setTags([
+        ...tags,
+        {
+          id: Date.now().toString(),
+          name: newTag,
+          color: selectedColor,
+        },
+      ]);
+      setNewTag("");
+    }
+  };
+
+  const removeTag = (id: string) => {
+    setTags(tags.filter((tag) => tag.id !== id));
+  };
+
+  const getTagColor = (tagName: string) => {
+    return tags.find((tag) => tag.name === tagName)?.color || "#9CA3AF";
+  };
+
+  const resendSummary = async (symbol: string) => {
+    // Implement email resend logic here
+    console.log(`Resending summary for ${symbol}`);
+  };
+
+  useEffect(() => {
+    getSession().then((result) => {
+      if (!result.session) {
+        redirect("/login");
+      }
+      setUser(result.user);
+      setLoading(false);
+    });
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -242,88 +338,3 @@ export default async function Dashboard() {
     </div>
   );
 }
-
-const [tickers, setTickers] = useState<Ticker[]>([
-  {
-    symbol: "AAPL",
-    name: "Apple Inc.",
-    price: 175.84,
-    marketCap: "2.8T",
-    tags: ["Tech", "Consumer Electronics"],
-    lastFiling: "2024-02-15",
-  },
-  {
-    symbol: "GOOGL",
-    name: "Alphabet Inc.",
-    price: 143.96,
-    marketCap: "1.8T",
-    tags: ["Tech", "Internet"],
-    lastFiling: "2024-02-10",
-  },
-  {
-    symbol: "MSFT",
-    name: "Microsoft Corporation",
-    price: 402.65,
-    marketCap: "3.1T",
-    tags: ["Tech", "Software"],
-    lastFiling: "2024-02-01",
-  },
-]);
-
-const [tags, setTags] = useState<Tag[]>([
-  { id: "1", name: "Tech", color: "#60A5FA" },
-  { id: "2", name: "Consumer Electronics", color: "#34D399" },
-  { id: "3", name: "Internet", color: "#F87171" },
-  { id: "4", name: "Software", color: "#FBBF24" },
-]);
-
-const [newTicker, setNewTicker] = useState("");
-const [newTag, setNewTag] = useState("");
-const [selectedColor, setSelectedColor] = useState(tagColors[0].hex);
-
-const addTicker = () => {
-  if (newTicker) {
-    setTickers([
-      ...tickers,
-      {
-        symbol: newTicker.toUpperCase(),
-        name: "New Company",
-        price: 0,
-        marketCap: "N/A",
-        tags: [],
-      },
-    ]);
-    setNewTicker("");
-  }
-};
-
-const removeTicker = (symbol: string) => {
-  setTickers(tickers.filter((ticker) => ticker.symbol !== symbol));
-};
-
-const addTag = () => {
-  if (newTag && !tags.some((tag) => tag.name === newTag)) {
-    setTags([
-      ...tags,
-      {
-        id: Date.now().toString(),
-        name: newTag,
-        color: selectedColor,
-      },
-    ]);
-    setNewTag("");
-  }
-};
-
-const removeTag = (id: string) => {
-  setTags(tags.filter((tag) => tag.id !== id));
-};
-
-const getTagColor = (tagName: string) => {
-  return tags.find((tag) => tag.name === tagName)?.color || "#9CA3AF";
-};
-
-const resendSummary = async (symbol: string) => {
-  // Implement email resend logic here
-  console.log(`Resending summary for ${symbol}`);
-};
