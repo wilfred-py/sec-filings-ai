@@ -7,7 +7,7 @@ import {
 import { github } from "@/lib/oauth";
 import { cookies } from "next/headers";
 import type { OAuth2Tokens } from "arctic";
-import { User } from "@/app/models";
+import User from "@/app/models/User";
 import { IUser } from "@/app/models/User";
 import connectDB from "@/lib/mongodb";
 import mongoose from "mongoose";

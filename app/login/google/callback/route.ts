@@ -9,7 +9,7 @@ import { cookies } from "next/headers";
 import type { OAuth2Tokens } from "arctic";
 import connectDB from "@/lib/mongodb";
 import { decodeIdToken } from "arctic";
-import { User } from "@/app/models";
+import User from "@/app/models/User";
 
 interface GoogleClaims {
   sub: string;
