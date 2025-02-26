@@ -1,4 +1,4 @@
-export { User } from "./User";
+export { default as User } from "./User";
 export { default as Watchlist } from "./Watchlist";
 export { default as Security } from "./Security";
 export { default as FilingCache } from "./FilingCache";
