@@ -1,5 +1,6 @@
 "use client";
 
+import { IUser } from "@/app/models/User";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session-client";
 import { logout } from "@/app/actions/log-out";
@@ -53,7 +54,7 @@ const tagColors = [
 ];
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [tickers, setTickers] = useState<Ticker[]>([
     {

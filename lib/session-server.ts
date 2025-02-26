@@ -1,4 +1,4 @@
-import { encodeBase32, encodeHexLowerCase } from "@oslojs/encoding";
+import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { cookies } from "next/headers";
 import { Session, ISession } from "@/app/models/Session";

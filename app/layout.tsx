@@ -77,11 +77,9 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans`}>
-        {/* <Providers> */}
         {children}
         <Analytics />
         <SpeedInsights />
-        {/* </Providers> */}
       </body>
     </html>
   );
