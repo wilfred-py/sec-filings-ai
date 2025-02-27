@@ -159,7 +159,7 @@ export default function DashboardPage() {
     <div className="space-y-8 px-4 md:px-8 py-6">
       <div className="flex items-center justify-between">
         <div>
-          <div>{user.oauthProfiles?.[0]?.displayName}</div>
+          <div>{user?.oauthProfiles?.[0]?.displayName}</div>
           <form action={logout}>
             <button type="submit">Logout</button>
           </form>
