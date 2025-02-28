@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { LayoutDashboard, User, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LuSun, LuMoon } from "react-icons/lu";
+import { getSession } from "@/lib/session-client";
+import { IUser } from "@/app/models/User";
 
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -15,10 +17,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [user, setUser] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-  });
+  const [user, setUser] = useState<IUser | null>(null);
   const [darkMode, setDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
@@ -27,6 +26,12 @@ export function Sidebar() {
     localStorage.setItem("darkMode", String(newDarkMode));
     document.documentElement.classList.toggle("dark");
   };
+
+  useEffect(() => {
+    getSession().then((result) => {
+      setUser(result.user);
+    });
+  }, []);
 
   return (
     <div className="flex h-screen w-64 flex-col justify-between bg-white p-4 dark:bg-gray-800">
@@ -55,10 +60,10 @@ export function Sidebar() {
         <div className="flex items-center space-x-4">
           <div>
             <p className="text-sm font-medium text-gray-900 dark:text-white">
-              {user.name}
+              {user?.oauthProfiles?.[0]?.displayName}
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              {user.email}
+              {user?.email}
             </p>
           </div>
         </div>
