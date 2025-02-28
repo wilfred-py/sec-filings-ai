@@ -158,12 +158,6 @@ export default function DashboardPage() {
   return (
     <div className="space-y-8 px-4 md:px-8 py-6">
       <div className="flex items-center justify-between">
-        <div>
-          <div>{user?.oauthProfiles?.[0]?.displayName}</div>
-          <form action={logout}>
-            <button type="submit">Logout</button>
-          </form>
-        </div>
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
           My Tickers
         </h2>
