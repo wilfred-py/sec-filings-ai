@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { LuSun, LuMoon } from "react-icons/lu";
 import { getSession } from "@/lib/session-client";
 import { IUser } from "@/app/models/User";
-
+import { logout } from "@/app/actions/log-out";
 const navItems = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/dashboard/profile", icon: User, label: "Profile" },
@@ -20,18 +20,18 @@ export function Sidebar() {
   const [user, setUser] = useState<IUser | null>(null);
   const [darkMode, setDarkMode] = useState(false);
 
+  useEffect(() => {
+    getSession().then((result) => {
+      setUser(result.user);
+    });
+  }, []);
+
   const toggleDarkMode = () => {
     const newDarkMode = !darkMode;
     setDarkMode(newDarkMode);
     localStorage.setItem("darkMode", String(newDarkMode));
     document.documentElement.classList.toggle("dark");
   };
-
-  useEffect(() => {
-    getSession().then((result) => {
-      setUser(result.user);
-    });
-  }, []);
 
   return (
     <div className="flex h-screen w-64 flex-col justify-between bg-white p-4 dark:bg-gray-800">
@@ -79,7 +79,7 @@ export function Sidebar() {
               <LuMoon className="h-5 w-5" />
             )}
           </button>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" onClick={logout}>
             <LogOut className="h-5 w-5" />
           </Button>
         </div>

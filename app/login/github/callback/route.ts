@@ -63,54 +63,66 @@ export async function GET(request: Request): Promise<Response> {
     }
 
     const githubUser = await githubUserResponse.json();
-    // console.log("GitHub user data:", githubUser); // Debug user data
-    const githubUserId = githubUser.id;
+    const githubId = githubUser.id.toString();
+    const email = githubUser.email;
 
-    try {
-      console.log("Searching for existing user with GitHub ID:", githubUserId);
-      const existingUser = await User.findOne({
-        "oauthProfiles.provider": "github",
-        "oauthProfiles.providerId": githubUserId.toString(),
-      });
-      console.log("Existing user found:", existingUser);
+    console.log("Searching for user by GitHub ID or email:", {
+      githubId,
+      email,
+    });
 
-      if (existingUser) {
-        return await handleSuccessfulLogin(existingUser);
+    // First try GitHub ID
+    let user = await User.findOne({
+      "oauthProfiles.provider": "github",
+      "oauthProfiles.providerId": githubId,
+    });
+
+    // If not found, try email
+    if (!user && email) {
+      user = await User.findOne({ email });
+      if (user) {
+        // Initialize oauthProfiles if undefined
+        if (!user.oauthProfiles) user.oauthProfiles = [];
+        // Link GitHub profile to existing account
+        user.oauthProfiles.push({
+          provider: "github",
+          providerId: githubId,
+          email: email,
+          displayName: githubUser.login,
+          photoURL: githubUser.avatar_url,
+        });
+        await user.save();
+        console.log("Linked GitHub profile to existing account");
       }
+    }
 
-      console.log("Creating new user with email:", githubUser.email);
-      const newUser = await User.create({
-        email: githubUser.email,
+    // If still not found, create new user
+    if (!user) {
+      user = await User.create({
+        email: email,
         oauthProfiles: [
           {
             provider: "github",
-            providerId: githubUser.id.toString(),
-            email: githubUser.email,
+            providerId: githubId,
+            email: email,
             displayName: githubUser.login,
             photoURL: githubUser.avatar_url,
           },
         ],
       });
-      console.log("New user created:", newUser);
-      return await handleSuccessfulLogin(newUser);
-    } catch (error) {
-      console.error("Database operation error:", error);
-      if (error instanceof mongoose.Error.ValidationError) {
-        return new Response(null, {
-          status: 400,
-          statusText: "Invalid user data",
-        });
-      }
-      return new Response(null, { status: 500 });
+      console.log("Created new user with GitHub profile");
     }
+
+    return await handleSuccessfulLogin(user);
   } catch (error) {
-    console.error("GitHub user fetch error:", error);
+    console.error("Database operation error:", error);
     return new Response(null, { status: 500 });
   }
 }
 
 // Helper functions
 async function handleSuccessfulLogin(user: IUser): Promise<Response> {
+  console.log("Handling successful login for user:", user);
   const sessionToken = generateSessionToken();
   const session = await createSession(sessionToken, user.id);
   setSessionTokenCookie(sessionToken, session.expiresAt);
