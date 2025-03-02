@@ -1,6 +1,5 @@
 "use client";
 
-import { IUser } from "@/app/models/User";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session-client";
 import { useState, useEffect } from "react";
