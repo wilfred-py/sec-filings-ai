@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { Session, ISession } from "@/app/models/Session";
 import { IUser } from "@/app/models/User";
 import mongoose from "mongoose";
+import { NextRequest } from "next/server";
 
 // Server-only functions
 export async function validateSessionToken(
@@ -88,6 +89,16 @@ export async function deleteSessionTokenCookie(): Promise<void> {
     sameSite: "lax",
     maxAge: 0,
   });
+}
+
+export async function getSession(
+  req: NextRequest,
+): Promise<SessionValidationResult> {
+  const token = req.cookies.get("session")?.value ?? null;
+  if (token === null) {
+    return { session: null, user: null };
+  }
+  return await validateSessionToken(token);
 }
 
 export type SessionValidationResult =
