@@ -53,7 +53,6 @@ const tagColors = [
 ];
 
 export default function DashboardPage() {
-  const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [tickers, setTickers] = useState<Ticker[]>([
     {
@@ -145,7 +144,7 @@ export default function DashboardPage() {
       if (!result.session) {
         redirect("/login");
       }
-      setUser(result.user);
+
       setLoading(false);
     });
   }, []);
