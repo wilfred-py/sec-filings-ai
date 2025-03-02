@@ -10,7 +10,6 @@ import type { OAuth2Tokens } from "arctic";
 import User from "@/app/models/User";
 import { IUser } from "@/app/models/User";
 import connectDB from "@/lib/mongodb";
-import mongoose from "mongoose";
 
 export async function GET(request: Request): Promise<Response> {
   if (!(await globalGETRateLimit())) {
