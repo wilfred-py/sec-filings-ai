@@ -8,7 +8,7 @@ import mongoose from "mongoose";
 import Ticker from "../models/Ticker";
 import connectDB from "../../lib/mongodb";
 
-async function updateTickers() {
+export async function updateTickers() {
   try {
     await connectDB();
     const response = await fetch(
@@ -41,5 +41,3 @@ async function updateTickers() {
     await mongoose.connection.close();
   }
 }
-
-updateTickers();
