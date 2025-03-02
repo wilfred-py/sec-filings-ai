@@ -3,6 +3,7 @@ import mongoose, { Schema } from "mongoose";
 const TickerSchema = new Schema({
   ticker: { type: String, required: true, unique: true },
   name: { type: String, required: true },
+  cik: { type: String, required: true },
 });
 
 TickerSchema.index({ ticker: "text", name: "text" });
