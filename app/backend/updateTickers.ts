@@ -8,6 +8,18 @@ import mongoose from "mongoose";
 import Ticker from "../models/Ticker";
 import connectDB from "../../lib/mongodb";
 
+// Define the type for each item in company_tickers.json
+interface EdgarTicker {
+  cik_str: string;
+  ticker: string;
+  title: string;
+}
+
+// Define the type for the full JSON response
+interface EdgarResponse {
+  [key: string]: EdgarTicker;
+}
+
 export async function updateTickers() {
   try {
     await connectDB();
@@ -26,10 +38,12 @@ export async function updateTickers() {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
-    const tickers = Object.values(data).map((item: any) => ({
+    // Cast result of response.json() to EdgarResponse
+    const data = (await response.json()) as EdgarResponse;
+    const tickers = Object.values(data).map((item: EdgarTicker) => ({
       ticker: item.ticker,
       name: item.title,
+      cik: item.cik_str,
     }));
 
     await Ticker.deleteMany({});
@@ -41,3 +55,14 @@ export async function updateTickers() {
     await mongoose.connection.close();
   }
 }
+
+// Self-executing async function for ESM
+updateTickers()
+  .then(() => {
+    console.log("Script completed");
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error("Script failed:", error);
+    process.exit(1);
+  });
