@@ -1,5 +1,6 @@
 import { config } from "dotenv";
 import { resolve } from "path";
+import cache from "memory-cache";
 
 // Load environment variables from .env.local
 config({ path: resolve(process.cwd(), ".env.local") });
@@ -48,6 +49,8 @@ export async function updateTickers() {
 
     await Ticker.deleteMany({});
     await Ticker.insertMany(tickers);
+    cache.clear(); // Clear cache to reflect new data
+
     console.log("Tickers updated successfully");
   } catch (error) {
     console.error("Error updating tickers:", error);
