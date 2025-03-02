@@ -3,7 +3,6 @@
 import { IUser } from "@/app/models/User";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session-client";
-import { logout } from "@/app/actions/log-out";
 import { useState, useEffect } from "react";
 import { Plus, Settings, Send, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
