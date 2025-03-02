@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { redirect, usePathname } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { LayoutDashboard, User, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LuSun, LuMoon } from "react-icons/lu";
