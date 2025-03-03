@@ -1,5 +1,6 @@
 "use client";
 
+import TrackedTickers from "@/components/TrackedTickers";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session-client";
 import { useState, useEffect } from "react";
@@ -53,32 +54,7 @@ const tagColors = [
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
-  const [tickers, setTickers] = useState<Ticker[]>([
-    {
-      symbol: "AAPL",
-      name: "Apple Inc.",
-      price: 175.84,
-      marketCap: "2.8T",
-      tags: ["Tech", "Consumer Electronics"],
-      lastFiling: "2024-02-15",
-    },
-    {
-      symbol: "GOOGL",
-      name: "Alphabet Inc.",
-      price: 143.96,
-      marketCap: "1.8T",
-      tags: ["Tech", "Internet"],
-      lastFiling: "2024-02-10",
-    },
-    {
-      symbol: "MSFT",
-      name: "Microsoft Corporation",
-      price: 402.65,
-      marketCap: "3.1T",
-      tags: ["Tech", "Software"],
-      lastFiling: "2024-02-01",
-    },
-  ]);
+  const [tickers, setTickers] = useState<Ticker[]>([]);
 
   const [tags, setTags] = useState<Tag[]>([
     { id: "1", name: "Tech", color: "#60A5FA" },
@@ -279,6 +255,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="rounded-lg border bg-white dark:bg-gray-800 p-6 shadow">
+        <TrackedTickers />
         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
           Tag Management
         </h3>
