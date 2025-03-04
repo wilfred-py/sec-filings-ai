@@ -7,6 +7,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { ticker: string; tag: string } },
 ) {
+  console.log("DELETE", params);
   const session = await getSession(req);
   if (!session?.user?.id)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

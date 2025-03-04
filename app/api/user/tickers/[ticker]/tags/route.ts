@@ -26,3 +26,24 @@ export async function POST(
     return NextResponse.json({ error: "Failed to add tag" }, { status: 500 });
   }
 }
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { ticker: string } },
+) {
+  const session = await getSession(req);
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    await connectDB();
+    const tags = await TrackedTicker.find({ userId: session.user.id });
+    return NextResponse.json({ tags: tags });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to fetch tags" },
+      { status: 500 },
+    );
+  }
+}
