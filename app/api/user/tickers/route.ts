@@ -13,8 +13,12 @@ export async function GET(req: NextRequest) {
     const tickers = await TrackedTicker.find({ userId: session.user.id });
     return NextResponse.json(tickers);
   } catch (error) {
+    console.error("Failed to fetch tickers:", error);
     return NextResponse.json(
-      { error: "Failed to fetch tickers" },
+      {
+        error: "Failed to fetch tickers",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 },
     );
   }
@@ -34,14 +38,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid ticker" }, { status: 404 });
     await TrackedTicker.create({ userId: session.user.id, ticker, tags: [] });
     return NextResponse.json({ message: "Ticker added" });
-  } catch (error: any) {
-    if (error.code === 11000)
+  } catch (error) {
+    console.error("Failed to add ticker:", error);
+    if (error instanceof Error && "code" in error && error.code === 11000) {
       return NextResponse.json(
         { error: "Ticker already tracked" },
         { status: 409 },
       );
+    }
     return NextResponse.json(
-      { error: "Failed to add ticker" },
+      {
+        error: "Failed to add ticker",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 },
     );
   }
