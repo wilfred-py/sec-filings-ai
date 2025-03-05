@@ -11,6 +11,7 @@ export async function DELETE(
   if (!session?.user?.id)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
+    console.log("Deleting ticker", params.ticker);
     await connectDB();
     const result = await TrackedTicker.deleteOne({
       userId: session.user.id,

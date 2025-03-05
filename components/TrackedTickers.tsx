@@ -61,6 +61,7 @@ export default function TrackedTickers() {
   };
 
   const removeTicker = async (ticker: string) => {
+    console.log("Removing ticker", ticker);
     const res = await fetch(`/api/user/tickers/${ticker}`, {
       method: "DELETE",
     });
