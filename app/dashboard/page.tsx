@@ -65,7 +65,6 @@ export default function DashboardPage() {
 
   const [newTicker, setNewTicker] = useState("");
   const [newTag, setNewTag] = useState("");
-  const [selectedColor, setSelectedColor] = useState(tagColors[0].hex);
 
   const addTicker = () => {
     if (newTicker) {
@@ -85,28 +84,6 @@ export default function DashboardPage() {
 
   const removeTicker = (symbol: string) => {
     setTickers(tickers.filter((ticker) => ticker.symbol !== symbol));
-  };
-
-  const addTag = () => {
-    if (newTag && !tags.some((tag) => tag.name === newTag)) {
-      setTags([
-        ...tags,
-        {
-          id: Date.now().toString(),
-          name: newTag,
-          color: selectedColor,
-        },
-      ]);
-      setNewTag("");
-    }
-  };
-
-  const removeTag = (id: string) => {
-    setTags(tags.filter((tag) => tag.id !== id));
-  };
-
-  const getTagColor = (tagName: string) => {
-    return tags.find((tag) => tag.name === tagName)?.color || "#9CA3AF";
   };
 
   const resendSummary = async (symbol: string) => {
@@ -134,20 +111,6 @@ export default function DashboardPage() {
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
           My Tickers
         </h2>
-        <div className="flex items-center space-x-2">
-          <Input
-            placeholder="Add ticker..."
-            value={newTicker}
-            onChange={(e) => setNewTicker(e.target.value)}
-            className="w-40"
-          />
-          <Button
-            onClick={addTicker}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="mr-2 h-4 w-4" /> Add
-          </Button>
-        </div>
       </div>
 
       <div className="rounded-lg border bg-white dark:bg-gray-800 shadow">
@@ -162,6 +125,7 @@ export default function DashboardPage() {
               <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
+
           <TableBody>
             {tickers.map((ticker) => (
               <TableRow key={ticker.symbol}>
@@ -172,13 +136,7 @@ export default function DashboardPage() {
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {ticker.tags.map((tag) => (
-                      <Badge
-                        key={tag}
-                        style={{ backgroundColor: getTagColor(tag) }}
-                        className="text-white"
-                      >
-                        {tag}
-                      </Badge>
+                      <Badge key={tag}>{tag}</Badge>
                     ))}
                   </div>
                 </TableCell>
@@ -256,53 +214,6 @@ export default function DashboardPage() {
 
       <div className="rounded-lg border bg-white dark:bg-gray-800 p-6 shadow">
         <TrackedTickers />
-        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
-          Tag Management
-        </h3>
-        <div className="flex items-center space-x-2 mb-4">
-          <Input
-            placeholder="New tag..."
-            value={newTag}
-            onChange={(e) => setNewTag(e.target.value)}
-            className="w-full max-w-xs"
-          />
-          <div className="flex items-center space-x-2">
-            {tagColors.map((color) => (
-              <button
-                key={color.hex}
-                className={`w-6 h-6 rounded-full border-2 ${
-                  selectedColor === color.hex
-                    ? "border-gray-900 dark:border-white"
-                    : "border-transparent"
-                }`}
-                style={{ backgroundColor: color.hex }}
-                onClick={() => setSelectedColor(color.hex)}
-                title={color.name}
-              />
-            ))}
-          </div>
-          <Button onClick={addTag}>Add Tag</Button>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {tags.map((tag) => (
-            <Badge
-              key={tag.id}
-              variant="outline"
-              style={{ backgroundColor: tag.color }}
-              className="text-white text-sm"
-            >
-              {tag.name}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-4 w-4 ml-2 -mr-2 hover:bg-transparent hover:text-white"
-                onClick={() => removeTag(tag.id)}
-              >
-                <X className="h-3 w-3" />
-              </Button>
-            </Badge>
-          ))}
-        </div>
       </div>
     </div>
   );
