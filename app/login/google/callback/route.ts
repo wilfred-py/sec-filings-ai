@@ -68,23 +68,45 @@ export async function GET(request: Request): Promise<Response> {
   const googleUserId = claims.sub;
   const username = claims.name;
 
+  // First check for existing OAuth user
   const existingUser = await User.findOne({
     "oauthProfiles.provider": "google",
     "oauthProfiles.providerId": googleUserId,
   });
 
-  if (existingUser !== null) {
+  if (existingUser) {
     const sessionToken = generateSessionToken();
     const session = await createSession(sessionToken, existingUser.id);
     setSessionTokenCookie(sessionToken, session.expiresAt);
     return new Response(null, {
       status: 302,
-      headers: {
-        Location: "/",
-      },
+      headers: { Location: "/dashboard" },
     });
   }
 
+  // If no OAuth user found, check for existing email user
+  const existingEmailUser = await User.findOne({ email: claims.email });
+
+  if (existingEmailUser) {
+    // Add Google profile to existing user
+    existingEmailUser.oauthProfiles.push({
+      provider: "google",
+      providerId: googleUserId,
+      email: claims.email,
+      displayName: username,
+    });
+    await existingEmailUser.save();
+
+    const sessionToken = generateSessionToken();
+    const session = await createSession(sessionToken, existingEmailUser.id);
+    setSessionTokenCookie(sessionToken, session.expiresAt);
+    return new Response(null, {
+      status: 302,
+      headers: { Location: "/dashboard" },
+    });
+  }
+
+  // If no existing user at all, create new one
   const user = await User.create({
     email: claims.email,
     oauthProfiles: [
