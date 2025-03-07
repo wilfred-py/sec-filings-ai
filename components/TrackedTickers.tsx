@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { debounce } from "lodash";
+import TickerSearch from "./TickerSearch";
 
 interface Ticker {
   ticker: string;
@@ -93,102 +94,12 @@ export default function TrackedTickers() {
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-gray-50 rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-        Ticker Management
-      </h2>
       {error && <p className="text-red-600 mb-4">{error}</p>}
-      <div className="mb-6">
-        <input
-          type="text"
-          value={query}
-          onChange={handleSearch}
-          placeholder="Search tickers (e.g., AAPL)"
-          className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        {searchResults.length > 0 && (
-          <ul className="mt-2 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
-            {searchResults.map((result) => {
-              const isTracked = trackedTickers.some(
-                (t) => t.ticker === result.ticker,
-              );
-              return (
-                <li
-                  key={result.ticker}
-                  className="p-3 flex justify-between items-center hover:bg-gray-100"
-                >
-                  <span className="text-gray-700">
-                    {result.ticker} - {result.name}
-                  </span>
-                  {!isTracked && (
-                    <button
-                      onClick={() => addTicker(result.ticker)}
-                      className="text-blue-600 hover:underline"
-                    >
-                      Add
-                    </button>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </div>
-      <div>
-        <h3 className="text-lg font-medium mb-3 text-gray-700">
-          Tracked Tickers
-        </h3>
-        {trackedTickers.length === 0 ? (
-          <p className="text-gray-500">No tickers tracked yet.</p>
-        ) : (
-          trackedTickers.map((t) => (
-            <div
-              key={t.ticker}
-              className="mb-4 p-4 bg-white border border-gray-200 rounded-md shadow-sm"
-            >
-              <div className="flex justify-between items-center">
-                <span className="text-gray-800 font-medium">{t.ticker}</span>
-                <button
-                  onClick={() => removeTicker(t.ticker)}
-                  className="text-red-600 hover:underline"
-                >
-                  Remove
-                </button>
-              </div>
-              <div className="mt-2">
-                <span className="text-gray-600">Tags: </span>
-                {t.tags.length === 0 ? (
-                  <span className="text-gray-500">None</span>
-                ) : (
-                  t.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="inline-flex items-center bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded-full mr-2"
-                    >
-                      {tag}
-                      <button
-                        onClick={() => removeTag(t.ticker, tag)}
-                        className="ml-1 text-red-600 hover:text-red-800"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))
-                )}
-                <input
-                  type="text"
-                  value={newTag[t.ticker] || ""}
-                  onChange={(e) =>
-                    setNewTag({ ...newTag, [t.ticker]: e.target.value })
-                  }
-                  onKeyPress={(e) => e.key === "Enter" && addTag(t.ticker)}
-                  placeholder="Add tag"
-                  className="mt-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
-            </div>
-          ))
-        )}
-      </div>
+      <TickerSearch
+        onSelect={addTicker}
+        trackedTickers={trackedTickers.map((t) => t.ticker)}
+        className="mb-6"
+      />
     </div>
   );
 }

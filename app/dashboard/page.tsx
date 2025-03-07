@@ -23,6 +23,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import TickerSearch from "@/components/TickerSearch";
 
 interface Tag {
   id: string;
@@ -38,19 +39,6 @@ interface Ticker {
   tags: string[];
   lastFiling?: string;
 }
-
-const tagColors = [
-  { hex: "#60A5FA", name: "Blue" },
-  { hex: "#34D399", name: "Green" },
-  { hex: "#F87171", name: "Red" },
-  { hex: "#FBBF24", name: "Yellow" },
-  { hex: "#A78BFA", name: "Purple" },
-  { hex: "#EC4899", name: "Pink" },
-  { hex: "#6EE7B7", name: "Emerald" },
-  { hex: "#9CA3AF", name: "Gray" },
-  { hex: "#FB923C", name: "Orange" },
-  { hex: "#C084FC", name: "Violet" },
-];
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -89,6 +77,11 @@ export default function DashboardPage() {
   const resendSummary = async (symbol: string) => {
     // Implement email resend logic here
     console.log(`Resending summary for ${symbol}`);
+  };
+
+  const handleTickerSelect = (ticker: string) => {
+    // Handle ticker selection
+    console.log(`Adding ticker ${ticker}`);
   };
 
   useEffect(() => {
