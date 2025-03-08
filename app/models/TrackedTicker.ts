@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 
 const TrackedTickerSchema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  userId: { type: Schema.Types.ObjectId, ref: "users", required: true },
   ticker: { type: String, required: true },
   tags: [{ type: String }],
 });
