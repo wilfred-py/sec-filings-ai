@@ -138,6 +138,9 @@ UserSchema.index({
   "oauthProfiles.providerId": 1,
 });
 
+UserSchema.index({ lockUntil: 1 }); // For account lock checks
+UserSchema.index({ verificationToken: 1 }, { sparse: true }); // For email verification
+
 // Hash password before saving
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
