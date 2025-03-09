@@ -20,7 +20,7 @@ export interface IUser extends mongoose.Document {
   email: string;
   password?: string; // Make password optional since OAuth users won't have one
   oauthProfiles?: IOAuthProfile[];
-  roles: string[];
+  roles: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   lastLogin?: Date;
@@ -89,9 +89,9 @@ const UserSchema = new mongoose.Schema<IUser>(
       },
     ],
     roles: {
-      type: [String],
+      type: String,
       enum: ["user", "admin"],
-      default: ["user"],
+      default: "user",
     },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
@@ -135,9 +135,12 @@ UserSchema.index({
 UserSchema.index({ lockUntil: 1 }); // For account lock checks
 UserSchema.index({ verificationToken: 1 }, { sparse: true }); // For email verification
 
-// Hash password before saving
+UserSchema.index({ resetPasswordExpires: 1 }, { expireAfterSeconds: 0 }); // Expires at resetPasswordExpires
+UserSchema.index({ lockUntil: 1 }, { expireAfterSeconds: 0 }); // Expires at lockUntil
+
+// Hash password before saving; skip if unchanged password
 UserSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
+  if (!this.isModified("password") || !this.password) return next();
 
   try {
     const salt = await bcrypt.genSalt(12);
