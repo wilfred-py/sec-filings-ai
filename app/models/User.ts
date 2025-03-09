@@ -21,7 +21,6 @@ export interface IUser extends mongoose.Document {
   password?: string; // Make password optional since OAuth users won't have one
   oauthProfiles?: IOAuthProfile[];
   roles: string[];
-  createdAt: Date;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   lastLogin?: Date;
@@ -93,11 +92,6 @@ const UserSchema = new mongoose.Schema<IUser>(
       type: [String],
       enum: ["user", "admin"],
       default: ["user"],
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-      immutable: true,
     },
     resetPasswordToken: String,
     resetPasswordExpires: Date,
