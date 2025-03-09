@@ -106,6 +106,13 @@ export default function DashboardPage() {
         </h2>
       </div>
 
+      <div className="rounded-lg border bg-white dark:bg-gray-800 p-6 shadow">
+        <TickerSearch
+          onSelect={handleTickerSelect}
+          trackedTickers={tickers.map((ticker) => ticker.symbol)}
+        />
+      </div>
+
       <div className="rounded-lg border bg-white dark:bg-gray-800 shadow">
         <Table>
           <TableHeader>
@@ -203,10 +210,6 @@ export default function DashboardPage() {
             ))}
           </TableBody>
         </Table>
-      </div>
-
-      <div className="rounded-lg border bg-white dark:bg-gray-800 p-6 shadow">
-        <TrackedTickers />
       </div>
     </div>
   );
