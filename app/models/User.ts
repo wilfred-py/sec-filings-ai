@@ -25,16 +25,14 @@ export interface IUser extends mongoose.Document {
   isActive: boolean;
   emailVerified: boolean;
   verificationToken?: string | null;
-  lastPasswordChange?: Date;
   failedLoginAttempts: number;
   lockUntil?: Date;
   gdprConsent: {
     accepted: boolean;
     date: Date;
   };
-  dataRetentionApproved: boolean;
   comparePassword(candidatePassword: string): Promise<boolean>;
-  generatePasswordReset(): Promise<void>;
+  generatePasswordReset(): Promise<string>;
   generateEmailVerification(): Promise<string>;
 }
 
@@ -103,14 +101,12 @@ const UserSchema = new mongoose.Schema<IUser>(
     verificationToken: {
       type: String,
     },
-    lastPasswordChange: Date,
     failedLoginAttempts: { type: Number, default: 0 },
     lockUntil: Date,
     gdprConsent: {
       accepted: { type: Boolean, default: false },
       date: Date,
     },
-    dataRetentionApproved: { type: Boolean, default: false },
   },
   {
     timestamps: true,
@@ -159,14 +155,16 @@ UserSchema.methods.generatePasswordReset = async function () {
     token: this.resetPasswordToken,
     expiresAt: this.resetPasswordExpires,
   });
-  await this.save();
   return this.resetPasswordToken;
 };
 
 UserSchema.methods.generateEmailVerification = async function () {
   const token = randomBytes(32).toString("hex");
   this.verificationToken = token;
-  await this.save();
+  await this.model("User").updateOne(
+    { _id: this._id },
+    { verificationToken: token },
+  );
   return token;
 };
 
