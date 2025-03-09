@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 }
 
 // Reset password with token
-export async function PUT(request: Request) {
+export async function PUT(request: NextRequest) {
   try {
     const { token, newPassword } = await request.json();
 

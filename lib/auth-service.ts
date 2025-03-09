@@ -1,5 +1,6 @@
 import User from "@/app/models/User";
 import { generateToken } from "@/lib/jwt";
+import PasswordReset from "@/app/models/PasswordResets";
 
 export class AuthService {
   // Login with rate limiting and account locking
@@ -75,27 +76,28 @@ export class AuthService {
       return true;
     }
 
-    await user.generatePasswordReset();
-    return user.resetPasswordToken;
+    const token = await user.generatePasswordReset();
+
+    return true;
   }
 
   // Validate reset token and update password
   static async resetPassword(token: string, newPassword: string) {
-    const user = await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpires: { $gt: Date.now() },
-    });
-
-    if (!user) {
+    const reset = await PasswordReset.findOne({ token });
+    if (!reset || reset.expiresAt < new Date()) {
       throw new Error("Invalid or expired reset token");
     }
 
+    const user = await User.findById(reset.userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     user.password = newPassword;
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpires = undefined;
     user.lastPasswordChange = new Date();
     await user.save();
 
+    await PasswordReset.deleteOne({ _id: reset._id });
     return true;
   }
 }
