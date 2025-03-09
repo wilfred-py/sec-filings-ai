@@ -21,8 +21,6 @@ export interface IUser extends mongoose.Document {
   password?: string; // Make password optional since OAuth users won't have one
   oauthProfiles?: IOAuthProfile[];
   roles: string;
-  resetPasswordToken?: string;
-  resetPasswordExpires?: Date;
   lastLogin?: Date;
   isActive: boolean;
   emailVerified: boolean;
@@ -93,8 +91,6 @@ const UserSchema = new mongoose.Schema<IUser>(
       enum: ["user", "admin"],
       default: "user",
     },
-    resetPasswordToken: String,
-    resetPasswordExpires: Date,
     lastLogin: Date,
     isActive: {
       type: Boolean,
@@ -124,7 +120,6 @@ const UserSchema = new mongoose.Schema<IUser>(
 
 // Index for performance
 UserSchema.index({ email: 1 }, { unique: true });
-UserSchema.index({ resetPasswordToken: 1 }, { sparse: true });
 
 // Add index for OAuth lookups
 UserSchema.index({
@@ -134,9 +129,6 @@ UserSchema.index({
 
 UserSchema.index({ lockUntil: 1 }); // For account lock checks
 UserSchema.index({ verificationToken: 1 }, { sparse: true }); // For email verification
-
-UserSchema.index({ resetPasswordExpires: 1 }, { expireAfterSeconds: 0 }); // Expires at resetPasswordExpires
-UserSchema.index({ lockUntil: 1 }, { expireAfterSeconds: 0 }); // Expires at lockUntil
 
 // Hash password before saving; skip if unchanged password
 UserSchema.pre("save", async function (next) {
@@ -162,7 +154,13 @@ UserSchema.methods.comparePassword = async function (
 UserSchema.methods.generatePasswordReset = async function () {
   this.resetPasswordToken = randomBytes(32).toString("hex");
   this.resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour
+  await mongoose.model("PasswordReset").create({
+    userId: this._id,
+    token: this.resetPasswordToken,
+    expiresAt: this.resetPasswordExpires,
+  });
   await this.save();
+  return this.resetPasswordToken;
 };
 
 UserSchema.methods.generateEmailVerification = async function () {
