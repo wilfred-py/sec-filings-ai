@@ -1,13 +1,40 @@
 "use client";
 
-import TrackedTickers from "@/components/TrackedTickers";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session-client";
 import { useState, useEffect } from "react";
-import { Plus, Settings, Send, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  MoreHorizontal,
+  Send,
+  Settings,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
@@ -25,78 +52,258 @@ import {
 } from "@/components/ui/dialog";
 import TickerSearch from "@/components/TickerSearch";
 
-interface Tag {
-  id: string;
-  name: string;
-  color: string;
-}
-
 interface Ticker {
   symbol: string;
-  name: string;
-  price: number;
-  marketCap: string;
+  name?: string;
+  price?: number;
+  marketCap?: string;
   tags: string[];
   lastFiling?: string;
+}
+
+const columns: ColumnDef<Ticker>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "symbol",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Symbol
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="font-medium">{row.getValue("symbol")}</div>
+    ),
+  },
+  {
+    accessorKey: "name",
+    header: "Company Name",
+    cell: ({ row }) => <div>{row.getValue("name") || "Unknown"}</div>,
+  },
+  {
+    accessorKey: "price",
+    header: () => <div className="text-right">Price</div>,
+    cell: ({ row }) => {
+      const price = row.getValue("price") as number | undefined;
+      const formatted = price
+        ? new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "USD",
+          }).format(price)
+        : "N/A";
+      return <div className="text-right">{formatted}</div>;
+    },
+  },
+  {
+    accessorKey: "marketCap",
+    header: "Market Cap",
+    cell: ({ row }) => <div>{row.getValue("marketCap") || "N/A"}</div>,
+  },
+  {
+    accessorKey: "tags",
+    header: "Tags",
+    cell: ({ row }) => (
+      <div className="flex flex-wrap gap-1">
+        {(row.getValue("tags") as string[]).map((tag) => (
+          <span
+            key={tag}
+            className="bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded"
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    ),
+    filterFn: (row, id, value) => {
+      const tags = row.getValue(id) as string[];
+      return value.some((v: string) => tags.includes(v));
+    },
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: ({ row }) => {
+      const ticker = row.original;
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem asChild>
+              <DialogTrigger asChild>
+                <span className="cursor-pointer">Manage Tags</span>
+              </DialogTrigger>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => resendSummary(ticker.symbol)}>
+              Resend Summary
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => removeTicker(ticker.symbol)}
+              className="text-red-600"
+            >
+              Remove Ticker
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
+];
+
+function removeTicker(symbol: string) {
+  // Defined globally to avoid passing as prop (simpler for this example)
+  // Will be moved into component logic below
+}
+
+function resendSummary(symbol: string) {
+  // Same reasoning
 }
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [tickers, setTickers] = useState<Ticker[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
 
-  const [tags, setTags] = useState<Tag[]>([
-    { id: "1", name: "Tech", color: "#60A5FA" },
-    { id: "2", name: "Consumer Electronics", color: "#34D399" },
-    { id: "3", name: "Internet", color: "#F87171" },
-    { id: "4", name: "Software", color: "#FBBF24" },
-  ]);
+  useEffect(() => {
+    const initialize = async () => {
+      const { session } = await getSession();
+      if (!session) {
+        redirect("/login");
+        return;
+      }
 
-  const [newTicker, setNewTicker] = useState("");
-  const [newTag, setNewTag] = useState("");
+      try {
+        const res = await fetch("/api/user/tickers", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Failed to fetch tickers");
+        const data = await res.json();
+        setTickers(
+          data.map((t: any) => ({
+            symbol: t.ticker,
+            tags: t.tags || [],
+            name: t.name || "Unknown",
+            price: t.price || 0,
+            marketCap: t.marketCap || "N/A",
+            lastFiling: t.lastFiling,
+          })),
+        );
+      } catch (err) {
+        setError("Could not load tickers. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    initialize();
+  }, []);
 
-  const addTicker = () => {
-    if (newTicker) {
+  const addTicker = async (symbol: string) => {
+    try {
+      const res = await fetch("/api/user/tickers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ticker: symbol }),
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to add ticker");
       setTickers([
         ...tickers,
-        {
-          symbol: newTicker.toUpperCase(),
-          name: "New Company",
-          price: 0,
-          marketCap: "N/A",
-          tags: [],
-        },
+        { symbol, tags: [], name: "Unknown", price: 0, marketCap: "N/A" },
       ]);
-      setNewTicker("");
+    } catch (err) {
+      setError(`Failed to add ${symbol}. Please try again.`);
     }
   };
 
-  const removeTicker = (symbol: string) => {
-    setTickers(tickers.filter((ticker) => ticker.symbol !== symbol));
+  const removeTicker = async (symbol: string) => {
+    try {
+      const res = await fetch(`/api/user/tickers/${symbol}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to remove ticker");
+      setTickers(tickers.filter((t) => t.symbol !== symbol));
+    } catch (err) {
+      setError(`Failed to remove ${symbol}. Please try again.`);
+    }
+  };
+
+  const updateTags = async (symbol: string, newTags: string[]) => {
+    try {
+      const res = await fetch(`/api/user/tickers/${symbol}/tags`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ tags: newTags }),
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to update tags");
+      setTickers(
+        tickers.map((t) => (t.symbol === symbol ? { ...t, tags: newTags } : t)),
+      );
+    } catch (err) {
+      setError(`Failed to update tags for ${symbol}.`);
+    }
   };
 
   const resendSummary = async (symbol: string) => {
-    // Implement email resend logic here
-    console.log(`Resending summary for ${symbol}`);
+    console.log(`Resending summary for ${symbol}`); // Add email logic later
   };
 
-  const handleTickerSelect = (ticker: string) => {
-    // Handle ticker selection
-    console.log(`Adding ticker ${ticker}`);
-  };
+  const table = useReactTable({
+    data: tickers,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+  });
 
-  useEffect(() => {
-    getSession().then((result) => {
-      if (!result.session) {
-        redirect("/login");
-      }
-
-      setLoading(false);
-    });
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div className="text-red-600">{error}</div>;
 
   return (
     <div className="space-y-8 px-4 md:px-8 py-6">
@@ -108,109 +315,165 @@ export default function DashboardPage() {
 
       <div className="rounded-lg border bg-white dark:bg-gray-800 p-6 shadow">
         <TickerSearch
-          onSelect={handleTickerSelect}
-          trackedTickers={tickers.map((ticker) => ticker.symbol)}
+          onSelect={addTicker}
+          trackedTickers={tickers.map((t) => t.symbol)}
         />
       </div>
 
       <div className="rounded-lg border bg-white dark:bg-gray-800 shadow">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Symbol</TableHead>
-              <TableHead>Company Name</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Market Cap</TableHead>
-              <TableHead>Tags</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody>
-            {tickers.map((ticker) => (
-              <TableRow key={ticker.symbol}>
-                <TableCell className="font-medium">{ticker.symbol}</TableCell>
-                <TableCell>{ticker.name}</TableCell>
-                <TableCell>${ticker.price.toLocaleString()}</TableCell>
-                <TableCell>{ticker.marketCap}</TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {ticker.tags.map((tag) => (
-                      <Badge key={tag}>{tag}</Badge>
+        <div className="flex items-center py-4 px-6">
+          <Input
+            placeholder="Filter tickers..."
+            value={
+              (table.getColumn("symbol")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn("symbol")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="ml-auto">
+                Columns <ChevronDown className="ml-2 h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+        <div className="rounded-md border mx-6 mb-6">
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </TableCell>
                     ))}
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center space-x-2">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline" size="icon">
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent>
-                        <DialogHeader>
-                          <DialogTitle>Manage {ticker.symbol}</DialogTitle>
-                        </DialogHeader>
-                        <div className="space-y-4 py-4">
-                          <div>
-                            <h4 className="mb-2 font-medium">Assigned Tags</h4>
-                            <div className="flex flex-wrap gap-2">
-                              {tags.map((tag) => (
-                                <Badge
-                                  key={tag.id}
-                                  style={{ backgroundColor: tag.color }}
-                                  className="cursor-pointer text-white"
-                                  onClick={() => {
-                                    const newTags = ticker.tags.includes(
-                                      tag.name,
-                                    )
-                                      ? ticker.tags.filter(
-                                          (t) => t !== tag.name,
-                                        )
-                                      : [...ticker.tags, tag.name];
-                                    setTickers(
-                                      tickers.map((t) =>
-                                        t.symbol === ticker.symbol
-                                          ? { ...t, tags: newTags }
-                                          : t,
-                                      ),
-                                    );
-                                  }}
-                                >
-                                  {tag.name}
-                                  {ticker.tags.includes(tag.name) && (
-                                    <X className="ml-1 h-3 w-3" />
-                                  )}
-                                </Badge>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </DialogContent>
-                    </Dialog>
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={() => resendSummary(ticker.symbol)}
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeTicker(ticker.symbol)}
-                      className="text-red-500 hover:text-red-600"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No tickers added yet.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+        <div className="flex items-center justify-end space-x-2 py-4 px-6">
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} of{" "}
+            {table.getFilteredRowModel().rows.length} ticker(s) selected.
+          </div>
+          <div className="space-x-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+            >
+              Previous
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+            >
+              Next
+            </Button>
+          </div>
+        </div>
       </div>
+
+      {/* Tag Management Dialog - Scoped to each row */}
+      {tickers.map((ticker) => (
+        <Dialog key={ticker.symbol}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Manage {ticker.symbol}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <h4 className="mb-2 font-medium">Tags</h4>
+                <Input
+                  placeholder="Add new tag"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      const newTag = (e.target as HTMLInputElement).value;
+                      if (newTag && !ticker.tags.includes(newTag)) {
+                        updateTags(ticker.symbol, [...ticker.tags, newTag]);
+                        (e.target as HTMLInputElement).value = "";
+                      }
+                    }
+                  }}
+                />
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {ticker.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded cursor-pointer"
+                      onClick={() =>
+                        updateTags(
+                          ticker.symbol,
+                          ticker.tags.filter((t) => t !== tag),
+                        )
+                      }
+                    >
+                      {tag} <X className="inline h-3 w-3 ml-1" />
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+      ))}
     </div>
   );
 }
