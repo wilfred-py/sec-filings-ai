@@ -101,27 +101,18 @@ const columns: ColumnDef<Ticker>[] = [
   },
   {
     accessorKey: "name",
-    header: "Company Name",
-    cell: ({ row }) => <div>{row.getValue("name") || "Unknown"}</div>,
-  },
-  {
-    accessorKey: "price",
-    header: () => <div className="text-right">Price</div>,
-    cell: ({ row }) => {
-      const price = row.getValue("price") as number | undefined;
-      const formatted = price
-        ? new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-          }).format(price)
-        : "N/A";
-      return <div className="text-right">{formatted}</div>;
-    },
-  },
-  {
-    accessorKey: "marketCap",
-    header: "Market Cap",
-    cell: ({ row }) => <div>{row.getValue("marketCap") || "N/A"}</div>,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Company Name
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <div className="font-medium">{row.getValue("name")}</div>
+    ),
   },
   {
     accessorKey: "tags",
@@ -212,13 +203,12 @@ export default function DashboardPage() {
         });
         if (!res.ok) throw new Error("Failed to fetch tickers");
         const data = await res.json();
+        console.log(data);
         setTickers(
           data.map((t: any) => ({
             symbol: t.ticker,
-            tags: t.tags || [],
             name: t.name || "Unknown",
-            price: t.price || 0,
-            marketCap: t.marketCap || "N/A",
+            tags: t.tags || [],
             lastFiling: t.lastFiling,
           })),
         );
