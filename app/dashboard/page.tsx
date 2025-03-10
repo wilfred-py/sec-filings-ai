@@ -313,14 +313,14 @@ export default function DashboardPage() {
         </h2>
       </div>
 
-      <div className="rounded-lg border bg-white dark:bg-gray-800 p-6 shadow">
+      <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow">
         <TickerSearch
           onSelect={addTicker}
           trackedTickers={tickers.map((t) => t.symbol)}
         />
       </div>
 
-      <div className="rounded-lg border bg-white dark:bg-gray-800 shadow">
+      <div className="rounded-lg bg-white dark:bg-gray-800 shadow">
         <div className="flex items-center py-4 px-6">
           <Input
             placeholder="Filter tickers..."
@@ -357,7 +357,7 @@ export default function DashboardPage() {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        <div className="rounded-md border mx-6 mb-6">
+        <div className="rounded-md mx-6 mb-6">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
