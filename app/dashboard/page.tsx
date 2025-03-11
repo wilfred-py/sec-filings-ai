@@ -15,14 +15,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import {
-  ArrowUpDown,
-  ChevronDown,
-  MoreHorizontal,
-  Send,
-  Settings,
-  X,
-} from "lucide-react";
+import { ArrowUpDown, ChevronDown, MoreHorizontal, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -154,12 +147,14 @@ const columns: ColumnDef<Ticker>[] = [
                 <span className="cursor-pointer">Manage Tags</span>
               </DialogTrigger>
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => resendSummary(ticker.symbol)}>
+            <DropdownMenuItem
+              onClick={() => handleResendSummary(ticker.symbol)}
+            >
               Resend Summary
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              onClick={() => removeTicker(ticker.symbol)}
+              onClick={() => handleRemoveTicker(ticker.symbol)}
               className="text-red-600"
             >
               Remove Ticker
@@ -171,12 +166,12 @@ const columns: ColumnDef<Ticker>[] = [
   },
 ];
 
-function removeTicker(symbol: string) {
+function handleRemoveTicker(symbol: string) {
   // Defined globally to avoid passing as prop (simpler for this example)
   // Will be moved into component logic below
 }
 
-function resendSummary(symbol: string) {
+function handleResendSummary(symbol: string) {
   // Same reasoning
 }
 
@@ -193,12 +188,22 @@ export default function DashboardPage() {
     console.log("Dashboard page mounted, starting initialization");
 
     const initialize = async () => {
-      const { session } = await getSession();
-      if (!session) {
-        redirect("/login");
-      }
+      console.log("Initialize function called");
 
       try {
+        console.log("Getting session...");
+        const { session } = await getSession();
+        console.log(
+          "Session result:",
+          session ? "Session exists" : "No session",
+        );
+
+        if (!session) {
+          console.log("No session, redirecting to login");
+          redirect("/login");
+        }
+
+        console.log("About to fetch tickers");
         const res = await fetch("/api/user/tickers", {
           credentials: "include",
         });
@@ -210,24 +215,45 @@ export default function DashboardPage() {
         console.log("API response:", data);
 
         setTickers(
-          data.map((t: any) => ({
-            symbol: t.ticker,
-            name: t.name || "Unknown",
-            tags: t.tags || [],
-            lastFiling: t.lastFiling,
-          })),
+          data.map(
+            (t: {
+              ticker: string;
+              name?: string;
+              tags?: string[];
+              lastFiling?: string;
+            }) => ({
+              symbol: t.ticker,
+              name: t.name || "Unknown",
+              tags: t.tags || [],
+              lastFiling: t.lastFiling,
+            }),
+          ),
         );
-      } catch (err) {
-        console.error("Error in initialize:", err);
+      } catch (error) {
+        console.error("Error in initialize:", error);
         setError("Could not load tickers. Please try again.");
       } finally {
+        console.log("Setting loading to false");
         setLoading(false);
       }
     };
-    initialize();
+
+    initialize().catch((error) => {
+      console.error("Unhandled error in initialize:", error);
+      setLoading(false);
+      setError("An unexpected error occurred. Please try again.");
+    });
+
+    return () => {
+      console.log("Dashboard component unmounting");
+    };
   }, []);
 
-  console.log(`tickers: ${tickers}`);
+  useEffect(() => {
+    if (tickers.length > 0) {
+      console.log("First ticker:", tickers[0]);
+    }
+  }, [tickers]);
 
   const addTicker = async (symbol: string) => {
     try {
@@ -242,7 +268,8 @@ export default function DashboardPage() {
         ...tickers,
         { symbol, tags: [], name: "Unknown", price: 0, marketCap: "N/A" },
       ]);
-    } catch (err) {
+    } catch (error) {
+      console.error(`Failed to add ${symbol}:`, error);
       setError(`Failed to add ${symbol}. Please try again.`);
     }
   };
@@ -255,7 +282,8 @@ export default function DashboardPage() {
       });
       if (!res.ok) throw new Error("Failed to remove ticker");
       setTickers(tickers.filter((t) => t.symbol !== symbol));
-    } catch (err) {
+    } catch (error) {
+      console.error(`Failed to remove ${symbol}:`, error);
       setError(`Failed to remove ${symbol}. Please try again.`);
     }
   };
@@ -272,7 +300,8 @@ export default function DashboardPage() {
       setTickers(
         tickers.map((t) => (t.symbol === symbol ? { ...t, tags: newTags } : t)),
       );
-    } catch (err) {
+    } catch (error) {
+      console.error(`Failed to update tags for ${symbol}:`, error);
       setError(`Failed to update tags for ${symbol}.`);
     }
   };
