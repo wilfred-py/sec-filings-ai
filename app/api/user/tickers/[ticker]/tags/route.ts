@@ -23,6 +23,7 @@ export async function POST(
       return NextResponse.json({ error: "Ticker not found" }, { status: 404 });
     return NextResponse.json({ message: "Tag added" });
   } catch (error) {
+    console.error(`Error adding tag to ticker ${params.ticker}:`, error);
     return NextResponse.json({ error: "Failed to add tag" }, { status: 500 });
   }
 }
@@ -38,9 +39,18 @@ export async function GET(
 
   try {
     await connectDB();
-    const tags = await TrackedTicker.find({ userId: session.user.id });
-    return NextResponse.json({ tags: tags });
+    const ticker = await TrackedTicker.findOne({
+      userId: session.user.id,
+      ticker: params.ticker,
+    });
+
+    if (!ticker) {
+      return NextResponse.json({ error: "Ticker not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ tags: ticker.tags || [] });
   } catch (error) {
+    console.error(`Error fetching tags for ticker ${params.ticker}:`, error);
     return NextResponse.json(
       { error: "Failed to fetch tags" },
       { status: 500 },
