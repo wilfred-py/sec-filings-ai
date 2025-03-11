@@ -13,3 +13,6 @@ Questions:
 5. Send request to api route to trigger api GET from SEC
 6. Receive parsed data and send to Grok LLM API end point with prompts.
 7. Response is stored in Mongoose, formatted into a high fidelity email, and then sent to the user's email address.
+
+8. Add a "resend summary" button to the ticker details page.
+9. Add a "delete ticker" button to the ticker details page.

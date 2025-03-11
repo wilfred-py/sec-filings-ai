@@ -190,20 +190,25 @@ export default function DashboardPage() {
   const [rowSelection, setRowSelection] = useState({});
 
   useEffect(() => {
+    console.log("Dashboard page mounted, starting initialization");
+
     const initialize = async () => {
       const { session } = await getSession();
       if (!session) {
         redirect("/login");
-        return;
       }
 
       try {
         const res = await fetch("/api/user/tickers", {
           credentials: "include",
         });
+
+        console.log("Fetch response status:", res.status);
         if (!res.ok) throw new Error("Failed to fetch tickers");
+
         const data = await res.json();
-        console.log(data);
+        console.log("API response:", data);
+
         setTickers(
           data.map((t: any) => ({
             symbol: t.ticker,
@@ -213,6 +218,7 @@ export default function DashboardPage() {
           })),
         );
       } catch (err) {
+        console.error("Error in initialize:", err);
         setError("Could not load tickers. Please try again.");
       } finally {
         setLoading(false);
@@ -220,6 +226,8 @@ export default function DashboardPage() {
     };
     initialize();
   }, []);
+
+  console.log(`tickers: ${tickers}`);
 
   const addTicker = async (symbol: string) => {
     try {
