@@ -21,6 +21,7 @@ export async function DELETE(
       return NextResponse.json({ error: "Ticker not found" }, { status: 404 });
     return NextResponse.json({ message: "Tag removed" });
   } catch (error) {
+    console.error(`Error deleting ticker ${params.ticker}: `, error);
     return NextResponse.json(
       { error: "Failed to remove tag" },
       { status: 500 },
