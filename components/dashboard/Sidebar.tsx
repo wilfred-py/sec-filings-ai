@@ -9,7 +9,14 @@ import { LuSun, LuMoon } from "react-icons/lu";
 import { getSession } from "@/lib/session-client";
 import { IUser } from "@/app/models/User";
 import { logout } from "@/app/actions/log-out";
-const navItems = [
+
+interface NavItem {
+  href: string;
+  icon: React.FC<{ className?: string }>;
+  label: string;
+}
+
+const navItems: NavItem[] = [
   { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
   { href: "/dashboard/profile", icon: User, label: "Profile" },
   { href: "/dashboard/settings", icon: Settings, label: "Settings" },
@@ -19,11 +26,21 @@ export function Sidebar() {
   const pathname = usePathname();
   const [user, setUser] = useState<IUser | null>(null);
   const [darkMode, setDarkMode] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getSession().then((result) => {
-      setUser(result.user);
-    });
+    const initialize = async () => {
+      try {
+        const { user } = await getSession();
+        setUser(user);
+        const savedDarkMode = localStorage.getItem("darkMode") === "true";
+        setDarkMode(savedDarkMode);
+        document.documentElement.classList.toggle("dark", savedDarkMode);
+      } catch (err) {
+        setError("Failed to load session");
+      }
+    };
+    initialize();
   }, []);
 
   const toggleDarkMode = () => {
@@ -32,6 +49,8 @@ export function Sidebar() {
     localStorage.setItem("darkMode", String(newDarkMode));
     document.documentElement.classList.toggle("dark");
   };
+
+  if (error) return <div className="p-4 text-red-600">{error}</div>;
 
   return (
     <div className="flex h-screen w-64 flex-col justify-between bg-white p-4 dark:bg-gray-800">
@@ -57,16 +76,18 @@ export function Sidebar() {
         </nav>
       </div>
       <div className="space-y-4">
-        <div className="flex items-center space-x-4">
-          <div>
-            <p className="text-sm font-medium text-gray-900 dark:text-white">
-              {user?.oauthProfiles?.[0]?.displayName}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {user?.email}
-            </p>
+        {user && (
+          <div className="flex items-center space-x-4">
+            <div>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                {user.oauthProfiles?.[0]?.displayName ?? "User"}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {user.email}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
         <div className="flex items-center justify-between">
           <button
             onClick={toggleDarkMode}

@@ -48,8 +48,6 @@ import TickerSearch from "@/components/TickerSearch";
 interface Ticker {
   symbol: string;
   name?: string;
-  price?: number;
-  marketCap?: string;
   tags: string[];
   lastFiling?: string;
 }
@@ -166,15 +164,6 @@ const columns: ColumnDef<Ticker>[] = [
   },
 ];
 
-function handleRemoveTicker(symbol: string) {
-  // Defined globally to avoid passing as prop (simpler for this example)
-  // Will be moved into component logic below
-}
-
-function handleResendSummary(symbol: string) {
-  // Same reasoning
-}
-
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [tickers, setTickers] = useState<Ticker[]>([]);
@@ -215,12 +204,19 @@ export default function DashboardPage() {
         console.log("API response:", data);
 
         setTickers(
-          data.map((t: any) => ({
-            symbol: t.ticker,
-            name: t.name || "Unknown",
-            tags: t.tags || [],
-            lastFiling: t.lastFiling,
-          })),
+          data.map(
+            (t: {
+              ticker: string;
+              name?: string;
+              tags?: string[];
+              lastFiling?: string;
+            }) => ({
+              symbol: t.ticker,
+              name: t.name || "Unknown",
+              tags: t.tags || [],
+              lastFiling: t.lastFiling,
+            }),
+          ),
         );
       } catch (error) {
         console.error("Error in initialize:", error);
@@ -266,20 +262,6 @@ export default function DashboardPage() {
     }
   };
 
-  const removeTicker = async (symbol: string) => {
-    try {
-      const res = await fetch(`/api/user/tickers/${symbol}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      if (!res.ok) throw new Error("Failed to remove ticker");
-      setTickers(tickers.filter((t) => t.symbol !== symbol));
-    } catch (error) {
-      console.error(`Failed to remove ${symbol}:`, error);
-      setError(`Failed to remove ${symbol}. Please try again.`);
-    }
-  };
-
   const updateTags = async (symbol: string, newTags: string[]) => {
     try {
       const res = await fetch(`/api/user/tickers/${symbol}/tags`, {
@@ -298,8 +280,23 @@ export default function DashboardPage() {
     }
   };
 
-  const resendSummary = async (symbol: string) => {
-    console.log(`Resending summary for ${symbol}`); // Add email logic later
+  const handleRemoveTicker = async (tickerSymbol: string) => {
+    try {
+      const res = await fetch(`/api/user/tickers/${tickerSymbol}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to remove ticker");
+      setTickers(tickers.filter((t) => t.symbol !== tickerSymbol));
+    } catch (error) {
+      console.error(`Failed to remove ${tickerSymbol}:`, error);
+      setError(`Failed to remove ${tickerSymbol}. Please try again.`);
+    }
+  };
+
+  const handleResendSummary = async (tickerSymbol: string) => {
+    console.log(`Resending summary for ${tickerSymbol}`);
+    // Add email logic later
   };
 
   const table = useReactTable({
