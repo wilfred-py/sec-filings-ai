@@ -169,10 +169,12 @@ const columns: ColumnDef<Ticker>[] = [
 function handleRemoveTicker(symbol: string) {
   // Defined globally to avoid passing as prop (simpler for this example)
   // Will be moved into component logic below
+  console.log(`Removing ${symbol}`);
 }
 
 function handleResendSummary(symbol: string) {
   // Same reasoning
+  console.log(`Sending email summary for ${symbol}`);
 }
 
 export default function DashboardPage() {
