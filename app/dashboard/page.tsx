@@ -48,8 +48,6 @@ import TickerSearch from "@/components/TickerSearch";
 interface Ticker {
   symbol: string;
   name?: string;
-  price?: number;
-  marketCap?: string;
   tags: string[];
   lastFiling?: string;
 }
