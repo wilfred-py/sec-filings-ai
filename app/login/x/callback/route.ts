@@ -43,7 +43,6 @@ export async function GET(request: Request): Promise<Response> {
   //   Connect to DB
   try {
     await connectDB();
-    console.log("Database connected");
   } catch (error) {
     console.error("Database connection error:", error);
     return new Response(null, { status: 500 });
@@ -53,11 +52,6 @@ export async function GET(request: Request): Promise<Response> {
   let tokens: OAuth2Tokens;
   try {
     tokens = await x.validateAuthorizationCode(code, codeVerifier);
-    console.log("Tokens received:", {
-      hasAccessToken: !!tokens.accessToken,
-      hasRefreshToken: !!tokens.refreshToken,
-      scope: tokens.scopes,
-    });
   } catch (error) {
     console.error("X token validation error:", error);
     return new Response(null, { status: 400 });
@@ -70,13 +64,6 @@ export async function GET(request: Request): Promise<Response> {
   //   Get X user details from v2 API
   let xUserResponse: Response;
   try {
-    console.log("Received tokens structure:", {
-      tokenKeys: Object.keys(tokens),
-      tokenData: tokens.data,
-      hasAccessToken: !!(tokens.data as { access_token?: string })
-        ?.access_token,
-    });
-
     xUserResponse = await fetch("https://api.twitter.com/2/users/me", {
       headers: {
         Authorization: `Bearer ${(tokens.data as { access_token?: string })?.access_token}`,
@@ -91,24 +78,20 @@ export async function GET(request: Request): Promise<Response> {
     }
 
     const xUser = await xUserResponse.json();
-    console.log("X User data:", xUser);
 
     const xUserId = xUser.data.id;
 
     // Database operations
     try {
-      console.log("Searching for existing user with X ID:", xUserId);
       const existingUser = await User.findOne({
         "oauthProfiles.provider": "x",
         "oauthProfiles.providerId": xUserId.toString(),
       });
-      console.log("Existing user found:", existingUser);
 
       if (existingUser) {
         return await handleSuccessfulLogin(existingUser);
       }
 
-      console.log("Creating new user with X data");
       const newUser = await User.create({
         oauthProfiles: [
           {
@@ -120,7 +103,7 @@ export async function GET(request: Request): Promise<Response> {
           },
         ],
       });
-      console.log("New user created:", newUser);
+
       return await handleSuccessfulLogin(newUser);
     } catch (error) {
       console.error("Database operation error:", error);
