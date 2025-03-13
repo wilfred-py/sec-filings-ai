@@ -215,25 +215,17 @@ export default function DashboardPage() {
         console.log("API response:", data);
 
         setTickers(
-          data.map(
-            (t: {
-              ticker: string;
-              name?: string;
-              tags?: string[];
-              lastFiling?: string;
-            }) => ({
-              symbol: t.ticker,
-              name: t.name || "Unknown",
-              tags: t.tags || [],
-              lastFiling: t.lastFiling,
-            }),
-          ),
+          data.map((t: any) => ({
+            symbol: t.ticker,
+            name: t.name || "Unknown",
+            tags: t.tags || [],
+            lastFiling: t.lastFiling,
+          })),
         );
       } catch (error) {
         console.error("Error in initialize:", error);
         setError("Could not load tickers. Please try again.");
       } finally {
-        console.log("Setting loading to false");
         setLoading(false);
       }
     };
