@@ -26,7 +26,6 @@ export default function DashboardPage() {
 
   return (
     <div className="flex">
-      <Sidebar />
       <div className="flex-1 space-y-8 px-4 md:px-8 py-6">
         <div className="flex items-center justify-between">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
