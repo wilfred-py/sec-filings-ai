@@ -9,6 +9,10 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
+  SortingState,
+  ColumnFiltersState,
+  VisibilityState,
+  RowSelectionState,
 } from "@tanstack/react-table";
 import { ArrowUpDown, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -49,10 +53,10 @@ export function TickerTable({
   onRemoveTicker,
   onOpenTagManagement,
 }: TickerTableProps) {
-  const [sorting, setSorting] = useState([]);
-  const [columnFilters, setColumnFilters] = useState([]);
-  const [columnVisibility, setColumnVisibility] = useState({});
-  const [rowSelection, setRowSelection] = useState({});
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
   const columns: ColumnDef<Ticker>[] = useMemo(
     () => [
