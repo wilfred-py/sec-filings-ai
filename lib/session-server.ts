@@ -6,11 +6,14 @@ import { Session, ISession } from "@/app/models/Session";
 import { IUser } from "@/app/models/User";
 import mongoose from "mongoose";
 import { NextRequest } from "next/server";
+import connectDB from "@/lib/mongodb";
 
 // Server-only functions
 export async function validateSessionToken(
   token: string,
 ): Promise<SessionValidationResult> {
+  await connectDB();
+
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
   const session = await Session.findOne({ id: sessionId }).populate("userId");
 
@@ -50,6 +53,7 @@ export async function getCurrentSession(): Promise<SessionValidationResult> {
 }
 
 export async function invalidateSession(sessionId: string): Promise<void> {
+  await connectDB();
   await Session.deleteOne({ id: sessionId });
 }
 
@@ -57,6 +61,7 @@ export async function createSession(
   token: string,
   userId: mongoose.Types.ObjectId,
 ): Promise<ISession> {
+  await connectDB();
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
   const session = new Session({
     id: sessionId,
