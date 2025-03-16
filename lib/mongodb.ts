@@ -38,10 +38,10 @@ async function connectDB() {
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false, // Disable buffering
-      maxPoolSize: 1, // Reduce pool size
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 30000,
+      bufferCommands: true, // CHANGED: Enable buffering
+      maxPoolSize: 10, // CHANGED: Increased pool size
+      serverSelectionTimeoutMS: 30000, // CHANGED: Increased timeout
+      socketTimeoutMS: 45000, // CHANGED: Increased timeout
       family: 4,
       ssl: true,
       tls: true,
@@ -72,37 +72,39 @@ async function connectDB() {
     throw e;
   }
 
+  return cached.conn;
+}
+
+// Register event handlers only once
+if (mongoose.connection.listenerCount("error") === 0) {
+  // Connection error handlers
+  mongoose.connection.on("error", (err) => {
+    console.error("MongoDB connection error:", err);
+    if (err.name === "MongoNetworkError") {
+      console.log("Network error detected, attempting to reconnect...");
+      cached.conn = null;
+      cached.promise = null;
+    }
+  });
+
   mongoose.connection.on("disconnected", async () => {
     console.log("MongoDB disconnected, attempting to reconnect...");
     cached.conn = null;
     cached.promise = null;
-    await connectDB();
   });
 
-  return cached.conn;
+  mongoose.connection.on("connecting", () => {
+    console.log("Connecting to MongoDB...");
+  });
+
+  mongoose.connection.on("connected", () => {
+    console.log("MongoDB connected successfully");
+  });
+
+  mongoose.connection.on("reconnected", () => {
+    console.log("MongoDB reconnected successfully");
+  });
 }
-
-// Add connection error handlers
-mongoose.connection.on("error", (err) => {
-  console.error("MongoDB connection error:", err);
-  if (err.name === "MongoNetworkError") {
-    console.log("Network error detected, attempting to reconnect...");
-    cached.conn = null;
-    cached.promise = null;
-  }
-});
-
-mongoose.connection.on("connecting", () => {
-  console.log("Connecting to MongoDB...");
-});
-
-mongoose.connection.on("connected", () => {
-  console.log("MongoDB connected successfully");
-});
-
-mongoose.connection.on("reconnected", () => {
-  console.log("MongoDB reconnected successfully");
-});
 
 process.on("SIGINT", async () => {
   try {
