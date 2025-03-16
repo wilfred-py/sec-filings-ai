@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import { IUser } from "@/app/models/User";
+import User from "@/app/models/User";
 
 export interface ISession extends mongoose.Document {
   id: string;
   userId: mongoose.Types.ObjectId;
   expiresAt: Date;
-  user?: IUser;
+  user?: typeof User;
 }
 
 const SessionSchema = new mongoose.Schema<ISession>({
@@ -25,5 +25,12 @@ const SessionSchema = new mongoose.Schema<ISession>({
   },
 });
 
+// Create an index for faster lookups by id
+SessionSchema.index({ id: 1 }, { unique: true });
+// Create an index for expiration queries
+SessionSchema.index({ expiresAt: 1 });
+
 export const Session =
   mongoose.models.Session || mongoose.model<ISession>("Session", SessionSchema);
+
+export default Session;

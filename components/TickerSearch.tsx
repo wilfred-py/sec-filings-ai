@@ -46,7 +46,7 @@ export default function TickerSearch({
   };
 
   return (
-    <div className={className}>
+    <div className={`relative ${className}`}>
       {error && <p className="text-red-600 mb-4">{error}</p>}
       <input
         type="text"
@@ -56,7 +56,7 @@ export default function TickerSearch({
         className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
       {searchResults.length > 0 && (
-        <ul className="mt-2 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
+        <ul className="absolute left-0 right-0 z-20 mt-1 bg-white border border-gray-200 rounded-md shadow-lg max-h-60 overflow-y-auto">
           {searchResults.map((result) => {
             const isTracked = trackedTickers.includes(result.ticker);
             return (
