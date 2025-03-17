@@ -16,7 +16,6 @@ export async function initializeModels() {
 
   // Get a list of all registered models
   const registeredModelNames = mongoose.modelNames();
-  console.log("Registered models:", registeredModelNames);
 
   // Dynamically create an object with all registered models
   const registeredModels = registeredModelNames.reduce(
