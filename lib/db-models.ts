@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 import connectDB from "./mongodb";
 
-// Import all model schemas here
-import "@/app/models/User";
-import "@/app/models/Session";
+// Import all models from the index file
+import * as models from "@/app/models";
 
 /**
  * Initialize all database models
@@ -12,15 +11,27 @@ import "@/app/models/Session";
 export async function initializeModels() {
   await connectDB();
 
-  // Force load all models to ensure they're registered
-  const models = mongoose.modelNames();
-  console.log("Registered models:", models);
+  // Force models to be registered by accessing each model in the imported object
+  Object.values(models);
 
-  return {
-    User: mongoose.model("User"),
-    Session: mongoose.model("Session"),
-    // Add other models as needed
-  };
+  // Get a list of all registered models
+  const registeredModelNames = mongoose.modelNames();
+  console.log("Registered models:", registeredModelNames);
+
+  // Dynamically create an object with all registered models
+  const registeredModels = registeredModelNames.reduce(
+    (acc, modelName) => {
+      try {
+        acc[modelName] = mongoose.model(modelName);
+      } catch (err) {
+        console.error(`Error retrieving model ${modelName}:`, err);
+      }
+      return acc;
+    },
+    {} as Record<string, mongoose.Model<any>>,
+  );
+
+  return registeredModels;
 }
 
 export default initializeModels;
