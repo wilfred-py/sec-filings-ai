@@ -55,7 +55,12 @@ export default function DashboardPage() {
                     : tag,
                 ) || []
             }
-            onUpdateTags={updateTags}
+            onUpdateTags={(symbol, tagObjects) =>
+              updateTags(
+                symbol,
+                tagObjects.map((tag) => tag.name),
+              )
+            }
             open={!!selectedTicker}
             onOpenChange={(open) => !open && setSelectedTicker(null)}
           />
