@@ -66,7 +66,8 @@ export const useTickerData = () => {
       });
       if (!res.ok) throw new Error("Failed to add ticker");
       setTickers([...tickers, { symbol, tags: [], name: "Unknown" }]);
-    } catch (err) {
+    } catch (error) {
+      console.error("Error adding ticker:", error);
       setError(`Failed to add ${symbol}.`);
     }
   };
@@ -83,7 +84,8 @@ export const useTickerData = () => {
       setTickers(
         tickers.map((t) => (t.symbol === symbol ? { ...t, tags: newTags } : t)),
       );
-    } catch (err) {
+    } catch (error) {
+      console.error("Error updating tags:", error);
       setError(`Failed to update tags for ${symbol}.`);
     }
   };
@@ -96,7 +98,8 @@ export const useTickerData = () => {
       });
       if (!res.ok) throw new Error("Failed to remove ticker");
       setTickers(tickers.filter((t) => t.symbol !== symbol));
-    } catch (err) {
+    } catch (error) {
+      console.error("Error removing ticker:", error);
       setError(`Failed to remove ${symbol}.`);
     }
   };
