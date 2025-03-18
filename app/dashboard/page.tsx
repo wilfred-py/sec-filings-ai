@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Sidebar } from "./Sidebar";
 import { TickerTable } from "./TickerTable";
 import { TagManagement } from "./TagManagement";
 import { useTickerData } from "./useTickerData";
@@ -47,7 +46,15 @@ export default function DashboardPage() {
         {selectedTicker && (
           <TagManagement
             symbol={selectedTicker}
-            tags={tickers.find((t) => t.symbol === selectedTicker)?.tags || []}
+            tags={
+              tickers
+                .find((t) => t.symbol === selectedTicker)
+                ?.tags.map((tag) =>
+                  typeof tag === "string"
+                    ? { name: tag, color: "#3b82f6" }
+                    : tag,
+                ) || []
+            }
             onUpdateTags={updateTags}
             open={!!selectedTicker}
             onOpenChange={(open) => !open && setSelectedTicker(null)}
