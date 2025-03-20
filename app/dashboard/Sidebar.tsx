@@ -36,7 +36,8 @@ export function Sidebar() {
         const savedDarkMode = localStorage.getItem("darkMode") === "true";
         setDarkMode(savedDarkMode);
         document.documentElement.classList.toggle("dark", savedDarkMode);
-      } catch (err) {
+      } catch (error) {
+        console.error("Error initializing session:", error);
         setError("Failed to load session");
       }
     };
