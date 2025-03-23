@@ -1,29 +1,24 @@
-import { config } from "dotenv";
-import { resolve } from "path";
-import cache from "memory-cache";
-
-// Load environment variables from .env.local
-config({ path: resolve(process.cwd(), ".env.local") });
-
+// app/api/tickers/update/route.ts
+import { NextResponse } from "next/server";
 import mongoose from "mongoose";
 import Ticker from "@/app/models/Ticker";
 import connectDB from "@/lib/mongodb";
+import cache from "memory-cache";
 
-// Define the type for each item in company_tickers.json
 interface EdgarTicker {
   cik_str: string;
   ticker: string;
   title: string;
 }
 
-// Define the type for the full JSON response
 interface EdgarResponse {
   [key: string]: EdgarTicker;
 }
 
-export async function updateTickers() {
+export async function GET() {
   try {
     await connectDB();
+
     const response = await fetch(
       "https://www.sec.gov/files/company_tickers.json",
       {
@@ -39,7 +34,6 @@ export async function updateTickers() {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // Cast result of response.json() to EdgarResponse
     const data = (await response.json()) as EdgarResponse;
     const tickers = Object.values(data).map((item: EdgarTicker) => ({
       ticker: item.ticker,
@@ -47,25 +41,42 @@ export async function updateTickers() {
       cik: item.cik_str,
     }));
 
-    await Ticker.deleteMany({});
-    await Ticker.insertMany(tickers);
+    // Incremental update with upsert
+    const bulkOps = tickers.map((ticker) => ({
+      updateOne: {
+        filter: { ticker: ticker.ticker },
+        update: { $set: ticker },
+        upsert: true,
+      },
+    }));
+
+    await Ticker.bulkWrite(bulkOps);
     cache.clear(); // Clear cache to reflect new data
 
-    console.log("Tickers updated successfully");
+    return NextResponse.json({
+      message: "Tickers updated successfully",
+      count: tickers.length,
+    });
   } catch (error) {
     console.error("Error updating tickers:", error);
-  } finally {
-    await mongoose.connection.close();
+    return NextResponse.json(
+      {
+        error: "Failed to update tickers",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 },
+    );
   }
 }
 
-// Self-executing async function for ESM
-updateTickers()
-  .then(() => {
-    console.log("Script completed");
+// Optional: Run as script if called directly
+if (
+  process.env.NODE_ENV === "development" &&
+  !process.env.NEXT_PUBLIC_API_URL
+) {
+  (async () => {
+    await GET();
+    await mongoose.connection.close();
     process.exit(0);
-  })
-  .catch((error) => {
-    console.error("Script failed:", error);
-    process.exit(1);
-  });
+  })();
+}
