@@ -7,14 +7,14 @@ import { getSession } from "@/lib/session-client";
 interface Ticker {
   symbol: string;
   name?: string;
-  tags: string[];
+  tags: { name: string; color: string }[];
   lastFiling?: string;
 }
 
 interface TickerResponse {
   ticker: string;
   name?: string;
-  tags?: string[];
+  tags?: { name: string; color: string }[];
   lastFiling?: string;
 }
 
@@ -47,7 +47,7 @@ export const useTickerData = () => {
         );
       } catch (err) {
         setError(
-          err instanceof Error ? err.message : "An unexpected error occurred",
+          err instanceof Error ? err.message : "Could not load tickers.",
         );
       } finally {
         setLoading(false);
@@ -64,15 +64,26 @@ export const useTickerData = () => {
         body: JSON.stringify({ ticker: symbol }),
         credentials: "include",
       });
-      if (!res.ok) throw new Error("Failed to add ticker");
-      setTickers([...tickers, { symbol, tags: [], name: "Unknown" }]);
-    } catch (error) {
-      console.error("Error adding ticker:", error);
-      setError(`Failed to add ${symbol}.`);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Failed to add ticker");
+      }
+      const data = await res.json(); // Expect { ticker, name }
+      setTickers([
+        ...tickers,
+        { symbol, name: data.name || "Unknown", tags: [] },
+      ]);
+    } catch (err) {
+      setError(
+        `Failed to add ${symbol}: ${err instanceof Error ? err.message : "Unknown error"}`,
+      );
     }
   };
 
-  const updateTags = async (symbol: string, newTags: string[]) => {
+  const updateTags = async (
+    symbol: string,
+    newTags: { name: string; color: string }[],
+  ) => {
     try {
       const res = await fetch(`/api/user/tickers/${symbol}/tags`, {
         method: "PUT",
@@ -84,9 +95,10 @@ export const useTickerData = () => {
       setTickers(
         tickers.map((t) => (t.symbol === symbol ? { ...t, tags: newTags } : t)),
       );
-    } catch (error) {
-      console.error("Error updating tags:", error);
-      setError(`Failed to update tags for ${symbol}.`);
+    } catch (err) {
+      setError(
+        `Failed to update tags for ${symbol}: ${err instanceof Error ? err.message : "Unknown error"}`,
+      );
     }
   };
 
@@ -98,15 +110,25 @@ export const useTickerData = () => {
       });
       if (!res.ok) throw new Error("Failed to remove ticker");
       setTickers(tickers.filter((t) => t.symbol !== symbol));
-    } catch (error) {
-      console.error("Error removing ticker:", error);
-      setError(`Failed to remove ${symbol}.`);
+    } catch (err) {
+      setError(
+        `Failed to remove ${symbol}: ${err instanceof Error ? err.message : "Unknown error"}`,
+      );
     }
   };
 
   const resendSummary = async (symbol: string) => {
-    console.log(`Resending summary for ${symbol}`);
-    // Add email logic later
+    try {
+      const res = await fetch(`/api/filings/${symbol}/resend`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to resend summary");
+    } catch (err) {
+      setError(
+        `Failed to resend summary for ${symbol}: ${err instanceof Error ? err.message : "Unknown error"}`,
+      );
+    }
   };
 
   return {
