@@ -127,7 +127,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen">
       <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300 relative">
-        <video
+        {/* <video
           autoPlay
           loop
           muted
@@ -135,7 +135,7 @@ export default function LandingPage() {
           className="absolute inset-0 w-full h-full object-cover"
         >
           <source src="/background.mp4" type="video/mp4" />
-        </video>
+        </video> */}
 
         <div className="absolute inset-0 bg-black/30 dark:bg-black/50"></div>
 
