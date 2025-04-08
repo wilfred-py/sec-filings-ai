@@ -8,6 +8,7 @@ const TrackedTickerSchema = new Schema({
 });
 TrackedTickerSchema.index({ userId: 1, ticker: 1 }, { unique: true });
 TrackedTickerSchema.index({ userId: 1 });
+TrackedTickerSchema.index({ ticker: 1 });
 
 export default mongoose.models.TrackedTicker ||
   mongoose.model("TrackedTicker", TrackedTickerSchema);
