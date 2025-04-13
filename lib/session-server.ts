@@ -1,12 +1,10 @@
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
 import { cookies } from "next/headers";
-import User from "@/app/models/User";
 import { Session, ISession } from "@/app/models/Session";
 import { IUser } from "@/app/models/User";
 import mongoose from "mongoose";
 import { NextRequest } from "next/server";
-import connectDB from "@/lib/mongodb";
 import initializeModels from "@/lib/db-models";
 
 // Server-only functions
