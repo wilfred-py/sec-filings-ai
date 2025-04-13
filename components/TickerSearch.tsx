@@ -27,11 +27,15 @@ export default function TickerSearch({
         setSearchResults([]);
         return;
       }
-      const res = await fetch(`/api/ticker/search?query=${q}`);
-      if (res.ok) setSearchResults(await res.json());
-      else setError("Search failed");
+      try {
+        const res = await fetch(`/api/ticker/search?query=${q}`);
+        if (res.ok) setSearchResults(await res.json());
+        else setError("Search failed");
+      } catch (err) {
+        setError("Search failed");
+      }
     }, 300),
-    [],
+    [setSearchResults, setError],
   );
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
