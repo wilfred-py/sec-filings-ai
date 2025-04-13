@@ -27,7 +27,7 @@ export async function initializeModels() {
       }
       return acc;
     },
-    {} as Record<string, mongoose.Model<any>>,
+    {} as Record<string, ReturnType<typeof mongoose.model>>,
   );
 
   return registeredModels;
