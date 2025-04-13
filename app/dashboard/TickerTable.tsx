@@ -33,15 +33,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { TickerActions } from "./TickerActions";
+import { Ticker as GlobalTicker } from "@/app/types/Ticker";
 
-interface Ticker {
-  symbol: string;
-  name?: string;
-  tags: string[];
-}
+type LocalTicker = Omit<GlobalTicker, "tags"> & {
+  tags: { name: string; color: string }[];
+};
 
 interface TickerTableProps {
-  tickers: Ticker[];
+  tickers: LocalTicker[];
   onResendSummary: (symbol: string) => void;
   onRemoveTicker: (symbol: string) => void;
   onOpenTagManagement: (symbol: string) => void;
@@ -58,7 +57,7 @@ export function TickerTable({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
 
-  const columns: ColumnDef<Ticker>[] = useMemo(
+  const columns: ColumnDef<LocalTicker>[] = useMemo(
     () => [
       {
         id: "select",
@@ -114,18 +113,22 @@ export function TickerTable({
         header: "Tags",
         cell: ({ row }) => (
           <div className="flex flex-wrap gap-1">
-            {(row.getValue("tags") as string[]).map((tag) => (
-              <span
-                key={tag}
-                className="bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded"
-              >
-                {tag}
-              </span>
-            ))}
+            {(row.getValue("tags") as { name: string; color: string }[]).map(
+              (tag) => (
+                <span
+                  key={tag.name}
+                  className="bg-gray-200 text-gray-800 text-xs px-2 py-1 rounded"
+                >
+                  {tag.name}
+                </span>
+              ),
+            )}
           </div>
         ),
         filterFn: (row, id, value) =>
-          value.some((v: string) => (row.getValue(id) as string[]).includes(v)),
+          value.some((v: { name: string; color: string }) =>
+            (row.getValue(id) as { name: string; color: string }[]).includes(v),
+          ),
       },
       {
         id: "actions",

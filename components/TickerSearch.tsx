@@ -32,6 +32,7 @@ export default function TickerSearch({
         if (res.ok) setSearchResults(await res.json());
         else setError("Search failed");
       } catch (err) {
+        console.error("Search failed", err);
         setError("Search failed");
       }
     }, 300),
