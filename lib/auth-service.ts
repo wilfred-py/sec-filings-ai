@@ -76,7 +76,7 @@ export class AuthService {
       return true;
     }
 
-    const token = await user.generatePasswordReset();
+    await user.generatePasswordReset();
 
     return true;
   }
