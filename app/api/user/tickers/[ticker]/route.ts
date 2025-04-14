@@ -6,9 +6,7 @@ import connectDB from "@/lib/mongodb";
 export async function DELETE(
   req: NextRequest,
   { params }: { params: { ticker: string } },
-) {
-  console.log("DELETE request received for ticker:", params.ticker);
-
+): Promise<Response> {
   try {
     // 1. Session check with better error handling
     const session = await getSession(req);
