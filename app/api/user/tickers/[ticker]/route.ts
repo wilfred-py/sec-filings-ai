@@ -5,9 +5,9 @@ import connectDB from "@/lib/mongodb";
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { ticker: string } },
+  context: { params: { ticker: string } },
 ) {
-  console.log("DELETE request received for ticker:", params.ticker);
+  console.log("DELETE request received for ticker:", context.params.ticker);
 
   try {
     // 1. Session check with better error handling
@@ -26,11 +26,11 @@ export async function DELETE(
 
     // 3. Execute deletion with better error handling
     console.log(
-      `Attempting to delete ticker ${params.ticker} for user ${session.user.id}`,
+      `Attempting to delete ticker ${context.params.ticker} for user ${session.user.id}`,
     );
     const result = await TrackedTicker.deleteOne({
       userId: session.user.id,
-      ticker: params.ticker,
+      ticker: context.params.ticker,
     });
 
     console.log("Delete operation result:", result);
@@ -45,7 +45,7 @@ export async function DELETE(
   } catch (error) {
     // Improved error logging
     console.error(
-      `Error processing DELETE request for ticker ${params.ticker}:`,
+      `Error processing DELETE request for ticker ${context.params.ticker}:`,
     );
     console.error(error instanceof Error ? error.stack : error);
 
